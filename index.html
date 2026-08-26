@@ -295,6 +295,56 @@
         @keyframes spin { 100% { transform: rotate(360deg); } }
         .placeholder { color: #AFAAA7; font-size: 1.1rem; font-weight: 300; letter-spacing: 1px;}
         .error { color: #E06C75; font-size: 0.9rem; margin-top: 12px; padding: 12px 16px; background: rgba(224, 108, 117, 0.1); border-radius: var(--radius-sm); display: none;}
+        /* 主题切换按钮 */
+        .theme-toggle {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: var(--bg-card); border: 1px solid var(--border);
+            box-shadow: var(--shadow-float); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; padding: 0; transition: all 0.3s;
+        }
+        .theme-toggle:hover { transform: scale(1.08); border-color: var(--primary); }
+        .theme-toggle .theme-icon-dark { display: none; }
+        body.dark .theme-toggle .theme-icon-light { display: none; }
+        body.dark .theme-toggle .theme-icon-dark { display: inline; }
+        /* ========== 暗色主题覆盖 ========== */
+        body.dark {
+            --primary: #C48878;
+            --primary-hover: #D49A89;
+            --bg-app: #161413;
+            --bg-card: rgba(38, 36, 34, 0.95);
+            --bg-input: #252321;
+            --text-main: #E4E0DB;
+            --text-muted: #8E8A85;
+            --border: rgba(255, 255, 255, 0.06);
+            --accent: #8FA085;
+            --shadow-float: 0 24px 48px rgba(0, 0, 0, 0.4);
+            --shadow-inner: inset 0 2px 4px rgba(0,0,0,0.3);
+            background-image: radial-gradient(at 100% 0%, rgba(60, 55, 50, 0.4) 0%, transparent 50%),
+                              radial-gradient(at 0% 100%, rgba(60, 55, 50, 0.3) 0%, transparent 50%);
+        }
+        body.dark .panel { border-color: rgba(255, 255, 255, 0.08); }
+        body.dark h1 { color: var(--text-main); }
+        body.dark ::-webkit-scrollbar-thumb { background: #4A4744; }
+        body.dark select:focus, body.dark input:focus, body.dark textarea:focus { background: #2E2C2A; }
+        body.dark .api-config-box { background: rgba(45, 43, 41, 0.8); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        body.dark .upload-area { border-color: #4A4744; }
+        body.dark .upload-area:hover { background: #2A2826; }
+        body.dark .level-box { background: rgba(45, 43, 41, 0.8); }
+        body.dark button:disabled { background-color: #4A4744; }
+        body.dark button.ghost { border-color: #4A4744; }
+        body.dark button.ghost:hover { background-color: #2E2C2A; }
+        body.dark .toggle-key-btn:hover { background: #2E2C2A; }
+        body.dark .snapshot-panel { background: rgba(45, 43, 41, 0.9); }
+        body.dark .snapshot-header span { color: var(--text-main); }
+        body.dark .snap-btn.primary:disabled { background: #4A4744; }
+        body.dark .snap-btn.secondary:hover { background: #2E2C2A; }
+        body.dark .prompt-board { background: rgba(45, 43, 41, 0.9); }
+        body.dark .prompt-board h3 { color: var(--text-main); }
+        body.dark .placeholder { color: #6A6764; }
+        body.dark select { background: #252321 !important; }
+        body.dark #uploadText svg { color: #6A6764 !important; }
+        body.dark #extractBtn { background: #4A4744 !important; }
     </style>
 </head>
 <body>
@@ -303,7 +353,13 @@
         <div class="left-scroll-area">
             <div class="app-header">
                 <h1>产品4X4矩阵设计舱</h1>
-                <button class="ghost" onclick="fillPreset()">填入行业示例</button>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="切换亮暗模式">
+                        <span class="theme-icon-light">☀️</span>
+                        <span class="theme-icon-dark">🌙</span>
+                    </button>
+                    <button class="ghost" onclick="fillPreset()">填入行业示例</button>
+                </div>
             </div>
             
             <div class="section-tag first">01 AI 引擎配置 <span class="model-badge">🫘 豆包大模型</span></div>
@@ -575,6 +631,20 @@
             btn.textContent = '显示';
         }
     }
+
+    // ========== 亮暗主题切换 ==========
+    const THEME_KEY = 'app_theme';
+    function toggleTheme() {
+        const isDark = document.body.classList.toggle('dark');
+        localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+    }
+    // 页面加载时恢复主题偏好（在DOM解析后立即执行，避免闪烁）
+    (function() {
+        const saved = localStorage.getItem(THEME_KEY);
+        if (saved === 'dark') {
+            document.body.classList.add('dark');
+        }
+    })();
 
     // 等级描述映射字典
     const levelDescriptions = {
