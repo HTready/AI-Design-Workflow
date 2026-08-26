@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>产品4X4X5矩阵设计舱 · 豆包版</title>
+    <title>居家腰靠4X4X5矩阵设计舱 · 豆包版</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -302,7 +302,7 @@
     <aside class="panel left-panel">
         <div class="left-scroll-area">
             <div class="app-header">
-                <h1>产品4X4X5矩阵设计舱</h1>
+                <h1>居家腰靠4X4X5矩阵设计舱</h1>
                 <button class="ghost" onclick="fillPreset()">填入行业示例</button>
             </div>
             
@@ -473,37 +473,94 @@
     let uploadedImageBase64 = null;
     let uploadedImageMimeType = null;
 
-    // ========== localStorage 持久化 API Key ==========
+    // ========== localStorage 持久化配置 ==========
     const STORAGE_KEY = 'doubao_ark_api_key';
     const STORAGE_VISION_MODEL = 'doubao_vision_model';
     const STORAGE_IMAGE_MODEL = 'doubao_image_model';
+    const STORAGE_DIM1 = 'design_dim1';
+    const STORAGE_DIM2 = 'design_dim2';
+    const STORAGE_DIM3 = 'design_dim3';
+    const STORAGE_DIM4 = 'design_dim4';
+    const STORAGE_DESIGN_LEVEL = 'design_level';
+    const STORAGE_REF_SIMILARITY = 'ref_similarity';
+    const STORAGE_REF_IMAGE = 'ref_image_base64';
+    const STORAGE_REF_MIME = 'ref_image_mime';
+
+    // 安全保存到 localStorage（参考图可能较大，超出配额时静默失败）
+    function safeSave(key, value) {
+        try {
+            localStorage.setItem(key, value);
+        } catch (e) {
+            console.warn('localStorage 保存失败，可能超出存储配额:', key);
+        }
+    }
 
     // 页面加载时恢复已保存的配置
     window.addEventListener('DOMContentLoaded', function() {
+        // API 配置
         const savedKey = localStorage.getItem(STORAGE_KEY);
-        if (savedKey) {
-            document.getElementById('doubaoApiKey').value = savedKey;
-        }
+        if (savedKey) document.getElementById('doubaoApiKey').value = savedKey;
         const savedVision = localStorage.getItem(STORAGE_VISION_MODEL);
-        if (savedVision) {
-            document.getElementById('doubaoVisionModel').value = savedVision;
-        }
+        if (savedVision) document.getElementById('doubaoVisionModel').value = savedVision;
         const savedImage = localStorage.getItem(STORAGE_IMAGE_MODEL);
-        if (savedImage) {
-            document.getElementById('doubaoImageModel').value = savedImage;
-        }
-    });
+        if (savedImage) document.getElementById('doubaoImageModel').value = savedImage;
 
-    // API Key 输入时自动保存
-    document.addEventListener('DOMContentLoaded', function() {
+        // 4X4 矩阵参数
+        const d1 = localStorage.getItem(STORAGE_DIM1);
+        if (d1) document.getElementById('dim1').value = d1;
+        const d2 = localStorage.getItem(STORAGE_DIM2);
+        if (d2) document.getElementById('dim2').value = d2;
+        const d3 = localStorage.getItem(STORAGE_DIM3);
+        if (d3) document.getElementById('dim3').value = d3;
+        const d4 = localStorage.getItem(STORAGE_DIM4);
+        if (d4) document.getElementById('dim4').value = d4;
+
+        // 设计等级
+        const level = localStorage.getItem(STORAGE_DESIGN_LEVEL);
+        if (level) {
+            document.getElementById('designLevel').value = level;
+            updateLevelDesc();
+        }
+
+        // 参考图贴合度
+        const sim = localStorage.getItem(STORAGE_REF_SIMILARITY);
+        if (sim) document.getElementById('refSimilarity').value = sim;
+
+        // 参考图
+        const refImg = localStorage.getItem(STORAGE_REF_IMAGE);
+        const refMime = localStorage.getItem(STORAGE_REF_MIME);
+        if (refImg && refMime) {
+            uploadedImageBase64 = refImg;
+            uploadedImageMimeType = refMime;
+            const dataUrl = `data:${refMime};base64,${refImg}`;
+            document.getElementById('refImagePreview').src = dataUrl;
+            document.getElementById('refImagePreview').style.display = 'block';
+            document.getElementById('uploadText').style.display = 'none';
+            document.getElementById('extractBtn').style.display = 'flex';
+            document.getElementById('refineControl').style.display = 'block';
+            document.getElementById('removeRefBtn').style.display = 'flex';
+        }
+
+        // 绑定自动保存事件
         document.getElementById('doubaoApiKey').addEventListener('input', function() {
-            localStorage.setItem(STORAGE_KEY, this.value.trim());
+            safeSave(STORAGE_KEY, this.value.trim());
         });
         document.getElementById('doubaoVisionModel').addEventListener('change', function() {
-            localStorage.setItem(STORAGE_VISION_MODEL, this.value.trim());
+            safeSave(STORAGE_VISION_MODEL, this.value.trim());
         });
         document.getElementById('doubaoImageModel').addEventListener('change', function() {
-            localStorage.setItem(STORAGE_IMAGE_MODEL, this.value.trim());
+            safeSave(STORAGE_IMAGE_MODEL, this.value.trim());
+        });
+        ['dim1','dim2','dim3','dim4'].forEach(function(id) {
+            document.getElementById(id).addEventListener('input', function() {
+                safeSave('design_' + id, this.value);
+            });
+        });
+        document.getElementById('designLevel').addEventListener('change', function() {
+            safeSave(STORAGE_DESIGN_LEVEL, this.value);
+        });
+        document.getElementById('refSimilarity').addEventListener('change', function() {
+            safeSave(STORAGE_REF_SIMILARITY, this.value);
         });
     });
 
@@ -554,6 +611,9 @@
             document.getElementById('extractBtn').style.display = 'flex';
             document.getElementById('refineControl').style.display = 'block';
             document.getElementById('removeRefBtn').style.display = 'flex';
+            // 持久化参考图
+            safeSave(STORAGE_REF_IMAGE, uploadedImageBase64);
+            safeSave(STORAGE_REF_MIME, uploadedImageMimeType);
         };
         reader.readAsDataURL(file);
     }
@@ -568,6 +628,9 @@
         document.getElementById('extractBtn').style.display = 'none';
         document.getElementById('refineControl').style.display = 'none';
         document.getElementById('removeRefBtn').style.display = 'none';
+        // 清除持久化的参考图
+        localStorage.removeItem(STORAGE_REF_IMAGE);
+        localStorage.removeItem(STORAGE_REF_MIME);
         // 清空提取错误提示
         const err = document.getElementById('extractError');
         err.style.display = 'none';
@@ -626,6 +689,11 @@ Example: {"dim1": "...", "dim2": "...", "dim3": "...", "dim4": "..."}`;
             document.getElementById('dim2').value = result.dim2 || "";
             document.getElementById('dim3').value = result.dim3 || "";
             document.getElementById('dim4').value = result.dim4 || "";
+            // 手动持久化提取结果
+            safeSave(STORAGE_DIM1, result.dim1 || "");
+            safeSave(STORAGE_DIM2, result.dim2 || "");
+            safeSave(STORAGE_DIM3, result.dim3 || "");
+            safeSave(STORAGE_DIM4, result.dim4 || "");
             
             btn.innerHTML = `✅ 腰靠参数提取成功！请微调后渲染`;
             setTimeout(() => { 
