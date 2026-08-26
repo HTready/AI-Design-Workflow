@@ -176,6 +176,14 @@
         .upload-area:hover { background: #FFFFFF; border-color: var(--primary); }
         .upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
         .preview-img { max-height: 150px; border-radius: var(--radius-sm); display: none; margin: 12px auto 0; object-fit: cover;}
+        .remove-ref-btn {
+            position: absolute; top: 8px; right: 8px; width: 28px; height: 28px;
+            background: rgba(224, 108, 117, 0.9); color: white; border: none;
+            border-radius: 50%; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; transition: all 0.2s; z-index: 2;
+            padding: 0;
+        }
+        .remove-ref-btn:hover { background: #E06C75; transform: scale(1.1); }
         /* 设计等级选框特殊样式 */
         .level-box {
             background: #FFFFFF;
@@ -350,6 +358,9 @@
                     <div style="font-weight: 500;">点击或拖拽上传腰靠参考图</div>
                 </div>
                 <img id="refImagePreview" class="preview-img" alt="预览">
+                <button type="button" id="removeRefBtn" class="remove-ref-btn" onclick="removeReferenceImage()" style="display:none;" title="删除参考图">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
             </div>
             <button id="extractBtn" style="width: 100%; margin-top: 12px; display: none; background: #68605B;" onclick="extractFeatures()">
                 <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
@@ -542,8 +553,25 @@
             document.getElementById('uploadText').style.display = 'none';
             document.getElementById('extractBtn').style.display = 'flex';
             document.getElementById('refineControl').style.display = 'block';
+            document.getElementById('removeRefBtn').style.display = 'flex';
         };
         reader.readAsDataURL(file);
+    }
+
+    function removeReferenceImage() {
+        uploadedImageBase64 = null;
+        uploadedImageMimeType = null;
+        document.getElementById('imageInput').value = '';
+        document.getElementById('refImagePreview').src = '';
+        document.getElementById('refImagePreview').style.display = 'none';
+        document.getElementById('uploadText').style.display = 'block';
+        document.getElementById('extractBtn').style.display = 'none';
+        document.getElementById('refineControl').style.display = 'none';
+        document.getElementById('removeRefBtn').style.display = 'none';
+        // 清空提取错误提示
+        const err = document.getElementById('extractError');
+        err.style.display = 'none';
+        err.textContent = '';
     }
 
     // 获取当前配置的便捷方法
