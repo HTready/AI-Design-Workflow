@@ -38,7 +38,266 @@
             height: 100vh;
             overflow: hidden;
             display: flex;
+            flex-direction: column;
             gap: 24px;
+        }
+        /* 上部：左右分栏区域 */
+        .top-section {
+            display: flex;
+            gap: 24px;
+            flex: 1;
+            min-height: 0;
+        }
+        /* 下部：3D模型生成横向分栏 */
+        .model3d-panel {
+            height: 380px;
+            flex-shrink: 0;
+            padding: 20px 28px;
+        }
+        .model3d-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        .model3d-header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .model3d-header h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+            color: #2C2A29;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .model3d-body {
+            display: flex;
+            gap: 20px;
+            height: calc(100% - 40px);
+        }
+        .model3d-ref {
+            width: 180px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .model3d-ref-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .model3d-ref-img {
+            flex: 1;
+            background: var(--bg-input);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .model3d-ref-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: none;
+        }
+        .model3d-ref-empty {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-align: center;
+            padding: 12px;
+            line-height: 1.5;
+        }
+        .model3d-ref-tag {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            background: rgba(212, 154, 137, 0.9);
+            color: white;
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 500;
+            display: none;
+        }
+        /* 新增：手动上传按钮样式 */
+        .model3d-upload-box {
+            background: var(--bg-input);
+            border: 1px dashed #CFCACA;
+            border-radius: var(--radius-sm);
+            padding: 24px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            height: 100%;
+            justify-content: center;
+        }
+        .model3d-upload-box:hover {
+            background: #FFFFFF;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        body.dark .model3d-upload-box { border-color: #4A4744; }
+        body.dark .model3d-upload-box:hover { background: #2A2826; }
+        
+        /* 新增：参考图删除按钮 */
+        .model3d-ref-del {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 22px;
+            height: 22px;
+            background: rgba(224,108,117,0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 14px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            z-index: 10;
+        }
+        .model3d-ref-img:hover .model3d-ref-del { display: flex; }
+        .model3d-params {
+            width: 240px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 0;
+        }
+        .model3d-param-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 0;
+            padding-right: 4px;
+        }
+        .model3d-param-row {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .model3d-param-row label {
+            font-size: 0.78rem;
+            font-weight: 500;
+            margin: 0;
+        }
+        .model3d-param-row select {
+            padding: 8px 12px;
+            font-size: 0.85rem;
+        }
+        /* 修改：调整 3D 模块的整体分栏布局 */
+        .model3d-result {
+            width: 260px; /* 将结果信息栏固定宽度 */
+            flex-shrink: 0;
+            background: var(--bg-input);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        /* 新增：中间的 3D 模型交互预览分栏 */
+        .model3d-viewer-panel {
+            flex: 1; /* 占据剩余的大部分空间 */
+            background: var(--bg-input);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        body.dark .model3d-viewer-panel { background: rgba(45,43,41,0.6); }
+        .model3d-result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .model3d-result-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        .model3d-status {
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+        .model3d-status.idle { background: rgba(143,139,136,0.15); color: var(--text-muted); }
+        .model3d-status.queued { background: rgba(212,154,137,0.15); color: var(--primary); }
+        .model3d-status.running { background: rgba(212,154,137,0.15); color: var(--primary); }
+        .model3d-status.succeeded { background: rgba(163,177,155,0.2); color: #6B7A63; }
+        .model3d-status.failed { background: rgba(224,108,117,0.15); color: #E06C75; }
+        .model3d-result-content {
+            flex: 1;
+            overflow-y: auto;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        .model3d-result-content a {
+            color: var(--primary);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            word-break: break-all;
+        }
+        .model3d-actions {
+            flex-shrink: 0;
+            display: flex;
+            gap: 10px;
+            margin-top: auto;
+            padding-top: 8px;
+        }
+        .model3d-gen-btn {
+            padding: 8px 20px;
+            font-size: 0.88rem;
+            border-radius: var(--radius-sm);
+            white-space: nowrap;
+        }
+        .model3d-gen-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .model3d-info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .model3d-info-row:last-child { border-bottom: none; }
+        .model3d-info-label { color: var(--text-muted); }
+        .model3d-info-value { color: var(--text-main); font-weight: 500; word-break: break-all; text-align: right; max-width: 60%; }
+        body.dark .model3d-header h2 { color: var(--text-main); }
+        body.dark .model3d-result { background: rgba(45,43,41,0.6); }
+        @media (max-width: 1024px) {
+            body { flex-direction: column; height: auto; overflow: auto; }
+            .top-section { flex-direction: column; }
+            .left-panel { width: 100%; height: auto; }
+            .right-panel { min-height: 600px; }
+            .model3d-panel { height: auto; min-height: 380px; }
+            .model3d-body { flex-direction: column; height: auto; }
+            .model3d-ref, .model3d-params { width: 100%; }
+            .model3d-ref-img { min-height: 160px; }
+            .model3d-result { width: 100%; }
+            .model3d-viewer-panel { min-height: 300px; }
         }
         /* Bento 悬浮卡片布局 */
         .panel {
@@ -68,11 +327,6 @@
             padding: 24px;
             position: relative;
             background: var(--bg-card);
-        }
-        @media (max-width: 1024px) {
-            body { flex-direction: column; height: auto; overflow: auto; }
-            .left-panel { width: 100%; height: auto; }
-            .right-panel { min-height: 800px; }
         }
         /* 极简滚动条 */
         ::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -346,8 +600,11 @@
         body.dark #uploadText svg { color: #6A6764 !important; }
         body.dark #extractBtn { background: #4A4744 !important; }
     </style>
+    <!-- 使用 unpkg CDN 以解决部分网络下组件加载失败的问题 -->
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 <body>
+    <div class="top-section">
     <!-- 左侧工作台 -->
     <aside class="panel left-panel">
         <div class="left-scroll-area">
@@ -393,16 +650,18 @@
                     <label>视觉解析 · 推理接入点 ID</label>
                     <input type="text" id="doubaoVisionModel" placeholder="ep-xxxxxxxxxx（选 Doubao-Seed-1.6-Vision 或 1.5-vision-pro 模型创建）" style="margin-bottom: 12px;">
                     <label>生图渲染 · 推理接入点 ID / 模型 ID</label>
-                    <input type="text" id="doubaoImageModel" placeholder="ep-xxxxxxxxxx，或直接填模型ID如 doubao-seedream-5-0-pro-260628">
+                    <input type="text" id="doubaoImageModel" placeholder="ep-xxxxxxxxxx，或直接填模型ID如 doubao-seedream-5-0-pro-260628" style="margin-bottom: 12px;">
+                    <label>3D 生成 · 推理接入点 ID / 模型 ID</label>
+                    <input type="text" id="doubao3DModel" placeholder="ep-xxxxxxxxxx，或直接填模型ID doubao-seed3d-2-0-260328">
                 </div>
                 <details style="margin-top: 12px;">
                     <summary style="cursor: pointer; font-size: 0.8rem; color: var(--text-muted);">如何获取推理接入点 ID？（点击展开）</summary>
                     <div style="margin-top: 10px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.7;">
                         1. 打开 <a href="https://console.volcengine.com/ark/region:ark+cn-beijing/endpoint" target="_blank" rel="noopener" style="color: var(--accent);">火山方舟-在线推理</a> 页面<br>
                         2. 点击「创建推理接入点」，自定义名称<br>
-                        3. 视觉解析选 <b>Doubao-Seed-1.6-Vision</b>（或 Doubao-1.5-vision-pro），生图选 <b>Seedream 4.5</b> 或 <b>5.0</b><br>
+                        3. 视觉解析选 <b>Doubao-Seed-1.6-Vision</b>（或 Doubao-1.5-vision-pro），生图选 <b>Seedream 4.5</b> 或 <b>5.0</b>，3D 生成选 <b>Doubao-Seed3D-2.0</b><br>
                         4. 确认创建后，复制列表中的 <b>Endpoint ID</b>（ep- 开头）填入上方<br>
-                        5. 需分别创建两个接入点：一个视觉、一个生图
+                        5. 需分别创建三个接入点：一个视觉、一个生图、一个 3D
                     </div>
                 </details>
             </div>
@@ -472,7 +731,7 @@
                 </span>
             </div>
             <button id="generateBtn" class="main-btn" onclick="startGeneration()">
-                🚀 渲染输出设计图
+                🚀 渲染输出居家腰靠设计图
             </button>
             <div id="errorMsg" class="error"></div>
         </div>
@@ -524,6 +783,95 @@
             </div>
         </div>
     </main>
+    </div><!-- /.top-section -->
+
+    <!-- 下部：3D模型生成横向分栏 -->
+    <section class="panel model3d-panel">
+        <div class="model3d-header">
+            <h2>
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+                3D 模型生成
+                <span class="model-badge">Seed3D-2.0</span>
+            </h2>
+            <div class="model3d-header-right">
+                <span class="model3d-status idle" id="model3dStatus">待机</span>
+                <button class="model3d-gen-btn" id="model3dGenBtn" onclick="start3DGeneration()" disabled>
+                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    生成 3D 模型
+                </button>
+            </div>
+        </div>
+        <div class="model3d-body">
+            <!-- 1. 参考图区：增加手动上传和删除功能 -->
+            <div class="model3d-ref">
+                <span class="model3d-ref-label">参考图</span>
+                
+                <!-- 新增：手动上传区域 -->
+                <label class="model3d-upload-box" id="model3dUploadBox">
+                    <input type="file" accept="image/*" style="display:none;" onchange="handle3DManualUpload(event)">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path></svg>
+                    <span>点击手动导入<br>或点选上方快照</span>
+                </label>
+        
+                <!-- 预览区域 -->
+                <div class="model3d-ref-img" id="model3dRefImg" style="display:none;">
+                    <img id="model3dRefImage" alt="3D参考图">
+                    <span class="model3d-ref-tag" id="model3dRefTag">已导入</span>
+                    <!-- 新增：删除按钮 -->
+                    <button class="model3d-ref-del" onclick="clear3DReference()" title="删除参考图">×</button>
+                </div>
+            </div>
+        
+            <!-- 2. 参数配置区 -->
+            <div class="model3d-params">
+                <div class="model3d-param-list">
+                <div class="model3d-param-row">
+                    <label>模型文件格式</label>
+                    <select id="model3dFormat">
+                        <option value="glb" selected>GLB（推荐网页预览）</option>
+                        <option value="obj">OBJ</option>
+                        <option value="usd">USD</option>
+                        <option value="usdz">USDZ</option>
+                    </select>
+                </div>
+                <div class="model3d-param-row">
+                    <label>模型面数（subdivision）</label>
+                    <select id="model3dFace">
+                        <option value="low">10万（轻量）</option>
+                        <option value="medium" selected>50万（均衡）</option>
+                        <option value="high">100万（精细）</option>
+                    </select>
+                </div>
+                <div class="model3d-param-row">
+                    <label>文本提示词（可选）</label>
+                    <textarea id="model3dPrompt" placeholder="描述期望的3D模型细节，如材质、风格等，留空则纯图生3D" style="min-height:60px;padding:8px 12px;font-size:0.85rem;"></textarea>
+                </div>
+                </div>
+            </div>
+        
+            <!-- 3. 新增：交互式 3D 预览分栏 -->
+            <div class="model3d-viewer-panel">
+                <div class="model3d-result-header" style="padding: 14px 18px 0; margin-bottom: 0;">
+                    <span class="model3d-result-title">交互式 3D 模型预览</span>
+                </div>
+                <div id="modelViewerContainer" style="flex:1; width:100%; display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:0.85rem; text-align:center; padding:10px;">
+                    生成成功后，模型将在此处展示，支持鼠标拖拽旋转缩放
+                </div>
+            </div>
+        
+            <!-- 4. 结果展示/任务信息区 -->
+            <div class="model3d-result">
+                <div class="model3d-result-header">
+                    <span class="model3d-result-title">任务信息</span>
+                </div>
+                <div class="model3d-result-content" id="model3dResultContent">
+                    <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);font-size:0.85rem;text-align:center;">
+                        导入参考图后点击「生成 3D 模型」，将依据参考图生成带 PBR 材质的模型
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 <!-- JS 逻辑层 -->
 <script>
     let uploadedImageBase64 = null;
@@ -533,6 +881,7 @@
     const STORAGE_KEY = 'doubao_ark_api_key';
     const STORAGE_VISION_MODEL = 'doubao_vision_model';
     const STORAGE_IMAGE_MODEL = 'doubao_image_model';
+    const STORAGE_3D_MODEL = 'doubao_3d_model';
     const STORAGE_DIM1 = 'design_dim1';
     const STORAGE_DIM2 = 'design_dim2';
     const STORAGE_DIM3 = 'design_dim3';
@@ -542,7 +891,7 @@
     const STORAGE_REF_IMAGE = 'ref_image_base64';
     const STORAGE_REF_MIME = 'ref_image_mime';
 
-    // 安全保存到 localStorage（参考图可能较大，超出配额时静默失败）
+    // 安全保存到 localStorage
     function safeSave(key, value) {
         try {
             localStorage.setItem(key, value);
@@ -553,15 +902,15 @@
 
     // 页面加载时恢复已保存的配置
     window.addEventListener('DOMContentLoaded', function() {
-        // API 配置
         const savedKey = localStorage.getItem(STORAGE_KEY);
         if (savedKey) document.getElementById('doubaoApiKey').value = savedKey;
         const savedVision = localStorage.getItem(STORAGE_VISION_MODEL);
         if (savedVision) document.getElementById('doubaoVisionModel').value = savedVision;
         const savedImage = localStorage.getItem(STORAGE_IMAGE_MODEL);
         if (savedImage) document.getElementById('doubaoImageModel').value = savedImage;
+        const saved3D = localStorage.getItem(STORAGE_3D_MODEL);
+        if (saved3D) document.getElementById('doubao3DModel').value = saved3D;
 
-        // 4X4 矩阵参数
         const d1 = localStorage.getItem(STORAGE_DIM1);
         if (d1) document.getElementById('dim1').value = d1;
         const d2 = localStorage.getItem(STORAGE_DIM2);
@@ -571,18 +920,15 @@
         const d4 = localStorage.getItem(STORAGE_DIM4);
         if (d4) document.getElementById('dim4').value = d4;
 
-        // 设计等级
         const level = localStorage.getItem(STORAGE_DESIGN_LEVEL);
         if (level) {
             document.getElementById('designLevel').value = level;
             updateLevelDesc();
         }
 
-        // 参考图贴合度
         const sim = localStorage.getItem(STORAGE_REF_SIMILARITY);
         if (sim) document.getElementById('refSimilarity').value = sim;
 
-        // 参考图
         const refImg = localStorage.getItem(STORAGE_REF_IMAGE);
         const refMime = localStorage.getItem(STORAGE_REF_MIME);
         if (refImg && refMime) {
@@ -597,7 +943,6 @@
             document.getElementById('removeRefBtn').style.display = 'flex';
         }
 
-        // 绑定自动保存事件
         document.getElementById('doubaoApiKey').addEventListener('input', function() {
             safeSave(STORAGE_KEY, this.value.trim());
         });
@@ -606,6 +951,12 @@
         });
         document.getElementById('doubaoImageModel').addEventListener('change', function() {
             safeSave(STORAGE_IMAGE_MODEL, this.value.trim());
+        });
+        document.getElementById('doubao3DModel').addEventListener('change', function() {
+            safeSave(STORAGE_3D_MODEL, this.value.trim());
+        });
+        document.getElementById('doubao3DModel').addEventListener('input', function() {
+            safeSave(STORAGE_3D_MODEL, this.value.trim());
         });
         ['dim1','dim2','dim3','dim4'].forEach(function(id) {
             document.getElementById(id).addEventListener('input', function() {
@@ -638,7 +989,6 @@
         const isDark = document.body.classList.toggle('dark');
         localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
     }
-    // 页面加载时恢复主题偏好（在DOM解析后立即执行，避免闪烁）
     (function() {
         const saved = localStorage.getItem(THEME_KEY);
         if (saved === 'dark') {
@@ -646,7 +996,6 @@
         }
     })();
 
-    // 等级描述映射字典
     const levelDescriptions = {
         "1": "标准：针对给出的参考图进行直接模仿出图，微调部分造型细节用于规避产品专利。",
         "2": "标准：与参考图功能类似，造型存在一定差异化，和竞品为同一市场竞争。",
@@ -681,7 +1030,6 @@
             document.getElementById('extractBtn').style.display = 'flex';
             document.getElementById('refineControl').style.display = 'block';
             document.getElementById('removeRefBtn').style.display = 'flex';
-            // 持久化参考图
             safeSave(STORAGE_REF_IMAGE, uploadedImageBase64);
             safeSave(STORAGE_REF_MIME, uploadedImageMimeType);
         };
@@ -698,21 +1046,19 @@
         document.getElementById('extractBtn').style.display = 'none';
         document.getElementById('refineControl').style.display = 'none';
         document.getElementById('removeRefBtn').style.display = 'none';
-        // 清除持久化的参考图
         localStorage.removeItem(STORAGE_REF_IMAGE);
         localStorage.removeItem(STORAGE_REF_MIME);
-        // 清空提取错误提示
         const err = document.getElementById('extractError');
         err.style.display = 'none';
         err.textContent = '';
     }
 
-    // 获取当前配置的便捷方法
     function getConfig() {
         return {
             apiKey: document.getElementById('doubaoApiKey').value.trim(),
             visionModel: document.getElementById('doubaoVisionModel').value.trim(),
-            imageModel: document.getElementById('doubaoImageModel').value.trim()
+            imageModel: document.getElementById('doubaoImageModel').value.trim(),
+            model3d: document.getElementById('doubao3DModel').value.trim()
         };
     }
 
@@ -759,7 +1105,6 @@ Example: {"dim1": "...", "dim2": "...", "dim3": "...", "dim4": "..."}`;
             document.getElementById('dim2').value = result.dim2 || "";
             document.getElementById('dim3').value = result.dim3 || "";
             document.getElementById('dim4').value = result.dim4 || "";
-            // 手动持久化提取结果
             safeSave(STORAGE_DIM1, result.dim1 || "");
             safeSave(STORAGE_DIM2, result.dim2 || "");
             safeSave(STORAGE_DIM3, result.dim3 || "");
@@ -785,7 +1130,6 @@ Example: {"dim1": "...", "dim2": "...", "dim3": "...", "dim4": "..."}`;
         const d3 = document.getElementById('dim3').value.trim();
         const d4 = document.getElementById('dim4').value.trim();
         
-        // 获取设计等级与对应文本，用于注入大模型提示词
         const levelVal = document.getElementById('designLevel').value;
         const levelDescText = levelDescriptions[levelVal];
         const btn = document.getElementById('generateBtn');
@@ -823,7 +1167,6 @@ Example: {"dim1": "...", "dim2": "...", "dim3": "...", "dim4": "..."}`;
         loadingStatus.style.display = 'flex';
         
         try {
-            // 系统指令注入：强烈要求 AI 根据用户选定的"产品设计等级"进行策略思考
             const generatePromptSys = `You are a world-class AI Prompt Engineer specializing in Home Furnishings and Ergonomic Products.
 The subject to be generated is a "Home Lumbar Support Cushion" (居家腰靠).
 ${uploadedImageBase64 ? "I am providing a Reference Image AND user modifications based on a 4-dimensional matrix." : "I am providing 4-dimensional design parameters (Form, Function, Aesthetics, Value)."}
@@ -840,7 +1183,6 @@ Ensure the core subject is CLEARLY identified as a "high-end ergonomic lumbar su
 Focus strictly on: Form & Shape, Visual Function, Aesthetics (CMF), Lighting and rendering style (e.g., soft natural lighting, warm home environment, photorealistic, 8k, Octane render, interior photography).
 OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
 
-            // 用户文本组合
             const userText = `[Innovation Strategy]: Level ${levelVal}
 [Form Dimension]: ${d1 || 'Ergonomic shape'}
 [Function Dimension]: ${d2 || 'Memory foam support'}
@@ -860,7 +1202,6 @@ OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
             promptOutput.textContent = finalPrompt;
             loadingText.textContent = `[2/2] 正在将提示词送入豆包生图引擎，渲染真实产品照...`;
 
-            // 根据参考图贴合度追加指令
             let enhancedPrompt = finalPrompt;
             if (uploadedImageBase64) {
                 const sim = document.getElementById('refSimilarity').value;
@@ -872,14 +1213,12 @@ OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
                 enhancedPrompt = finalPrompt + simInstructions[sim];
             }
 
-            // 有参考图时走图生图，否则纯文生图
             const refDataUrl = uploadedImageBase64 ? `data:${uploadedImageMimeType};base64,${uploadedImageBase64}` : null;
             const imageSrc = await callDoubaoImage(cfg.apiKey, cfg.imageModel, enhancedPrompt, refDataUrl);
             
             loadingStatus.style.display = 'none';
             resultImage.src = imageSrc;
             resultImage.style.display = 'block';
-            // 启用快照和下载按钮
             document.getElementById('saveSnapBtn').disabled = false;
             document.getElementById('downloadBtn').disabled = false;
         } catch (err) {
@@ -956,7 +1295,6 @@ OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
             response_format: "b64_json", 
             size: "2048x2048" 
         };
-        // 有参考图时启用图生图模式
         if (refImageDataUrl) {
             payload.image = refImageDataUrl;
         }
@@ -990,6 +1328,7 @@ OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
         });
         currentSnapshotIndex = snapshots.length - 1;
         renderSnapshots();
+        sync3DReferenceImage(img.src);
     }
 
     function deleteSnapshot(index, event) {
@@ -1022,6 +1361,7 @@ OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
         document.getElementById('promptOutput').textContent = snap.prompt;
         document.getElementById('downloadBtn').disabled = false;
         renderSnapshots();
+        sync3DReferenceImage(snap.src);
     }
 
     function renderSnapshots() {
@@ -1048,6 +1388,281 @@ OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+    }
+
+    // ========== 3D 模型生成（Doubao-Seed3D-2.0）==========
+    const SEED3D_DEFAULT_MODEL = 'doubao-seed3d-2-0-260328';
+    const ARK_3D_TASK_URL = `${ARK_BASE}/contents/generations/tasks`;
+    let model3dCurrentRef = null;   
+    let model3dPollTimer = null;    
+    let model3dTaskId = null;       
+
+    function handle3DManualUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            sync3DReferenceImage(e.target.result);
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function clear3DReference() {
+        model3dCurrentRef = null;
+        const refImg = document.getElementById('model3dRefImage');
+        refImg.src = '';
+        refImg.style.display = 'none'; 
+        
+        document.getElementById('model3dRefImg').style.display = 'none';
+        document.getElementById('model3dUploadBox').style.display = 'flex';
+        document.getElementById('model3dGenBtn').disabled = true; 
+    }
+
+    function sync3DReferenceImage(imgSrc) {
+        model3dCurrentRef = imgSrc;
+        const refImg = document.getElementById('model3dRefImage');
+        const refImgContainer = document.getElementById('model3dRefImg');
+        const uploadBox = document.getElementById('model3dUploadBox');
+        const genBtn = document.getElementById('model3dGenBtn');
+        const refTag = document.getElementById('model3dRefTag');
+        
+        refImg.src = imgSrc;
+        refImg.style.display = 'block'; 
+        refImgContainer.style.display = 'flex'; 
+        uploadBox.style.display = 'none'; 
+        
+        if (refTag) refTag.style.display = 'inline-block';
+        genBtn.disabled = false;
+    }
+
+    function update3DStatus(status, text) {
+        const el = document.getElementById('model3dStatus');
+        el.className = 'model3d-status ' + status;
+        const map = { idle: '待机', queued: '排队中', running: '生成中', succeeded: '已完成', failed: '失败' };
+        el.textContent = text || map[status] || status;
+    }
+
+    function render3DResult(html) {
+        document.getElementById('model3dResultContent').innerHTML = html;
+    }
+
+    function get3DModelId() {
+        const cfg = getConfig();
+        return cfg.model3d || SEED3D_DEFAULT_MODEL;
+    }
+
+    async function start3DGeneration() {
+        const cfg = getConfig();
+        if (!cfg.apiKey) {
+            alert('请先在上方填写火山引擎 API Key');
+            return;
+        }
+        if (!model3dCurrentRef) {
+            alert('请先选择一张快照作为参考图');
+            return;
+        }
+        const modelId = get3DModelId();
+        const btn = document.getElementById('model3dGenBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="animation:spin 1s linear infinite"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> 提交任务中...';
+
+        const fileFormat = document.getElementById('model3dFormat').value;
+        const subdivLevel = document.getElementById('model3dFace').value;
+        const textPrompt = document.getElementById('model3dPrompt').value.trim();
+        const faceMap = { 'low': '10万', 'medium': '50万', 'high': '100万' };
+
+        try {
+            document.getElementById('modelViewerContainer').innerHTML = `
+                <div style="display:flex; flex-direction:column; align-items:center; color:var(--primary);">
+                    <div class="spinner" style="width:36px; height:36px; border-width:2px; margin-bottom:12px;"></div>
+                    <span>云端正在生成模型中...</span>
+                </div>
+            `;
+
+            const taskId = await create3DTask(cfg.apiKey, modelId, fileFormat, subdivLevel, textPrompt, model3dCurrentRef);
+            model3dTaskId = taskId;
+            update3DStatus('queued');
+            render3DResult(`
+                <div class="model3d-info-row"><span class="model3d-info-label">任务 ID</span><span class="model3d-info-value">${taskId}</span></div>
+                <div class="model3d-info-row"><span class="model3d-info-label">模型</span><span class="model3d-info-value">${modelId}</span></div>
+                <div class="model3d-info-row"><span class="model3d-info-label">文件格式</span><span class="model3d-info-value">${fileFormat.toUpperCase()}</span></div>
+                <div class="model3d-info-row"><span class="model3d-info-label">模型面数</span><span class="model3d-info-value">${faceMap[subdivLevel]}（${subdivLevel}）</span></div>
+                ${textPrompt ? `<div class="model3d-info-row"><span class="model3d-info-label">文本提示</span><span class="model3d-info-value">${textPrompt}</span></div>` : ''}
+                <div class="model3d-wait" style="margin-top:12px;color:var(--primary);font-weight:500;">⏳ 任务已提交，正在排队生成中...</div>
+            `);
+            btn.innerHTML = '<svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="animation:spin 1s linear infinite"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> 生成中...';
+            poll3DTask(cfg.apiKey, taskId);
+        } catch (err) {
+            update3DStatus('failed');
+            render3DResult(`<div style="color:#E06C75;">❌ 任务创建失败：${err.message}</div>`);
+            document.getElementById('modelViewerContainer').innerHTML = '生成失败，请重试';
+            btn.disabled = false;
+            btn.innerHTML = '<svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> 生成 3D 模型';
+        }
+    }
+
+    async function create3DTask(apiKey, modelId, fileFormat, subdivLevel, textPrompt, imageDataUrl) {
+        const content = [];
+        if (textPrompt) content.push({ type: 'text', text: textPrompt });
+        content.push({ type: 'image_url', image_url: { url: imageDataUrl } });
+
+        const payload = {
+            model: modelId,
+            content: content,
+            file_format: fileFormat,
+            subdivision_level: subdivLevel
+        };
+        const res = await fetch(ARK_3D_TASK_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error?.message || `HTTP ${res.status}`);
+        }
+        const data = await res.json();
+        if (!data.id) throw new Error('返回数据中缺少任务 ID');
+        return data.id;
+    }
+
+    function poll3DTask(apiKey, taskId) {
+        if (model3dPollTimer) clearInterval(model3dPollTimer);
+        let elapsed = 0;
+        const interval = 5000; 
+        model3dPollTimer = setInterval(async () => {
+            elapsed += interval;
+            try {
+                const task = await query3DTask(apiKey, taskId);
+                const status = task.status;
+                if (status === 'queued' || status === 'running') {
+                    update3DStatus(status);
+                    const secs = Math.floor(elapsed / 1000);
+                    const content = document.getElementById('model3dResultContent');
+                    const waitEl = content.querySelector('.model3d-wait');
+                    if (waitEl) {
+                        waitEl.textContent = `⏳ ${status === 'queued' ? '排队中' : '模型生成中'}... 已等待 ${secs} 秒`;
+                    }
+                } else if (status === 'succeeded') {
+                    clearInterval(model3dPollTimer);
+                    model3dPollTimer = null;
+                    handle3DSuccess(task);
+                } else if (status === 'failed') {
+                    clearInterval(model3dPollTimer);
+                    model3dPollTimer = null;
+                    handle3DFailed(task);
+                } else if (status === 'cancelled') {
+                    clearInterval(model3dPollTimer);
+                    model3dPollTimer = null;
+                    update3DStatus('failed', '已取消');
+                    render3DResult(`<div style="color:#E06C75;">任务已取消</div>`);
+                    document.getElementById('modelViewerContainer').innerHTML = '任务已取消';
+                    reset3DGenBtn();
+                }
+            } catch (err) {
+                console.error('轮询3D任务出错:', err);
+            }
+        }, interval);
+    }
+
+    async function query3DTask(apiKey, taskId) {
+        const res = await fetch(`${ARK_3D_TASK_URL}/${taskId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            }
+        });
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error?.message || `HTTP ${res.status}`);
+        }
+        return res.json();
+    }
+
+    // 解决 3D 模型渲染库空降、崩溃及 CORS 问题
+    function handle3DSuccess(task) {
+        update3DStatus('succeeded');
+        const fileUrl = task.content?.file_url || '';
+        const tokens = task.usage?.total_tokens || 0;
+        
+        render3DResult(`
+            <div class="model3d-info-row"><span class="model3d-info-label">任务 ID</span><span class="model3d-info-value" style="font-size:10px;">${task.id}</span></div>
+            <div class="model3d-info-row"><span class="model3d-info-label">状态</span><span class="model3d-info-value" style="color:#6B7A63;">✅ 成功</span></div>
+            <div class="model3d-info-row"><span class="model3d-info-label">消耗 Token</span><span class="model3d-info-value">${tokens.toLocaleString()}</span></div>
+            <div style="margin-top:24px;">
+                <a href="${fileUrl}" target="_blank" rel="noopener" download style="display:block; background:var(--primary); color:white; text-align:center; padding:10px; border-radius:10px; text-decoration:none; font-weight:600;">⬇️ 下载模型文件</a>
+            </div>
+            <div style="margin-top:10px;font-size:0.75rem;color:var(--text-muted);text-align:center;">
+                文件 24 小时内有效，请及时下载
+            </div>
+        `);
+    
+        const format = document.getElementById('model3dFormat').value;
+        if (fileUrl && (format === 'glb')) {
+            document.getElementById('modelViewerContainer').innerHTML = `
+                <model-viewer 
+                    id="myModelViewer"
+                    src="${fileUrl}" 
+                    auto-rotate 
+                    camera-controls 
+                    shadow-intensity="1" 
+                    exposure="1"
+                    style="width: 100%; height: 100%; display: block; background-color: transparent; outline: none; min-height: 250px;">
+                    <div slot="poster" style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--primary); font-weight:500;">
+                        正在加载云端模型文件...
+                    </div>
+                </model-viewer>
+            `;
+            
+            setTimeout(() => {
+                const viewer = document.getElementById('myModelViewer');
+                if (viewer) {
+                    viewer.addEventListener('error', (error) => {
+                        console.error('Model Viewer 遇到错误:', error);
+                        document.getElementById('modelViewerContainer').innerHTML = `
+                            <div style="color:#E06C75; text-align:center; padding:20px; line-height:1.6; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%;">
+                                <span style="font-weight:600; font-size:1rem; margin-bottom:10px;">⚠️ 网页端自动预览失败</span>
+                                <span style="font-size:0.8rem; color:var(--text-muted);">
+                                    模型已成功生成。但由于 API 接口返回的链接存在跨域保护 (CORS) 限制或网络拦截，<br>无法直接在网页中呈现。<br><br>
+                                    👉 <b>请点击右侧「下载模型文件」按钮保存至本地</b>，<br>使用 Windows 自带 3D 查看器进行查看。
+                                </span>
+                            </div>
+                        `;
+                    });
+                }
+            }, 100);
+            
+        } else {
+            document.getElementById('modelViewerContainer').innerHTML = `
+                <div style="color:var(--text-muted);">当前格式（${format.toUpperCase()}）不支持直接在网页预览。<br><br>请点击右侧按钮下载后使用本地软件查看。</div>
+            `;
+        }
+    
+        reset3DGenBtn();
+    }
+
+    function handle3DFailed(task) {
+        update3DStatus('failed');
+        const errMsg = task.error?.message || '未知错误';
+        const errCode = task.error?.code || '';
+        render3DResult(`
+            <div style="color:#E06C75;font-weight:600;margin-bottom:8px;">❌ 3D 模型生成失败</div>
+            <div class="model3d-info-row"><span class="model3d-info-label">错误码</span><span class="model3d-info-value">${errCode || '-'}</span></div>
+            <div class="model3d-info-row"><span class="model3d-info-label">错误信息</span><span class="model3d-info-value" style="color:#E06C75;">${errMsg}</span></div>
+            <div style="margin-top:10px;font-size:0.78rem;">请检查参考图是否清晰、API Key 是否开通权限后重试。</div>
+        `);
+        document.getElementById('modelViewerContainer').innerHTML = '生成失败';
+        reset3DGenBtn();
+    }
+
+    function reset3DGenBtn() {
+        const btn = document.getElementById('model3dGenBtn');
+        btn.disabled = false;
+        btn.innerHTML = '<svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> 生成 3D 模型';
     }
 </script>
 </body>
