@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>产品4X4矩阵设计舱 · 双引擎动态版</title>
+    <title>产品4X4矩阵设计舱 · 多品类自适应版</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -34,34 +34,123 @@
             height: 100vh;
             overflow: hidden;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             gap: 24px;
         }
-        .top-section { display: flex; gap: 24px; flex: 1; min-height: 0; }
-        .model3d-panel { height: 380px; flex-shrink: 0; padding: 20px 28px; }
+
+        .panel { 
+            background: var(--bg-card); 
+            border-radius: var(--radius-lg); 
+            box-shadow: var(--shadow-float); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.5); 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+        }
+        
+        .left-panel { 
+            width: 520px; 
+            flex-shrink: 0; 
+            height: 100%; 
+            display: flex; 
+            flex-direction: column; 
+        }
+        .left-scroll-area { 
+            padding: 36px; 
+            overflow-y: auto; 
+            height: 100%; 
+        }
+
+        .right-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            flex: 1;
+            min-width: 0;
+            height: 100%;
+        }
+
+        .right-panel { 
+            flex: 1; 
+            padding: 24px; 
+            position: relative; 
+            background: var(--bg-card); 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 0; 
+        }
+        
+        .gallery-wrapper { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: row; 
+            gap: 16px; 
+            min-height: 0; 
+        }
+        .main-display { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: row; 
+            gap: 16px; 
+            min-width: 0; 
+        }
+        .render-col, .preview-col { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 16px; 
+            min-width: 0; 
+        }
+        
+        .canvas-area { 
+            flex: 1; 
+            background: var(--bg-input); 
+            border-radius: 24px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            position: relative; 
+            overflow: hidden; 
+            min-height: 0; 
+        }
+        .canvas-area img { width: 100%; height: 100%; object-fit: contain; display: none; }
+        
+        .prompt-board { background: #FFFFFF; border-radius: var(--radius-md); padding: 20px; border: 1px solid var(--border); min-height: 100px; max-height: 160px; overflow-y: auto; flex-shrink: 0;}
+        .prompt-board h3 { margin: 0 0 10px 0; font-size: 0.9rem; color: #2C2A29; display: flex; align-items: center; gap: 6px;}
+        .prompt-text { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; word-break: break-word; }
+        
+        .model3d-panel { 
+            height: auto; 
+            min-height: 240px; 
+            flex-shrink: 0; 
+            padding: 20px 28px; 
+            display: flex;
+            flex-direction: column;
+        }
         .model3d-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
         .model3d-header-right { display: flex; align-items: center; gap: 12px; }
         .model3d-header h2 { font-size: 1.1rem; font-weight: 600; margin: 0; color: #2C2A29; display: flex; align-items: center; gap: 8px; }
-        .model3d-body { display: flex; gap: 20px; height: calc(100% - 40px); }
-        .model3d-ref { width: 180px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
+        .model3d-body { display: flex; gap: 20px; flex: 1; min-height: 0; }
+        
+        .model3d-ref { width: 160px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
         .model3d-ref-label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-        .model3d-ref-img { flex: 1; background: var(--bg-input); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+        .model3d-ref-img { flex: 1; background: var(--bg-input); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; min-height: 120px; }
         .model3d-ref-img img { width: 100%; height: 100%; object-fit: contain; display: none; }
         .model3d-ref-tag { position: absolute; top: 6px; left: 6px; background: rgba(212, 154, 137, 0.9); color: white; font-size: 0.65rem; padding: 2px 8px; border-radius: 10px; font-weight: 500; display: none; }
-        .model3d-upload-box { background: var(--bg-input); border: 1px dashed #CFCACA; border-radius: var(--radius-sm); padding: 24px 10px; text-align: center; cursor: pointer; transition: all 0.2s; font-size: 0.8rem; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; justify-content: center; }
+        
+        .model3d-upload-box { background: var(--bg-input); border: 1px dashed #CFCACA; border-radius: var(--radius-sm); padding: 24px 10px; text-align: center; cursor: pointer; transition: all 0.2s; font-size: 0.8rem; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; min-height: 120px; justify-content: center; }
         .model3d-upload-box:hover { background: #FFFFFF; border-color: var(--primary); color: var(--primary); }
-        body.dark .model3d-upload-box { border-color: #4A4744; }
-        body.dark .model3d-upload-box:hover { background: #2A2826; }
         .model3d-ref-del { position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; background: rgba(224,108,117,0.9); color: white; border: none; border-radius: 50%; font-size: 14px; cursor: pointer; display: none; align-items: center; justify-content: center; line-height: 1; z-index: 10; }
         .model3d-ref-img:hover .model3d-ref-del { display: flex; }
-        .model3d-params { width: 240px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
-        .model3d-param-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; min-height: 0; padding-right: 4px; }
+        
+        .model3d-params { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; }
+        .model3d-param-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 4px; }
         .model3d-param-row { display: flex; flex-direction: column; gap: 4px; }
         .model3d-param-row label { font-size: 0.78rem; font-weight: 500; margin: 0; }
         .model3d-param-row select { padding: 8px 12px; font-size: 0.85rem; }
-        .model3d-result { width: 260px; flex-shrink: 0; background: var(--bg-input); border-radius: var(--radius-md); padding: 18px; display: flex; flex-direction: column; overflow: hidden; }
-        .model3d-viewer-panel { flex: 1; background: var(--bg-input); border-radius: var(--radius-md); overflow: hidden; display: flex; flex-direction: column; position: relative; }
-        body.dark .model3d-viewer-panel { background: rgba(45,43,41,0.6); }
+        
+        .model3d-result { flex: 1; min-width: 240px; background: var(--bg-input); border-radius: var(--radius-md); padding: 18px; display: flex; flex-direction: column; overflow: hidden; }
         .model3d-result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .model3d-result-title { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
         .model3d-status { font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; font-weight: 500; }
@@ -72,38 +161,27 @@
         .model3d-status.failed { background: rgba(224,108,117,0.15); color: #E06C75; }
         .model3d-result-content { flex: 1; overflow-y: auto; font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; }
         .model3d-result-content a { color: var(--primary); text-decoration: underline; text-underline-offset: 2px; word-break: break-all; }
-        .model3d-actions { flex-shrink: 0; display: flex; gap: 10px; margin-top: auto; padding-top: 8px; }
-        .model3d-gen-btn { padding: 8px 20px; font-size: 0.88rem; border-radius: var(--radius-sm); white-space: nowrap; }
-        .model3d-gen-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .model3d-info-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid var(--border); }
-        .model3d-info-row:last-child { border-bottom: none; }
-        .model3d-info-label { color: var(--text-muted); }
-        .model3d-info-value { color: var(--text-main); font-weight: 500; word-break: break-all; text-align: right; max-width: 60%; }
-        body.dark .model3d-header h2 { color: var(--text-main); }
-        body.dark .model3d-result { background: rgba(45,43,41,0.6); }
+        
         @media (max-width: 1024px) {
             body { flex-direction: column; height: auto; overflow: auto; }
-            .top-section { flex-direction: column; }
+            .right-layout { height: auto; display: flex; flex-direction: column; }
             .left-panel { width: 100%; height: auto; }
             .right-panel { min-height: 600px; }
-            .model3d-panel { height: auto; min-height: 380px; }
+            .model3d-panel { height: auto; min-height: auto; }
             .model3d-body { flex-direction: column; height: auto; }
             .model3d-ref, .model3d-params { width: 100%; }
             .model3d-ref-img { min-height: 160px; }
-            .model3d-result { width: 100%; }
-            .model3d-viewer-panel { min-height: 300px; }
+            .model3d-result { width: 100%; min-width: 0; }
         }
-        .panel { background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-float); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.5); overflow: hidden; display: flex; flex-direction: column; }
-        .left-panel { width: 520px; flex-shrink: 0; }
-        .left-scroll-area { padding: 36px; overflow-y: auto; height: 100%; }
-        .right-panel { flex: 1; padding: 24px; position: relative; background: var(--bg-card); }
+
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #D1CDCA; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+        
         .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
         h1 { font-size: 1.4rem; font-weight: 600; margin: 0; letter-spacing: -0.5px; color: #2C2A29; }
-        .section-tag { display: inline-block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--primary); background: rgba(212, 154, 137, 0.1); padding: 6px 12px; border-radius: 30px; margin: 32px 0 16px 0; }
+        .section-tag { display: inline-flex; align-items: center; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--primary); background: rgba(212, 154, 137, 0.1); padding: 6px 12px; border-radius: 30px; margin: 32px 0 16px 0; }
         .section-tag.first { margin-top: 0; }
         .form-row { display: flex; gap: 12px; margin-bottom: 16px; }
         .form-group { flex: 1; margin-bottom: 20px; }
@@ -120,12 +198,14 @@
         .free-hint { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 0.8rem; color: var(--accent); }
         .free-hint a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; font-weight: 500; }
         .model-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(163, 177, 155, 0.12); color: #6B7A63; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 500; margin-left: 8px; }
+        
         .upload-area { border: 1px dashed #CFCACA; border-radius: var(--radius-md); padding: 32px 20px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: var(--bg-input); position: relative; overflow: hidden; }
         .upload-area:hover { background: #FFFFFF; border-color: var(--primary); }
         .upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
         .preview-img { max-height: 150px; border-radius: var(--radius-sm); display: none; margin: 12px auto 0; object-fit: cover;}
         .remove-ref-btn { position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; background: rgba(224, 108, 117, 0.9); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; z-index: 2; padding: 0; }
         .remove-ref-btn:hover { background: #E06C75; transform: scale(1.1); }
+        
         .level-box { background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 24px; }
         button { background-color: var(--primary); color: white; border: none; padding: 16px 24px; border-radius: var(--radius-md); font-size: 1rem; cursor: pointer; font-weight: 600; letter-spacing: 0.5px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; justify-content: center; gap: 8px; }
         button:hover { background-color: var(--primary-hover); transform: scale(0.98); }
@@ -133,8 +213,7 @@
         button.ghost { background-color: transparent; color: var(--text-muted); border: 1px solid #D1CDCA; padding: 8px 16px; font-size: 0.85rem; border-radius: 30px; }
         button.ghost:hover { background-color: #F4F2F0; color: var(--text-main); border-color: var(--text-main); }
         .main-btn { width: 100%; margin-top: 12px; font-size: 1.1rem; box-shadow: 0 8px 24px rgba(212, 154, 137, 0.3); }
-        .gallery-wrapper { height: 100%; display: flex; flex-direction: row; gap: 16px; }
-        .main-display { flex: 1; display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+        
         .snapshot-panel { width: 168px; flex-shrink: 0; display: flex; flex-direction: column; background: #FFFFFF; border-radius: var(--radius-md); border: 1px solid var(--border); padding: 14px; gap: 10px; }
         .snapshot-header { display: flex; justify-content: space-between; align-items: center; }
         .snapshot-header span { font-size: 0.8rem; font-weight: 600; color: #2C2A29; }
@@ -156,12 +235,7 @@
         .snap-btn.secondary { background: var(--bg-input); color: var(--text-main); }
         .snap-btn.secondary:hover { background: #E8E5E2; }
         .snap-btn.secondary:disabled { opacity: 0.5; cursor: not-allowed; }
-        @media (max-width: 1200px) { .snapshot-panel { width: 140px; } }
-        .canvas-area { flex: 1; background: var(--bg-input); border-radius: 24px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-        .canvas-area img { width: 100%; height: 100%; object-fit: contain; display: none; }
-        .prompt-board { background: #FFFFFF; border-radius: var(--radius-md); padding: 24px; border: 1px solid var(--border); min-height: 120px; max-height: 200px; overflow-y: auto; }
-        .prompt-board h3 { margin: 0 0 12px 0; font-size: 0.95rem; color: #2C2A29; display: flex; align-items: center; gap: 8px;}
-        .prompt-text { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; word-break: break-word; }
+        
         .loading { display: none; flex-direction: column; align-items: center; justify-content: center; color: var(--primary); font-weight: 500; }
         .spinner { width: 48px; height: 48px; border: 3px solid rgba(212, 154, 137, 0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -170,8 +244,54 @@
         .theme-toggle { width: 40px; height: 40px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border); box-shadow: var(--shadow-float); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; padding: 0; transition: all 0.3s; }
         .theme-toggle:hover { transform: scale(1.08); border-color: var(--primary); }
         .theme-toggle .theme-icon-dark { display: none; }
-        body.dark .theme-toggle .theme-icon-light { display: none; }
-        body.dark .theme-toggle .theme-icon-dark { display: inline; }
+        
+        .matting-textarea {
+            width: 100%;
+            min-height: 48px;
+            padding: 6px 8px;
+            font-size: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-top: 8px;
+            resize: none;
+            background: var(--bg-input);
+            color: var(--text-main);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        /* 参考图控制滑块群组样式 */
+        .weight-slider-group {
+            background: #FFFFFF;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin-top: 20px;
+        }
+        .weight-slider-item {
+            margin-bottom: 14px;
+        }
+        .weight-slider-item:last-child {
+            margin-bottom: 0;
+        }
+        .weight-slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        .weight-slider-header .val {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; margin: 6px 0 2px 0; }
+        input[type=range]:focus { outline: none; box-shadow: none; background: transparent; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--primary); cursor: pointer; margin-top: -6px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); transition: transform 0.1s; }
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #D1CDCA; border-radius: 2px; }
+
         body.dark { --primary: #C48878; --primary-hover: #D49A89; --bg-app: #161413; --bg-card: rgba(38, 36, 34, 0.95); --bg-input: #252321; --text-main: #E4E0DB; --text-muted: #8E8A85; --border: rgba(255, 255, 255, 0.06); --accent: #8FA085; --shadow-float: 0 24px 48px rgba(0, 0, 0, 0.4); --shadow-inner: inset 0 2px 4px rgba(0,0,0,0.3); background-image: radial-gradient(at 100% 0%, rgba(60, 55, 50, 0.4) 0%, transparent 50%), radial-gradient(at 0% 100%, rgba(60, 55, 50, 0.3) 0%, transparent 50%); }
         body.dark .panel { border-color: rgba(255, 255, 255, 0.08); }
         body.dark h1 { color: var(--text-main); }
@@ -181,6 +301,7 @@
         body.dark .upload-area { border-color: #4A4744; }
         body.dark .upload-area:hover { background: #2A2826; }
         body.dark .level-box { background: rgba(45, 43, 41, 0.8); }
+        body.dark .weight-slider-group { background: rgba(45, 43, 41, 0.8); border-color: rgba(255, 255, 255, 0.06); }
         body.dark button:disabled { background-color: #4A4744; }
         body.dark button.ghost { border-color: #4A4744; }
         body.dark button.ghost:hover { background-color: #2E2C2A; }
@@ -195,15 +316,23 @@
         body.dark select { background: #252321 !important; }
         body.dark #uploadText svg { color: #6A6764 !important; }
         body.dark #extractBtn { background: #4A4744 !important; }
+        body.dark .theme-toggle .theme-icon-light { display: none; }
+        body.dark .theme-toggle .theme-icon-dark { display: inline; }
+        body.dark .matting-textarea { background: #2E2C2A; border-color: #4A4744; }
+        body.dark input[type=range]::-webkit-slider-runnable-track { background: #4A4744; }
+        body.dark .model3d-header h2 { color: var(--text-main); }
+        body.dark .model3d-result { background: rgba(45,43,41,0.6); }
+        body.dark .model3d-upload-box { border-color: #4A4744; }
+        body.dark .model3d-upload-box:hover { background: #2A2826; }
     </style>
-    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 <body>
-    <div class="top-section">
+
+    <!-- 左侧工作台 -->
     <aside class="panel left-panel">
         <div class="left-scroll-area">
             <div class="app-header">
-                <h1>产品4X4矩阵设计舱</h1>
+                <h1>产品设计舱·4X4矩阵</h1>
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="切换亮暗模式">
                         <span class="theme-icon-light">☀️</span>
@@ -213,85 +342,105 @@
                 </div>
             </div>
             
-            <div class="section-tag first">01 AI 引擎配置 <span class="model-badge">✨ 动态多引擎</span></div>
-            <div class="form-row">
-                <div style="flex:1;">
-                    <label>视觉/解析模型</label>
-                    <select id="visionModelSelect" onchange="updateEngineConfigUI()">
-                        <option value="gemini" selected>Gemini 3.6 Flash</option>
-                        <option value="doubao">豆包 Vision 大模型</option>
-                    </select>
-                </div>
-                <div style="flex:1;">
-                    <label>渲染生图模型</label>
-                    <select id="imageModelSelect" onchange="updateEngineConfigUI()">
-                        <option value="gemini" selected>Gemini 3.1 Flash Image</option>
-                        <option value="doubao">豆包 Seedream 生图</option>
-                    </select>
-                </div>
+            <div class="section-tag first" style="cursor: pointer; display: inline-flex; align-items: center; gap: 4px; user-select: none;" onclick="toggleEngineConfig()" title="点击折叠/展开配置">
+                01 AI 引擎配置 <span class="model-badge">✨ APINebula 中转集成</span>
+                <svg id="engineConfigIcon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="transition: transform 0.3s; margin-left: 4px; transform: rotate(0deg);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
             </div>
             
-            <div class="api-config-box">
-                <!-- Gemini 视觉解析配置区 -->
-                <div id="geminiVisionConfigArea" style="display: none; margin-bottom: 14px;">
-                    <label>视觉解析模型 · Gemini API Key</label>
-                    <div class="api-key-row">
-                        <input type="password" id="geminiVisionApiKey" placeholder="输入用于视觉解析的 Gemini API Key">
-                        <button class="toggle-key-btn" onclick="toggleKeyVisibility('geminiVisionApiKey', this)">显示</button>
+            <div id="engineConfigContent">
+                <div class="form-row">
+                    <div style="flex:1;">
+                        <label>视觉/解析模型引擎</label>
+                        <select id="visionModelSelect" onchange="updateEngineConfigUI()">
+                            <option value="gemini" selected>APINebula (Gemini)</option>
+                            <option value="doubao">豆包 Vision 大模型</option>
+                        </select>
                     </div>
-                    <div class="free-hint">
-                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">获取 Gemini API Key →</a>
+                    <div style="flex:1;">
+                        <label>渲染生图模型引擎</label>
+                        <select id="imageModelSelect" onchange="updateEngineConfigUI()">
+                            <option value="gemini" selected>APINebula (生图)</option>
+                            <option value="doubao">豆包 Seedream 生图</option>
+                        </select>
                     </div>
-                </div>
-
-                <!-- Gemini 渲染生图配置区 -->
-                <div id="geminiImageConfigArea" style="display: none; margin-bottom: 14px;">
-                    <label>渲染生图模型 · Gemini API Key</label>
-                    <div class="api-key-row">
-                        <input type="password" id="geminiImageApiKey" placeholder="输入用于生图的 Gemini API Key（可与上方相同）">
-                        <button class="toggle-key-btn" onclick="toggleKeyVisibility('geminiImageApiKey', this)">显示</button>
-                    </div>
-                    <div class="free-hint">
-                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">获取 Gemini API Key →</a>
-                    </div>
-                </div>
-
-                <!-- 豆包视觉配置区 -->
-                <div id="doubaoVisionConfigArea" style="display: none; margin-bottom: 14px;">
-                    <label>视觉解析 · 豆包推理接入点 ID (ep-xxx)</label>
-                    <input type="text" id="doubaoVisionModel" placeholder="填写豆包 Vision 推理接入点 ID">
                 </div>
                 
-                <!-- 豆包生图配置区 -->
-                <div id="doubaoImageConfigArea" style="display: none; margin-bottom: 14px;">
-                    <label>生图渲染 · 豆包推理接入点 ID (ep-xxx)</label>
-                    <input type="text" id="doubaoImageModel" placeholder="填写豆包生图推理接入点 ID">
-                </div>
+                <div class="api-config-box">
+                    <div id="geminiCommonConfigArea" style="margin-bottom: 14px;">
+                        <label>APINebula 接口地址 (Base URL)</label>
+                        <input type="text" id="apiNebulaBaseUrl" placeholder="https://apinebula.com/v1" value="https://apinebula.com/v1" style="margin-bottom: 12px;">
 
-                <!-- 3D 生成配置区 (常驻) -->
-                <div style="margin-top: 16px; border-top: 1px dashed var(--border); padding-top: 14px;">
-                    <label>火山引擎 API Key（豆包通用 / 用于 3D 生成）</label>
-                    <div class="api-key-row" style="margin-bottom: 8px;">
-                        <input type="password" id="doubaoApiKey" placeholder="输入火山方舟 API Key">
-                        <button class="toggle-key-btn" onclick="toggleKeyVisibility('doubaoApiKey', this)">显示</button>
+                        <div id="geminiVisionConfigArea" style="margin-bottom: 14px;">
+                            <label>视觉解析 · APINebula API Key</label>
+                            <div class="api-key-row" style="margin-bottom: 8px;">
+                                <input type="password" id="geminiVisionApiKey" placeholder="输入 sk- 开头的 APINebula 密钥">
+                                <button class="toggle-key-btn" onclick="toggleKeyVisibility('geminiVisionApiKey', this)">显示</button>
+                            </div>
+                            <label style="font-size:0.8rem;color:var(--text-muted);">视觉解析模型标识</label>
+                            <input type="text" id="geminiVisionModelName" placeholder="如 gemini-3.6-flash" value="gemini-3.6-flash">
+                        </div>
+
+                        <div id="geminiImageConfigArea" style="margin-bottom: 14px;">
+                            <label>渲染生图 · APINebula API Key</label>
+                            <div class="api-key-row" style="margin-bottom: 8px;">
+                                <input type="password" id="geminiImageApiKey" placeholder="输入用于生图的 Key（留空则复用上方 Key）">
+                                <button class="toggle-key-btn" onclick="toggleKeyVisibility('geminiImageApiKey', this)">显示</button>
+                            </div>
+                            <label style="font-size:0.8rem;color:var(--text-muted);">生图模型标识</label>
+                            <input type="text" id="geminiImageModelName" placeholder="如 gemini-3.1-flash-image" value="gemini-3.1-flash-image">
+                        </div>
+
+                        <div class="free-hint">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <a href="https://apinebula.com" target="_blank" rel="noopener">前往 APINebula 控制台获取 API Key →</a>
+                        </div>
                     </div>
-                    <label>3D 生成 · 推理接入点 ID / 模型 ID</label>
-                    <input type="text" id="doubao3DModel" placeholder="ep-xxxxxxxxxx 或 doubao-seed3d-2-0-260328" value="doubao-seed3d-2-0-260328">
-                    <div class="free-hint">
-                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <a href="https://console.volcengine.com/ark/region:ark+cn-beijing/apiKey" target="_blank" rel="noopener">获取火山引擎 API Key →</a>
+
+                    <div id="doubaoVisionConfigArea" style="display: none; margin-bottom: 14px;">
+                        <label>视觉解析 · 豆包推理接入点 ID (ep-xxx)</label>
+                        <input type="text" id="doubaoVisionModel" placeholder="填写豆包 Vision 推理接入点 ID">
+                    </div>
+                    
+                    <div id="doubaoImageConfigArea" style="display: none; margin-bottom: 14px;">
+                        <label>生图渲染 · 豆包推理接入点 ID (ep-xxx)</label>
+                        <input type="text" id="doubaoImageModel" placeholder="填写豆包生图推理接入点 ID">
+                    </div>
+
+                    <div style="margin-top: 16px; border-top: 1px dashed var(--border); padding-top: 14px;">
+                        <label>火山引擎 API Key（豆包通用 / 用于 3D 生成）</label>
+                        <div class="api-key-row" style="margin-bottom: 8px;">
+                            <input type="password" id="doubaoApiKey" placeholder="输入火山方舟 API Key">
+                            <button class="toggle-key-btn" onclick="toggleKeyVisibility('doubaoApiKey', this)">显示</button>
+                        </div>
+                        <label>3D 生成 · 推理接入点 ID / 模型 ID</label>
+                        <input type="text" id="doubao3DModel" placeholder="ep-xxxxxxxxxx 或 doubao-seed3d-2-0-260328" value="doubao-seed3d-2-0-260328">
+                        <div class="free-hint">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <a href="https://console.volcengine.com/ark/region:ark+cn-beijing/apiKey" target="_blank" rel="noopener">获取火山引擎 API Key →</a>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <div class="section-tag">02 竞品/参考图导入 (自动提取特征)</div>
+            <div class="section-tag">02 竞品/参考图导入 (多品类场景适配)</div>
+            
+            <div style="margin-bottom: 16px;">
+                <label>选择设计产品品类 (决定矩阵内容与生图场景逻辑)</label>
+                <select id="productCategory" onchange="changeCategory(); safeSave(STORAGE_CATEGORY, this.value);" style="background: #FFFFFF; font-weight: 600; color: var(--primary);">
+                    <option value="lumbar_support" selected>居家/车载腰靠 (记忆棉)</option>
+                    <option value="car_headrest">汽车头枕 (记忆棉)</option>
+                    <option value="u_pillow">U型枕 (记忆棉)</option>
+                    <option value="desk_nap_pillow">趴睡枕 (记忆棉)</option>
+                    <option value="bedside_cushion">床头靠垫 (记忆棉)</option>
+                    <option value="hemorrhoid_cushion">痔疮垫 (记忆棉)</option>
+                </select>
+            </div>
+
             <div class="upload-area" id="uploadArea">
                 <input type="file" id="imageInput" accept="image/*" onchange="handleImageUpload(event)">
                 <div id="uploadText">
                     <svg style="width:36px;height:36px;color:#AFAAA7;margin-bottom:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path></svg>
-                    <div style="font-weight: 500;">点击或拖拽上传腰靠参考图</div>
+                    <div style="font-weight: 500;">点击或拖拽上传参考图</div>
                 </div>
                 <img id="refImagePreview" class="preview-img" alt="预览">
                 <button type="button" id="removeRefBtn" class="remove-ref-btn" onclick="removeReferenceImage()" style="display:none;" title="删除参考图">
@@ -303,42 +452,73 @@
                 ✨ 智能识别参考图，提取 4X4 参数
             </button>
             <div id="extractError" class="error"></div>
-            <div id="refineControl" style="display: none; margin-top: 16px;">
-                <label>参考图贴合度（控制生图与参考图的接近程度）</label>
-                <select id="refSimilarity" style="margin-bottom: 8px; background: #FFFFFF;">
-                    <option value="high">高 — 严格保留造型/比例/配色，仅细节升级</option>
-                    <option value="medium" selected>中 — 保留主体造型，材质细节可创新</option>
-                    <option value="low">低 — 仅作灵感参考，鼓励大胆重新设计</option>
-                </select>
-                <span class="sub-label" style="margin-bottom: 0;">已上传参考图，将结合参考图特征精准构建渲染提示词。</span>
+            
+            <!-- 核心升级：三维精细控制滑块群组 -->
+            <div id="refineControl" class="weight-slider-group" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
+                    <label style="margin: 0; font-size: 0.85rem; font-weight: 600;">参考图贴合度控制 (Reference Adherence)</label>
+                    <span style="font-size: 0.72rem; color: var(--text-muted);">0% 放飞 · 100% 贴合</span>
+                </div>
+
+                <!-- 1. 造型轮廓 -->
+                <div class="weight-slider-item">
+                    <div class="weight-slider-header">
+                        <span>① 造型轮廓贴合度 (Shape & Contour)</span>
+                        <span id="weightShapeVal" class="val">50%</span>
+                    </div>
+                    <input type="range" id="weightShape" min="0" max="100" value="50">
+                    <span class="sub-label" style="margin-bottom:0; font-size:0.7rem;">控制整体外形、边界轮廓与几何起伏的保真度</span>
+                </div>
+
+                <!-- 2. 制版 -->
+                <div class="weight-slider-item">
+                    <div class="weight-slider-header">
+                        <span>② 制版贴合度 (Pattern & Structure)</span>
+                        <span id="weightPatternVal" class="val">50%</span>
+                    </div>
+                    <input type="range" id="weightPattern" min="0" max="100" value="50">
+                    <span class="sub-label" style="margin-bottom:0; font-size:0.7rem;">控制裁片分件、拼接走线与模块结构的保真度</span>
+                </div>
+
+                <!-- 3. 配色 -->
+                <div class="weight-slider-item">
+                    <div class="weight-slider-header">
+                        <span>③ 配色贴合度 (Color Palette)</span>
+                        <span id="weightColorVal" class="val">50%</span>
+                    </div>
+                    <input type="range" id="weightColor" min="0" max="100" value="50">
+                    <span class="sub-label" style="margin-bottom:0; font-size:0.7rem;">控制主次色调、材质色彩与视觉氛围的保真度</span>
+                </div>
             </div>
-            <div class="section-tag">03 腰靠 4X4 矩阵定义 (可迭代微调)</div>
+
+            <div class="section-tag">03 产品设计 4X4 矩阵定义 (可迭代微调)</div>
             
             <div class="form-group">
                 <label for="dim1">① 造型维度 (Form)</label>
                 <span class="sub-label">包含：1. 整体外形弧度尺寸比例 | 2. 线条与曲面特征 | 3. 部件与分件形态 | 4. 细节特征</span>
-                <textarea id="dim1" placeholder="请描述造型，例如：整体呈仿生蝶翼型贴合腰椎，3D双向弧面过渡，两侧大肺叶包裹模块，边缘无缝包边..."></textarea>
+                <textarea id="dim1" placeholder="请描述造型..."></textarea>
             </div>
             
             <div class="form-group">
                 <label for="dim2">② 功能维度 (Function)</label>
                 <span class="sub-label">包含：1. 核心支撑与减压 | 2. 舒适与适配调节 | 3. 辅助与附加功能 | 4. 维护与耐用功能</span>
-                <textarea id="dim2" placeholder="请描述功能，例如：核心太空记忆棉慢回弹，背部带强力固定绑带可调高度，两侧有热敷插槽，外套带有隐形拉链可机洗..."></textarea>
+                <textarea id="dim2" placeholder="请描述功能..."></textarea>
             </div>
             
             <div class="form-group">
                 <label for="dim3">③ 颜值维度 (Aesthetics)</label>
                 <span class="sub-label">包含：1. 主色彩与配色 | 2. 主要材质观感 | 3. 表面工艺与纹理 | 4. 装饰元素与细节点缀</span>
-                <textarea id="dim3" placeholder="请描述颜值，例如：莫兰迪燕麦色拼色，科技亲肤绒面料视觉柔软，表面有3D透气网孔纹理，侧边点缀真皮品牌Logo标..."></textarea>
+                <textarea id="dim3" placeholder="请描述颜值..."></textarea>
             </div>
             
             <div class="form-group">
                 <label for="dim4">④ 价值感维度 (Value)</label>
                 <span class="sub-label">包含：1. 品牌认知与健康信任 | 2. 品质质感与耐用承诺 | 3. 创新与技术领先感 | 4. 情感与生态附加值</span>
-                <textarea id="dim4" placeholder="请描述价值，例如：医疗级人体工学背书，精密走线彰显德系品质，石墨烯热压科技感，营造放松舒缓的居家生态..."></textarea>
+                <textarea id="dim4" placeholder="请描述价值..."></textarea>
             </div>
+
             <div class="section-tag">04 产品设计等级</div>
-            <div class="level-box">
+            <div class="level-box" style="margin-bottom: 16px;">
                 <label for="designLevel">决定 AI 产品的创新跨度</label>
                 <select id="designLevel" onchange="updateLevelDesc()" style="margin-bottom: 12px; font-weight: 500; background: #FFFFFF;">
                     <option value="1">等级1：已有产品模仿</option>
@@ -351,155 +531,208 @@
                     标准：在造型、功能上存在一定升级超越竞品。
                 </span>
             </div>
+
+            <div class="form-group" style="margin-bottom: 24px;">
+                <label for="imageAspectRatio">生图尺寸比例 (Aspect Ratio)</label>
+                <select id="imageAspectRatio" style="background: #FFFFFF;">
+                    <option value="1:1" selected>1:1 (正方形 - 推荐用于独立产品展示)</option>
+                    <option value="3:4">3:4 (竖版 - 适合社交媒体/海报)</option>
+                    <option value="4:3">4:3 (横版 - 适合网页/电脑端查看)</option>
+                    <option value="16:9">16:9 (宽屏 - 适合横向场景/展示)</option>
+                    <option value="9:16">9:16 (全面屏 - 适合手机满屏)</option>
+                </select>
+            </div>
+
             <button id="generateBtn" class="main-btn" onclick="startGeneration()">
-                🚀 渲染生成居家腰靠设计图
+                🚀 渲染生成设计图
             </button>
             <div id="errorMsg" class="error"></div>
         </div>
     </aside>
-    <main class="panel right-panel">
-        <div class="gallery-wrapper">
-            <div class="main-display">
-                <div class="canvas-area" id="imageContainer">
-                    <div id="loadingStatus" class="loading">
-                        <div class="spinner"></div>
-                        <div id="loadingText">正在处理...</div>
+
+    <!-- 右侧大区 -->
+    <div class="right-layout">
+        <main class="panel right-panel">
+            <div class="gallery-wrapper">
+                <div class="main-display">
+                    <div class="render-col">
+                        <div class="canvas-area" id="imageContainer">
+                            <div id="loadingStatus" class="loading">
+                                <div class="spinner"></div>
+                                <div id="loadingText">正在处理...</div>
+                            </div>
+                            <div id="placeholderText" class="placeholder">
+                                渲染结果将在此呈现
+                            </div>
+                            <img id="resultImage" alt="Generated Design">
+                        </div>
+                        <div class="prompt-board">
+                            <h3>
+                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M4 18h16a2 2 0 002-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                当前生图提示词：
+                            </h3>
+                            <div id="promptOutput" class="prompt-text">等待解析...</div>
+                        </div>
                     </div>
-                    <div id="placeholderText" class="placeholder">
-                        渲染结果将在此呈现
+
+                    <div class="preview-col">
+                        <div class="canvas-area" id="previewContainer">
+                            <div id="previewPlaceholder" class="placeholder">点击快照在此预览</div>
+                            <img id="previewImage" alt="Snapshot Preview">
+                        </div>
+                        <div class="prompt-board">
+                            <h3>
+                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                快照提示词：
+                            </h3>
+                            <div id="previewPromptOutput" class="prompt-text">暂无快照数据...</div>
+                        </div>
                     </div>
-                    <img id="resultImage" alt="Generated Lumbar Support Design">
                 </div>
-                <div class="prompt-board">
-                    <h3>
-                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M4 18h16a2 2 0 002-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                        专业级生图提示词：
-                    </h3>
-                    <div id="promptOutput" class="prompt-text">等待解析...</div>
+
+                <div class="snapshot-panel">
+                    <div class="snapshot-header">
+                        <span>生图快照</span>
+                        <button class="snapshot-clear" onclick="clearSnapshots()" title="清空全部快照">清空</button>
+                    </div>
+                    <div class="snapshot-list" id="snapshotList">
+                        <div class="snapshot-empty" id="snapshotEmpty">暂无快照<br>生成后点击保存</div>
+                    </div>
+                    <div class="snapshot-actions">
+                        <button class="snap-btn primary" id="saveSnapBtn" onclick="saveSnapshot()" disabled>
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                            保存快照
+                        </button>
+                        <button class="snap-btn secondary" id="downloadBtn" onclick="downloadCurrentImage()" disabled>
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            下载当前预览图
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="snapshot-panel">
-                <div class="snapshot-header">
-                    <span>生图快照</span>
-                    <button class="snapshot-clear" onclick="clearSnapshots()" title="清空全部快照">清空</button>
-                </div>
-                <div class="snapshot-list" id="snapshotList">
-                    <div class="snapshot-empty" id="snapshotEmpty">暂无快照<br>生成后点击保存</div>
-                </div>
-                <div class="snapshot-actions">
-                    <button class="snap-btn primary" id="saveSnapBtn" onclick="saveSnapshot()" disabled>
-                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
-                        保存快照
-                    </button>
-                    <button class="snap-btn secondary" id="downloadBtn" onclick="downloadCurrentImage()" disabled>
-                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        下载原图
+        </main>
+
+        <section class="panel model3d-panel">
+            <div class="model3d-header">
+                <h2>
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+                    3D 模型生成
+                    <span class="model-badge">Seed3D-2.0</span>
+                </h2>
+                <div class="model3d-header-right">
+                    <span class="model3d-status idle" id="model3dStatus">待机</span>
+                    <button class="model3d-gen-btn" id="model3dGenBtn" onclick="start3DGeneration()" disabled>
+                        <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        生成 3D 模型
                     </button>
                 </div>
             </div>
-        </div>
-    </main>
+            <div class="model3d-body">
+                
+                <div class="model3d-ref" style="width: 160px; display: flex; flex-direction: column;">
+                    <span class="model3d-ref-label">1. AI 抠图 (白底)</span>
+                    <label class="model3d-upload-box" id="mattingUploadBox" style="flex: 1;">
+                        <input type="file" accept="image/*" style="display:none;" onchange="handleMattingManualUpload(event)">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path></svg>
+                        <span>点击导入<br>或点选快照</span>
+                    </label>
+                    <div id="mattingWorkingArea" style="display:none; flex: 1; flex-direction: column;">
+                        <div class="model3d-ref-img" id="mattingImgContainer" style="background: transparent; flex: 1;">
+                            <img id="mattingImage" alt="待抠图">
+                            <button class="model3d-ref-del" onclick="clearMatting()" title="删除图片">×</button>
+                        </div>
+                        <textarea id="mattingPrompt" class="matting-textarea" placeholder="附加要求(选填)，如：纯白底色、保留阴影..."></textarea>
+                    </div>
+                    
+                    <button id="mattingBtn" class="snap-btn primary" style="display:none; margin-top: 8px;" onclick="startMatting()">✨ 一键抠图</button>
+                    <button id="downloadMattingBtn" class="snap-btn secondary" style="display:none; margin-top: 6px;" onclick="downloadMatting()">⬇️ 下载白底图</button>
+                </div>
+
+                <div class="model3d-ref" style="width: 160px;">
+                    <span class="model3d-ref-label">2. 3D 参考图</span>
+                    <label class="model3d-upload-box" id="model3dUploadBox">
+                        <input type="file" accept="image/*" style="display:none;" onchange="handle3DManualUpload(event)">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path></svg>
+                        <span>点击手动导入<br>或等待抠图推流</span>
+                    </label>
+                    <div class="model3d-ref-img" id="model3dRefImg" style="display:none;">
+                        <img id="model3dRefImage" alt="3D参考图">
+                        <span class="model3d-ref-tag" id="model3dRefTag">已导入</span>
+                        <button class="model3d-ref-del" onclick="clear3DReference()" title="删除参考图">×</button>
+                    </div>
+                </div>
+            
+                <div class="model3d-params" style="width: 220px;">
+                    <div class="model3d-param-list">
+                    <div class="model3d-param-row">
+                        <label>模型文件格式</label>
+                        <select id="model3dFormat">
+                            <option value="glb" selected>GLB</option>
+                            <option value="obj">OBJ</option>
+                            <option value="usd">USD</option>
+                            <option value="usdz">USDZ</option>
+                        </select>
+                    </div>
+                    <div class="model3d-param-row">
+                        <label>模型面数</label>
+                        <select id="model3dFace">
+                            <option value="low">10万（轻量）</option>
+                            <option value="medium" selected>50万（均衡）</option>
+                            <option value="high">100万（精细）</option>
+                        </select>
+                    </div>
+                    <div class="model3d-param-row">
+                        <label>文本提示词（可选）</label>
+                        <textarea id="model3dPrompt" placeholder="描述期望的3D模型细节，留空则纯图生3D" style="min-height:60px;padding:8px 12px;font-size:0.85rem;"></textarea>
+                    </div>
+                    </div>
+                </div>
+            
+                <div class="model3d-result">
+                    <div class="model3d-result-header">
+                        <span class="model3d-result-title">任务信息</span>
+                    </div>
+                    <div class="model3d-result-content" id="model3dResultContent">
+                        <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);font-size:0.85rem;text-align:center;">
+                            导入参考图后点击「生成 3D 模型」，将依据参考图生成带 PBR 材质的模型。<br>模型生成后，点击右侧提供的专属链接进行下载。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
-
-    <!-- 3D 模型生成横向分栏 -->
-    <section class="panel model3d-panel">
-        <div class="model3d-header">
-            <h2>
-                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"></path></svg>
-                3D 模型生成
-                <span class="model-badge">Seed3D-2.0</span>
-            </h2>
-            <div class="model3d-header-right">
-                <span class="model3d-status idle" id="model3dStatus">待机</span>
-                <button class="model3d-gen-btn" id="model3dGenBtn" onclick="start3DGeneration()" disabled>
-                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    生成 3D 模型
-                </button>
-            </div>
-        </div>
-        <div class="model3d-body">
-            <div class="model3d-ref">
-                <span class="model3d-ref-label">参考图</span>
-                <label class="model3d-upload-box" id="model3dUploadBox">
-                    <input type="file" accept="image/*" style="display:none;" onchange="handle3DManualUpload(event)">
-                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path></svg>
-                    <span>点击手动导入<br>或点选上方快照</span>
-                </label>
-                <div class="model3d-ref-img" id="model3dRefImg" style="display:none;">
-                    <img id="model3dRefImage" alt="3D参考图">
-                    <span class="model3d-ref-tag" id="model3dRefTag">已导入</span>
-                    <button class="model3d-ref-del" onclick="clear3DReference()" title="删除参考图">×</button>
-                </div>
-            </div>
-        
-            <div class="model3d-params">
-                <div class="model3d-param-list">
-                <div class="model3d-param-row">
-                    <label>模型文件格式</label>
-                    <select id="model3dFormat">
-                        <option value="glb" selected>GLB（推荐网页预览）</option>
-                        <option value="obj">OBJ</option>
-                        <option value="usd">USD</option>
-                        <option value="usdz">USDZ</option>
-                    </select>
-                </div>
-                <div class="model3d-param-row">
-                    <label>模型面数</label>
-                    <select id="model3dFace">
-                        <option value="low">10万（轻量）</option>
-                        <option value="medium" selected>50万（均衡）</option>
-                        <option value="high">100万（精细）</option>
-                    </select>
-                </div>
-                <div class="model3d-param-row">
-                    <label>文本提示词（可选）</label>
-                    <textarea id="model3dPrompt" placeholder="描述期望的3D模型细节，如材质、风格等，留空则纯图生3D" style="min-height:60px;padding:8px 12px;font-size:0.85rem;"></textarea>
-                </div>
-                </div>
-            </div>
-        
-            <div class="model3d-viewer-panel">
-                <div class="model3d-result-header" style="padding: 14px 18px 0; margin-bottom: 0;">
-                    <span class="model3d-result-title">交互式 3D 模型预览</span>
-                </div>
-                <div id="modelViewerContainer" style="flex:1; width:100%; display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:0.85rem; text-align:center; padding:10px;">
-                    生成成功后，模型将在此处展示，支持鼠标拖拽旋转缩放
-                </div>
-            </div>
-        
-            <div class="model3d-result">
-                <div class="model3d-result-header">
-                    <span class="model3d-result-title">任务信息</span>
-                </div>
-                <div class="model3d-result-content" id="model3dResultContent">
-                    <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);font-size:0.85rem;text-align:center;">
-                        导入参考图后点击「生成 3D 模型」，将依据参考图生成带 PBR 材质的模型
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
+    
 <script>
     let uploadedImageBase64 = null;
     let uploadedImageMimeType = null;
 
     // ========== localStorage 持久化配置 ==========
+    const STORAGE_BASE_URL = 'apinebula_base_url';
     const STORAGE_VISION_KEY = 'gemini_vision_api_key';
     const STORAGE_IMAGE_KEY = 'gemini_image_api_key';
+    const STORAGE_VISION_MODEL_NAME = 'gemini_vision_model_name';
+    const STORAGE_IMAGE_MODEL_NAME = 'gemini_image_model_name';
+
     const STORAGE_DOUBAO_KEY = 'doubao_ark_api_key';
     const STORAGE_DOUBAO_VISION = 'doubao_vision_model';
     const STORAGE_DOUBAO_IMAGE = 'doubao_image_model';
     const STORAGE_3D_MODEL = 'doubao_3d_model';
     const STORAGE_VISION_SELECT = 'vision_select';
     const STORAGE_IMAGE_SELECT = 'image_select';
+    const STORAGE_ASPECT_RATIO = 'image_aspect_ratio';
     
+    const STORAGE_CATEGORY = 'design_category';
     const STORAGE_DIM1 = 'design_dim1';
     const STORAGE_DIM2 = 'design_dim2';
     const STORAGE_DIM3 = 'design_dim3';
     const STORAGE_DIM4 = 'design_dim4';
     const STORAGE_DESIGN_LEVEL = 'design_level';
-    const STORAGE_REF_SIMILARITY = 'ref_similarity';
+    
+    // 三维贴合度控制
+    const STORAGE_WEIGHT_SHAPE = 'weight_shape_val';
+    const STORAGE_WEIGHT_PATTERN = 'weight_pattern_val';
+    const STORAGE_WEIGHT_COLOR = 'weight_color_val';
+
     const STORAGE_REF_IMAGE = 'ref_image_base64';
     const STORAGE_REF_MIME = 'ref_image_mime';
 
@@ -507,33 +740,105 @@
         try { localStorage.setItem(key, value); } catch (e) { console.warn('localStorage 保存失败'); }
     }
 
-    // 动态控制输入栏显示与隐藏
+    // ====== 品类与生图场景逻辑配置 ======
+    const genericMemoryFoam = function(name, enName, scene) {
+        return {
+            name: name,
+            enName: enName,
+            scene: scene,
+            material: "记忆棉材质产品 (Memory foam covered with fabric)",
+            placeholders: {
+                dim1: `请描述造型，例如：符合人体工学的${name}造型，3D曲面过渡，边缘平滑无缝...`,
+                dim2: `请描述功能，例如：核心太空记忆棉慢回弹，提供舒适支撑，外套隐形拉链可拆洗...`,
+                dim3: `请描述颜值，例如：温馨色调，亲肤绒面料视觉柔软，表面3D透气纹理...`,
+                dim4: `请描述价值，例如：医疗级人体工学背书，精密走线彰显品质，放松解压...`
+            },
+            presets: {
+                dim1: `整体外形符合${name}的专属人体工学曲线；曲面采用3D双向弧面过渡，线条流畅圆润；边缘采用无缝隐形工艺处理。`,
+                dim2: `内芯采用高回弹记忆棉提供动态减压支撑；外套配备耐用隐形拉链，方便拆洗维护；具备良好的透气与释压功能。`,
+                dim3: `主色调为治愈系浅色系；主要采用亲肤仿生绒面料与透气网眼布拼接，视觉柔和温暖；细节处带有精致的品牌织标。`,
+                dim4: `传递出专业的健康信任感；通过精细的环保缝线与高质感面料彰显耐用品质；整体散发着自然、放松、解压的生活情感附加值。`
+            }
+        };
+    };
+
+    const categoryConfigs = {
+        "lumbar_support": {
+            name: "居家/车载腰靠",
+            enName: "Home/Car Lumbar Support Cushion",
+            scene: "placed on a home chair or a car driver's seat (居家座椅或汽车主驾驶位)",
+            material: "记忆棉材质产品 (Memory foam covered with fabric)",
+            placeholders: {
+                dim1: "请描述造型，例如：整体呈仿生蝶翼型贴合腰椎，3D双向弧面过渡，两侧大肺叶包裹模块...",
+                dim2: "请描述功能，例如：核心太空记忆棉慢回弹，背部带强力固定绑带可调高度，两侧有热敷插槽...",
+                dim3: "请描述颜值，例如：莫兰迪燕麦色拼色，科技亲肤绒面料视觉柔软，表面有3D透气网孔纹理...",
+                dim4: "请描述价值，例如：医疗级人体工学背书，精密走线彰显德系品质，石墨烯热压科技感..."
+            },
+            presets: {
+                dim1: "整体外形呈仿生蝶翼型，黄金比例贴合人体脊柱；曲面采用3D双向弧面过渡，线条流畅圆润；包含左右双肺叶包裹模块与中部核心支撑模块；边缘采用无缝隐形工艺处理。",
+                dim2: "内芯采用高回弹记忆棉提供动态减压支撑；背部配备高弹性防滑绑带，适配各种居家与办公座椅；侧边带有小巧的透气散热网孔与隐形加热模块；外套配备耐用拉链，方便拆洗维护。",
+                dim3: "主色调为治愈系莫兰迪燕麦色搭配浅灰绑带；主要采用亲肤仿生绒面料与透气网眼布拼接，视觉柔和温暖；表面经过热压工艺形成隐约的水波纹理；侧边带有哑光金属质感的品牌Logo标点缀。",
+                dim4: "传递出医疗级人体工学的健康信任感；通过厚实的环保缝线与高克重面料彰显耐用品质；一体发泡成型工艺体现现代创新感；整体散发着自然、放松、解压的居家生活情感附加值。"
+            }
+        },
+        "car_headrest": genericMemoryFoam("汽车头枕", "Car Headrest Cushion", "installed on a car driver's seat (汽车主驾驶位)"),
+        "u_pillow": genericMemoryFoam("U型枕", "U-shaped Neck Pillow", "placed on an office desk or worn on a model's neck (办公桌或模特颈部)"),
+        "desk_nap_pillow": genericMemoryFoam("趴睡枕", "Desk Nap Pillow", "placed on a bed (床上)"),
+        "bedside_cushion": genericMemoryFoam("床头靠垫", "Bedside Backrest Cushion", "placed on a bed (床上)"),
+        "hemorrhoid_cushion": genericMemoryFoam("痔疮垫", "Hemorrhoid Cushion", "placed on an office chair (办公室办公椅上)")
+    };
+
+    function changeCategory() {
+        const catId = document.getElementById('productCategory').value;
+        const cfg = categoryConfigs[catId];
+        
+        document.getElementById('dim1').placeholder = cfg.placeholders.dim1;
+        document.getElementById('dim2').placeholder = cfg.placeholders.dim2;
+        document.getElementById('dim3').placeholder = cfg.placeholders.dim3;
+        document.getElementById('dim4').placeholder = cfg.placeholders.dim4;
+        
+        document.getElementById('generateBtn').innerHTML = `🚀 渲染生成${cfg.name}设计图`;
+        
+        const uploadTextDiv = document.querySelector('#uploadText div');
+        if (uploadTextDiv) {
+            uploadTextDiv.innerText = `点击或拖拽上传${cfg.name}参考图`;
+        }
+    }
+
+    function toggleEngineConfig() {
+        const content = document.getElementById('engineConfigContent');
+        const icon = document.getElementById('engineConfigIcon');
+        if (content.style.display === 'none') {
+            content.style.display = 'block';
+            icon.style.transform = 'rotate(0deg)';
+        } else {
+            content.style.display = 'none';
+            icon.style.transform = 'rotate(-90deg)';
+        }
+    }
+
     function updateEngineConfigUI() {
         const vision = document.getElementById('visionModelSelect').value;
         const image = document.getElementById('imageModelSelect').value;
         
-        // 视觉解析区域控制
+        const hasGemini = (vision === 'gemini' || image === 'gemini');
+        document.getElementById('geminiCommonConfigArea').style.display = hasGemini ? 'block' : 'none';
+
         document.getElementById('geminiVisionConfigArea').style.display = vision === 'gemini' ? 'block' : 'none';
         document.getElementById('doubaoVisionConfigArea').style.display = vision === 'doubao' ? 'block' : 'none';
         
-        // 生图渲染区域控制
         document.getElementById('geminiImageConfigArea').style.display = image === 'gemini' ? 'block' : 'none';
         document.getElementById('doubaoImageConfigArea').style.display = image === 'doubao' ? 'block' : 'none';
-
-        // 为了视觉美观，动态调整生图区顶部的虚线
-        const geminiImageArea = document.getElementById('geminiImageConfigArea');
-        if(vision === 'gemini') {
-            geminiImageArea.style.marginTop = '14px';
-            geminiImageArea.style.borderTop = '1px dashed var(--border)';
-            geminiImageArea.style.paddingTop = '14px';
-        } else {
-            geminiImageArea.style.marginTop = '0';
-            geminiImageArea.style.borderTop = 'none';
-            geminiImageArea.style.paddingTop = '0';
-        }
     }
 
     window.addEventListener('DOMContentLoaded', function() {
+        const savedCat = localStorage.getItem(STORAGE_CATEGORY);
+        if (savedCat) {
+            const catEl = document.getElementById('productCategory');
+            if(catEl) catEl.value = savedCat;
+        }
+        changeCategory();
+
         const savedVisionSelect = localStorage.getItem(STORAGE_VISION_SELECT);
         if (savedVisionSelect) document.getElementById('visionModelSelect').value = savedVisionSelect;
         
@@ -542,12 +847,28 @@
         
         updateEngineConfigUI();
 
-        // 恢复所有分离的 Key
+        const savedBaseUrl = localStorage.getItem(STORAGE_BASE_URL);
+        if (savedBaseUrl) document.getElementById('apiNebulaBaseUrl').value = savedBaseUrl;
+
         const savedVisionKey = localStorage.getItem(STORAGE_VISION_KEY);
         if (savedVisionKey) document.getElementById('geminiVisionApiKey').value = savedVisionKey;
         
         const savedImageKey = localStorage.getItem(STORAGE_IMAGE_KEY);
         if (savedImageKey) document.getElementById('geminiImageApiKey').value = savedImageKey;
+
+        const savedVisionModelName = localStorage.getItem(STORAGE_VISION_MODEL_NAME);
+        if (savedVisionModelName && !savedVisionModelName.includes('2.5')) {
+            document.getElementById('geminiVisionModelName').value = savedVisionModelName;
+        } else {
+            document.getElementById('geminiVisionModelName').value = 'gemini-3.6-flash';
+        }
+
+        const savedImageModelName = localStorage.getItem(STORAGE_IMAGE_MODEL_NAME);
+        if (savedImageModelName && !savedImageModelName.includes('2.5') && !savedImageModelName.includes('imagen')) {
+            document.getElementById('geminiImageModelName').value = savedImageModelName;
+        } else {
+            document.getElementById('geminiImageModelName').value = 'gemini-3.1-flash-image';
+        }
 
         const savedDoubaoKey = localStorage.getItem(STORAGE_DOUBAO_KEY);
         if (savedDoubaoKey) document.getElementById('doubaoApiKey').value = savedDoubaoKey;
@@ -561,6 +882,9 @@
         const saved3D = localStorage.getItem(STORAGE_3D_MODEL);
         if (saved3D) document.getElementById('doubao3DModel').value = saved3D;
 
+        const savedAspectRatio = localStorage.getItem(STORAGE_ASPECT_RATIO);
+        if (savedAspectRatio) document.getElementById('imageAspectRatio').value = savedAspectRatio;
+
         ['dim1','dim2','dim3','dim4'].forEach(id => {
             const val = localStorage.getItem('design_' + id);
             if(val) document.getElementById(id).value = val;
@@ -568,8 +892,23 @@
 
         const level = localStorage.getItem(STORAGE_DESIGN_LEVEL);
         if (level) { document.getElementById('designLevel').value = level; updateLevelDesc(); }
-        const sim = localStorage.getItem(STORAGE_REF_SIMILARITY);
-        if (sim) document.getElementById('refSimilarity').value = sim;
+        
+        // 绑定三维贴合度滑块
+        const bindSliderInit = (sliderId, labelId, storageKey, defaultVal = "50") => {
+            const val = localStorage.getItem(storageKey) || defaultVal;
+            const slider = document.getElementById(sliderId);
+            const label = document.getElementById(labelId);
+            slider.value = val;
+            label.innerText = val + '%';
+            slider.addEventListener('input', function() {
+                label.innerText = this.value + '%';
+                safeSave(storageKey, this.value);
+            });
+        };
+
+        bindSliderInit('weightShape', 'weightShapeVal', STORAGE_WEIGHT_SHAPE);
+        bindSliderInit('weightPattern', 'weightPatternVal', STORAGE_WEIGHT_PATTERN);
+        bindSliderInit('weightColor', 'weightColorVal', STORAGE_WEIGHT_COLOR);
 
         const refImg = localStorage.getItem(STORAGE_REF_IMAGE);
         const refMime = localStorage.getItem(STORAGE_REF_MIME);
@@ -585,26 +924,22 @@
             document.getElementById('removeRefBtn').style.display = 'flex';
         }
 
-        // 监听独立的 Select 与 Key 更新
-        document.getElementById('visionModelSelect').addEventListener('change', function() {
-            safeSave(STORAGE_VISION_SELECT, this.value);
-            updateEngineConfigUI();
-        });
-        document.getElementById('imageModelSelect').addEventListener('change', function() {
-            safeSave(STORAGE_IMAGE_SELECT, this.value);
-            updateEngineConfigUI();
-        });
+        document.getElementById('visionModelSelect').addEventListener('change', function() { safeSave(STORAGE_VISION_SELECT, this.value); updateEngineConfigUI(); });
+        document.getElementById('imageModelSelect').addEventListener('change', function() { safeSave(STORAGE_IMAGE_SELECT, this.value); updateEngineConfigUI(); });
         
+        document.getElementById('apiNebulaBaseUrl').addEventListener('input', function() { safeSave(STORAGE_BASE_URL, this.value.trim()); });
         document.getElementById('geminiVisionApiKey').addEventListener('input', function() { safeSave(STORAGE_VISION_KEY, this.value.trim()); });
         document.getElementById('geminiImageApiKey').addEventListener('input', function() { safeSave(STORAGE_IMAGE_KEY, this.value.trim()); });
-        
+        document.getElementById('geminiVisionModelName').addEventListener('input', function() { safeSave(STORAGE_VISION_MODEL_NAME, this.value.trim()); });
+        document.getElementById('geminiImageModelName').addEventListener('input', function() { safeSave(STORAGE_IMAGE_MODEL_NAME, this.value.trim()); });
+
         document.getElementById('doubaoApiKey').addEventListener('input', function() { safeSave(STORAGE_DOUBAO_KEY, this.value.trim()); });
         document.getElementById('doubaoVisionModel').addEventListener('input', function() { safeSave(STORAGE_DOUBAO_VISION, this.value.trim()); });
         document.getElementById('doubaoImageModel').addEventListener('input', function() { safeSave(STORAGE_DOUBAO_IMAGE, this.value.trim()); });
         document.getElementById('doubao3DModel').addEventListener('input', function() { safeSave(STORAGE_3D_MODEL, this.value.trim()); });
         ['dim1','dim2','dim3','dim4'].forEach(id => document.getElementById(id).addEventListener('input', function() { safeSave('design_' + id, this.value); }));
         document.getElementById('designLevel').addEventListener('change', function() { safeSave(STORAGE_DESIGN_LEVEL, this.value); });
-        document.getElementById('refSimilarity').addEventListener('change', function() { safeSave(STORAGE_REF_SIMILARITY, this.value); });
+        document.getElementById('imageAspectRatio').addEventListener('change', function() { safeSave(STORAGE_ASPECT_RATIO, this.value); });
     });
 
     function toggleKeyVisibility(inputId, btn) {
@@ -633,10 +968,13 @@
     }
 
     function fillPreset() {
-        document.getElementById('dim1').value = "整体外形呈仿生蝶翼型，黄金比例贴合人体脊柱；曲面采用3D双向弧面过渡，线条流畅圆润；包含左右双肺叶包裹模块与中部核心支撑模块；边缘采用无缝隐形工艺处理。";
-        document.getElementById('dim2').value = "内芯采用高回弹记忆棉提供动态减压支撑；背部配备高弹性防滑绑带，适配各种居家与办公座椅；侧边带有小巧的透气散热网孔与隐形加热模块；外套配备耐用拉链，方便拆洗维护。";
-        document.getElementById('dim3').value = "主色调为治愈系莫兰迪燕麦色搭配浅灰绑带；主要采用亲肤仿生绒面料与透气网眼布拼接，视觉柔和温暖；表面经过热压工艺形成隐约的水波纹理；侧边带有哑光金属质感的品牌Logo标点缀。";
-        document.getElementById('dim4').value = "传递出医疗级人体工学的健康信任感；通过厚实的环保缝线与高克重面料彰显耐用品质；一体发泡成型工艺体现现代创新感；整体散发着自然、放松、解压的居家生活情感附加值。";
+        const catId = document.getElementById('productCategory').value;
+        const cfg = categoryConfigs[catId];
+        document.getElementById('dim1').value = cfg.presets.dim1;
+        document.getElementById('dim2').value = cfg.presets.dim2;
+        document.getElementById('dim3').value = cfg.presets.dim3;
+        document.getElementById('dim4').value = cfg.presets.dim4;
+        ['dim1','dim2','dim3','dim4'].forEach(id => safeSave('design_' + id, document.getElementById(id).value));
     }
 
     function handleImageUpload(event) {
@@ -678,9 +1016,16 @@
     }
 
     function getConfig() {
+        const baseUrlRaw = (document.getElementById('apiNebulaBaseUrl').value.trim() || 'https://apinebula.com/v1').replace(/\/+$/, '');
+        const vKey = document.getElementById('geminiVisionApiKey').value.trim();
+        const iKey = document.getElementById('geminiImageApiKey').value.trim() || vKey;
+
         return {
-            geminiVisionApiKey: document.getElementById('geminiVisionApiKey').value.trim(),
-            geminiImageApiKey: document.getElementById('geminiImageApiKey').value.trim(),
+            baseUrl: baseUrlRaw,
+            geminiVisionApiKey: vKey,
+            geminiImageApiKey: iKey,
+            geminiVisionModel: document.getElementById('geminiVisionModelName').value.trim() || 'gemini-3.6-flash',
+            geminiImageModel: document.getElementById('geminiImageModelName').value.trim() || 'gemini-3.1-flash-image',
             doubaoApiKey: document.getElementById('doubaoApiKey').value.trim(),
             doubaoVisionModel: document.getElementById('doubaoVisionModel').value.trim(),
             doubaoImageModel: document.getElementById('doubaoImageModel').value.trim(),
@@ -688,35 +1033,148 @@
         };
     }
 
-    // ====== Gemini API =======
+    // ====== APINebula 视觉解析兼容层调用 ======
     async function callGeminiVision(apiKey, systemInstruction, userText, mimeType, base64Data, isJson = false) {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
-        const parts = [{ text: `${systemInstruction}\n\n${userText}` }];
-        if (base64Data && mimeType) { parts.push({ inline_data: { mime_type: mimeType, data: base64Data } }); }
-        const body = { contents: [{ role: 'user', parts: parts }] };
-        if (isJson) body.generationConfig = { response_mime_type: 'application/json' };
-        const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-        if (!res.ok) { const errData = await res.json().catch(() => ({})); throw new Error(errData.error?.message || `Gemini 请求失败 (HTTP ${res.status})`); }
-        const data = await res.json();
-        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (!text) throw new Error("Gemini 模型未返回有效文本");
+        const cfg = getConfig();
+        const url = `${cfg.baseUrl}/chat/completions`;
+        
+        const contentParts = [
+            { type: "text", text: userText }
+        ];
+
+        if (base64Data && mimeType) {
+            contentParts.push({
+                type: "image_url",
+                image_url: {
+                    url: `data:${mimeType};base64,${base64Data}`
+                }
+            });
+        }
+
+        const body = {
+            model: cfg.geminiVisionModel,
+            messages: [
+                { role: "system", content: systemInstruction },
+                { role: "user", content: contentParts }
+            ]
+        };
+
+        if (isJson) {
+            body.response_format = { type: "json_object" };
+        }
+
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify(body)
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            const errDetail = data.error?.message || data.message || JSON.stringify(data);
+            throw new Error(`视觉解析报错 (HTTP ${res.status}): ${errDetail}`);
+        }
+
+        const text = data.choices?.[0]?.message?.content;
+        if (!text) throw new Error("模型未返回有效内容");
         return text.trim();
     }
 
-    async function callGeminiImageGeneration(apiKey, prompt, mimeType, base64Data) {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent?key=${apiKey}`;
-        const parts = [{ text: prompt }];
-        if (base64Data && mimeType) { parts.push({ inline_data: { mime_type: mimeType, data: base64Data } }); }
-        const body = { contents: [{ role: 'user', parts: parts }], generationConfig: { responseModalities: ["TEXT", "IMAGE"] } };
-        const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-        if (!res.ok) { const errData = await res.json().catch(() => ({})); throw new Error(errData.error?.message || `Gemini 生图请求失败 (HTTP ${res.status})`); }
-        const data = await res.json();
-        const partsResponse = data.candidates?.[0]?.content?.parts;
-        if (!partsResponse) throw new Error("生图返回数据异常");
-        for (const part of partsResponse) {
-            if (part.inlineData && part.inlineData.data) { return `data:${part.inlineData.mimeType || 'image/png'};base64,${part.inlineData.data}`; }
+    // ====== APINebula 生图智能路由与多格式提取 ======
+    async function callGeminiImageGeneration(apiKey, prompt, mimeType, base64Data, aspectRatio = "1:1") {
+        const cfg = getConfig();
+        const ratioPrompt = `\n\n[Mandatory Requirement]: The generated image MUST be strictly in ${aspectRatio} aspect ratio.`;
+        const fullPrompt = prompt + ratioPrompt;
+
+        const isStandardImgModel = cfg.geminiImageModel.toLowerCase().includes('imagen') || 
+                                   cfg.geminiImageModel.toLowerCase().includes('dall-e');
+
+        if (isStandardImgModel) {
+            const sizeMap = {
+                "1:1": "1024x1024",
+                "3:4": "1024x1365",
+                "4:3": "1365x1024",
+                "16:9": "1792x1024",
+                "9:16": "1024x1792"
+            };
+            const size = sizeMap[aspectRatio] || "1024x1024";
+
+            const res = await fetch(`${cfg.baseUrl}/images/generations`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: cfg.geminiImageModel,
+                    prompt: fullPrompt,
+                    size: size
+                })
+            });
+
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                const errDetail = data.error?.message || data.message || JSON.stringify(data);
+                throw new Error(`生图端点报错 (HTTP ${res.status}): ${errDetail}`);
+            }
+
+            if (data.data?.[0]?.b64_json) return `data:image/png;base64,${data.data[0].b64_json}`;
+            if (data.data?.[0]?.url) return data.data[0].url;
+            throw new Error("生图接口未返回可用图片数据");
         }
-        throw new Error("模型未返回图像数据，请检查提示词或 API 权限");
+
+        const userContent = [{ type: "text", text: fullPrompt }];
+        if (base64Data && mimeType) {
+            userContent.push({
+                type: "image_url",
+                image_url: { url: `data:${mimeType};base64,${base64Data}` }
+            });
+        }
+
+        const res = await fetch(`${cfg.baseUrl}/chat/completions`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                model: cfg.geminiImageModel,
+                messages: [{ role: "user", content: userContent }],
+                modalities: ["text", "image"]
+            })
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            const errDetail = data.error?.message || data.message || JSON.stringify(data);
+            throw new Error(`Chat生图报错 (HTTP ${res.status}): ${errDetail}`);
+        }
+
+        const message = data.choices?.[0]?.message;
+        if (!message) throw new Error("服务端未返回有效 choices 数据");
+
+        if (message.image_url) return message.image_url;
+        if (message.images?.[0]?.url) return message.images[0].url;
+        if (message.images?.[0]?.b64_json) return `data:image/png;base64,${message.images[0].b64_json}`;
+
+        const content = message.content || "";
+
+        const mdMatch = content.match(/!\[.*?\]\((https?:\/\/[^\s\)]+)\)/);
+        if (mdMatch) return mdMatch[1];
+
+        const htmlMatch = content.match(/<img[^>]+src=["'](https?:\/\/[^"']+)["']/i);
+        if (htmlMatch) return htmlMatch[1];
+
+        const b64Match = content.match(/data:image\/[a-zA-Z]+;base64,[A-Za-z0-9+/=]+/);
+        if (b64Match) return b64Match[0];
+
+        const urlMatch = content.match(/(https?:\/\/[^\s<>"']+?\.(?:png|jpg|jpeg|webp)(?:\?[^\s<>"']*)?)/i);
+        if (urlMatch) return urlMatch[1];
+
+        throw new Error(`模型返回了文本而非图片数据: "${content.slice(0, 100)}..."`);
     }
 
     // ====== 豆包 API =======
@@ -739,9 +1197,19 @@
         return data.choices[0].message.content.trim();
     }
 
-    async function callDoubaoImage(apiKey, model, prompt, refImageDataUrl) {
+    async function callDoubaoImage(apiKey, model, prompt, refImageDataUrl, aspectRatio = "1:1") {
         const url = `${ARK_BASE}/images/generations`;
-        const payload = { model: model, prompt: prompt, response_format: "b64_json", size: "2048x2048" };
+        
+        const sizeMap = {
+            "1:1": "2048x2048",
+            "3:4": "1536x2048",
+            "4:3": "2048x1536",
+            "16:9": "1920x1080",
+            "9:16": "1080x1920"
+        };
+        const targetSize = sizeMap[aspectRatio] || "2048x2048";
+
+        const payload = { model: model, prompt: prompt, response_format: "b64_json", size: targetSize };
         if (refImageDataUrl) { payload.image = refImageDataUrl; }
         const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` }, body: JSON.stringify(payload) });
         if (!res.ok) { const errData = await res.json().catch(() => ({})); throw new Error(errData.error?.message || `豆包生图失败 (HTTP ${res.status})`); }
@@ -757,34 +1225,40 @@
         const btn = document.getElementById('extractBtn');
         const err = document.getElementById('extractError');
         
-        if (visionEngine === 'gemini' && !cfg.geminiVisionApiKey) { err.style.display='block'; err.textContent = "请先填写视觉解析模型的 Gemini API Key"; return; }
+        if (visionEngine === 'gemini' && !cfg.geminiVisionApiKey) { err.style.display='block'; err.textContent = "请先填写视觉解析模型的 APINebula API Key"; return; }
         if (visionEngine === 'doubao') {
             if (!cfg.doubaoApiKey) { err.style.display='block'; err.textContent = "请填写火山引擎 API Key"; return; }
             if (!cfg.doubaoVisionModel) { err.style.display='block'; err.textContent = "请填写豆包视觉解析推理接入点 ID"; return; }
         }
 
         btn.disabled = true;
-        btn.innerHTML = `⏳ 正在运用 AI 拆解腰靠参考图 4X4 矩阵...`;
+        btn.innerHTML = `⏳ 正在运用 AI 拆解产品参考图 4X4 矩阵...`;
         err.style.display = 'none';
 
+        const catId = document.getElementById('productCategory').value;
+        const catConfig = categoryConfigs[catId];
+
         const systemPrompt = `You are a top-tier Ergonomics and Home Product Industrial Designer. 
-Analyze the "Lumbar Support Cushion (居家腰靠)" in the provided image.
+Analyze the "${catConfig.enName} (${catConfig.name})" in the provided image.
+CRITICAL MATERIAL CONSTRAINT: This product is strictly made of: ${catConfig.material}.
 Break down its design into 4 dimensions (each containing 4 specific sub-tiers) in Chinese.
 Return ONLY a valid JSON object with EXACTLY these 4 keys: "dim1", "dim2", "dim3", "dim4".
 Rules for the JSON output:
 "dim1": 造型维度 (Describe: 整体外形弧度尺寸比例, 线条与曲面特征, 部件与分件形态, 细节特征)
 "dim2": 功能维度 (Describe visually evident functional parts: 核心支撑与减压, 舒适与适配调节, 辅助与附加功能, 维护与耐用功能)
-"dim3": 颜值维度 (Describe: 主色彩与配色, 主要材质观感, 表面工艺与纹理, 装饰元素与细节点缀)
+"dim3": 颜值维度 (Describe: 主色彩与配色, 主要材质观感, 表面工艺与纹理, 装饰元素与细节点缀. Must align with material: ${catConfig.material})
 "dim4": 价值感维度 (Infer from the design: 品牌认知与健康信任, 品质质感与耐用承诺, 创新与技术领先感, 情感与生态附加值)
 Example: {"dim1": "...", "dim2": "...", "dim3": "...", "dim4": "..."}`;
 
         try {
             let jsonText = "";
+            const userTextPrompt = `Analyze this ${catConfig.enName} image based on the 4X4 matrix.`;
+
             if (visionEngine === 'gemini') {
-                jsonText = await callGeminiVision(cfg.geminiVisionApiKey, systemPrompt, "Analyze this lumbar support image based on the 4X4 matrix.", uploadedImageMimeType, uploadedImageBase64, true);
+                jsonText = await callGeminiVision(cfg.geminiVisionApiKey, systemPrompt, userTextPrompt, uploadedImageMimeType, uploadedImageBase64, true);
             } else {
                 const dataUrl = `data:${uploadedImageMimeType};base64,${uploadedImageBase64}`;
-                jsonText = await callDoubaoVision(cfg.doubaoApiKey, cfg.doubaoVisionModel, systemPrompt, "Analyze this lumbar support image based on the 4X4 matrix.", dataUrl);
+                jsonText = await callDoubaoVision(cfg.doubaoApiKey, cfg.doubaoVisionModel, systemPrompt, userTextPrompt, dataUrl);
             }
             
             const cleanJson = jsonText.replace(/```json/g, '').replace(/```/g, '').trim();
@@ -798,7 +1272,7 @@ Example: {"dim1": "...", "dim2": "...", "dim3": "...", "dim4": "..."}`;
             safeSave(STORAGE_DIM3, result.dim3 || "");
             safeSave(STORAGE_DIM4, result.dim4 || "");
             
-            btn.innerHTML = `✅ 腰靠参数提取成功！请微调后渲染`;
+            btn.innerHTML = `✅ ${catConfig.name}参数提取成功！请微调后渲染`;
             setTimeout(() => { btn.innerHTML = `✨ 重新提取参考图特征`; btn.disabled = false; }, 3000);
         } catch (error) {
             err.style.display = 'block';
@@ -818,6 +1292,7 @@ Example: {"dim1": "...", "dim2": "...", "dim3": "...", "dim4": "..."}`;
         const d4 = document.getElementById('dim4').value.trim();
         const levelVal = document.getElementById('designLevel').value;
         const levelDescText = levelDescriptions[levelVal];
+        const aspectRatio = document.getElementById('imageAspectRatio').value;
         const btn = document.getElementById('generateBtn');
         const errorMsg = document.getElementById('errorMsg');
         const promptOutput = document.getElementById('promptOutput');
@@ -825,11 +1300,11 @@ Example: {"dim1": "...", "dim2": "...", "dim3": "...", "dim4": "..."}`;
         const loadingStatus = document.getElementById('loadingStatus');
         const loadingText = document.getElementById('loadingText');
 
-        if (visionEngine === 'gemini' && !cfg.geminiVisionApiKey) { errorMsg.style.display='block'; errorMsg.textContent = "请填写视觉解析模型的 Gemini API Key"; return; }
+        if (visionEngine === 'gemini' && !cfg.geminiVisionApiKey) { errorMsg.style.display='block'; errorMsg.textContent = "请填写视觉解析模型的 APINebula API Key"; return; }
         if (visionEngine === 'doubao' && (!cfg.doubaoApiKey || !cfg.doubaoVisionModel)) { errorMsg.style.display='block'; errorMsg.textContent = "请填写火山引擎 API Key 及视觉模型接入点"; return; }
-        if (imageEngine === 'gemini' && !cfg.geminiImageApiKey) { errorMsg.style.display='block'; errorMsg.textContent = "请填写渲染生图模型的 Gemini API Key"; return; }
+        if (imageEngine === 'gemini' && !cfg.geminiImageApiKey) { errorMsg.style.display='block'; errorMsg.textContent = "请填写渲染生图模型的 APINebula API Key"; return; }
         if (imageEngine === 'doubao' && (!cfg.doubaoApiKey || !cfg.doubaoImageModel)) { errorMsg.style.display='block'; errorMsg.textContent = "请填写火山引擎 API Key 及生图模型接入点"; return; }
-        if (!d1 && !d2 && !d3 && !d4) { errorMsg.style.display='block'; errorMsg.textContent = "请至少填写腰靠的部分参数！"; return; }
+        if (!d1 && !d2 && !d3 && !d4) { errorMsg.style.display='block'; errorMsg.textContent = "请至少填写设计产品矩阵的部分参数！"; return; }
 
         errorMsg.style.display = 'none';
         btn.disabled = true;
@@ -837,9 +1312,14 @@ Example: {"dim1": "...", "dim2": "...", "dim3": "...", "dim4": "..."}`;
         document.getElementById('placeholderText').style.display = 'none';
         loadingStatus.style.display = 'flex';
         
+        const catId = document.getElementById('productCategory').value;
+        const catConfig = categoryConfigs[catId];
+
         try {
-            const generatePromptSys = `You are a world-class AI Prompt Engineer specializing in Home Furnishings and Ergonomic Products.
-The subject to be generated is a "Home Lumbar Support Cushion" (居家腰靠).
+            const generatePromptSys = `You are a world-class AI Prompt Engineer specializing in Ergonomic Products.
+The subject to be generated is a "${catConfig.enName}" (${catConfig.name}).
+CRITICAL MATERIAL CONSTRAINT: This product is strictly a ${catConfig.material}.
+Ensure the prompt reflects the correct material properties (e.g., memory foam, soft fabric, breathable mesh, foam structure, plush).
 ${uploadedImageBase64 ? "I am providing a Reference Image AND user modifications based on a 4-dimensional matrix." : "I am providing 4-dimensional design parameters (Form, Function, Aesthetics, Value)."}
 CRITICAL INNOVATION STRATEGY (Level ${levelVal}): 
 ${levelDescText}
@@ -848,15 +1328,15 @@ If Level 1: stick strictly to the reference style with minor shape tweaks to avo
 If Level 2: similar market vibe, but clearly differentiated geometry.
 If Level 3: noticeable upgrades in shape and tech details surpassing competitors.
 If Level 4: next-generation product, significantly more premium and advanced.
-If Level 5: radical paradigm-shifting form or function, completely reinventing the lumbar cushion category.
+If Level 5: radical paradigm-shifting form or function, completely reinventing the product category.
 Your task: Translate the Chinese 4X4 matrix parameters (scaled by the Innovation Strategy above) into ONE highly detailed, professional English text-to-image prompt.
-Ensure the core subject is CLEARLY identified as a "high-end ergonomic lumbar support cushion placed in a cozy, modern home environment (like on a sofa or modern chair)".
-Focus strictly on: Form & Shape, Visual Function, Aesthetics (CMF), Lighting and rendering style (e.g., soft natural lighting, warm home environment, photorealistic, 8k, Octane render, interior photography).
+Ensure the core subject is CLEARLY identified as a "high-end ergonomic ${catConfig.enName}", and it MUST BE ${catConfig.scene}.
+Focus strictly on: Form & Shape, Visual Function, Aesthetics (CMF), Lighting and rendering style (e.g., soft natural lighting, photorealistic, 8k, Octane render, appropriate environmental context).
 OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
 
             const userText = `[Innovation Strategy]: Level ${levelVal}\n[Form Dimension]: ${d1 || 'Ergonomic shape'}\n[Function Dimension]: ${d2 || 'Memory foam support'}\n[Aesthetics Dimension]: ${d3 || 'Cozy fabric, neutral colors'}\n[Value Dimension]: ${d4 || 'High-end quality'}`;
 
-            loadingText.textContent = `[1/2] 正在运用 AI 融合等级 ${levelVal} 策略构建提示词...`;
+            loadingText.textContent = `[1/2] 正在运用 AI 构建 ${catConfig.name} 提示词...`;
             let finalPrompt = "";
             if (visionEngine === 'gemini') {
                 finalPrompt = await callGeminiVision(cfg.geminiVisionApiKey, generatePromptSys, userText, uploadedImageMimeType, uploadedImageBase64, false);
@@ -874,21 +1354,50 @@ OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
 
             let enhancedPrompt = finalPrompt;
             if (uploadedImageBase64) {
-                const sim = document.getElementById('refSimilarity').value;
-                const simInstructions = {
-                    high: " STRICTLY preserve the reference image's overall silhouette, proportions, structural layout and color palette. Apply only subtle material and detail upgrades. Do not change the fundamental shape.",
-                    medium: " Use the reference image as the primary design basis for overall shape and proportions. Allow moderate innovation in materials, textures and minor decorative details while keeping the core form recognizable.",
-                    low: " Treat the reference image only as loose inspiration. Significantly reimagine the form, structure and aesthetics while keeping it clearly identifiable as a lumbar support cushion. Encourage bold innovation."
-                };
-                enhancedPrompt = finalPrompt + (simInstructions[sim] || "");
+                // 读取三维精细控制的数值
+                const wShape = parseInt(document.getElementById('weightShape').value, 10);
+                const wPattern = parseInt(document.getElementById('weightPattern').value, 10);
+                const wColor = parseInt(document.getElementById('weightColor').value, 10);
+
+                // 造型轮廓贴合度约束
+                let shapeConstraint = "";
+                if (wShape >= 70) {
+                    shapeConstraint = `[Shape & Contour: ${wShape}%] Strictly preserve the exact silhouette, 3D geometry, and ergonomic contours of the reference image.`;
+                } else if (wShape >= 30) {
+                    shapeConstraint = `[Shape & Contour: ${wShape}%] Maintain the recognizable overall shape from the reference, allowing moderate ergonomic curve refinements.`;
+                } else {
+                    shapeConstraint = `[Shape & Contour: ${wShape}%] Radically re-imagine the shape and silhouette with minimal constraint from the reference.`;
+                }
+
+                // 制版贴合度约束
+                let patternConstraint = "";
+                if (wPattern >= 70) {
+                    patternConstraint = `[Pattern & Structure: ${wPattern}%] Strictly retain the paneling, structural lines, stitching seams, and module layout of the reference.`;
+                } else if (wPattern >= 30) {
+                    patternConstraint = `[Pattern & Structure: ${wPattern}%] Keep the core structural logic and paneling style, but modernize the seams and part divisions.`;
+                } else {
+                    patternConstraint = `[Pattern & Structure: ${wPattern}%] Innovate entirely new paneling, structure, and assembly logic, discarding the reference's pattern.`;
+                }
+
+                // 配色贴合度约束
+                let colorConstraint = "";
+                if (wColor >= 70) {
+                    colorConstraint = `[Color Palette: ${wColor}%] Strictly replicate the color scheme, tonal balance, and material colorway of the reference image.`;
+                } else if (wColor >= 30) {
+                    colorConstraint = `[Color Palette: ${wColor}%] Keep the foundational color tone of the reference, but introduce upgraded or complementary CMF details.`;
+                } else {
+                    colorConstraint = `[Color Palette: ${wColor}%] Explore bold, entirely new color palettes and futuristic colorways independent of the reference.`;
+                }
+
+                enhancedPrompt = `${finalPrompt}\n\n[Fine-Grained Weighting Controls]:\n- ${shapeConstraint}\n- ${patternConstraint}\n- ${colorConstraint}`;
             }
 
             let imageSrc = "";
             if (imageEngine === 'gemini') {
-                imageSrc = await callGeminiImageGeneration(cfg.geminiImageApiKey, enhancedPrompt, uploadedImageMimeType, uploadedImageBase64);
+                imageSrc = await callGeminiImageGeneration(cfg.geminiImageApiKey, enhancedPrompt, uploadedImageMimeType, uploadedImageBase64, aspectRatio);
             } else {
                 const refDataUrl = uploadedImageBase64 ? `data:${uploadedImageMimeType};base64,${uploadedImageBase64}` : null;
-                imageSrc = await callDoubaoImage(cfg.doubaoApiKey, cfg.doubaoImageModel, enhancedPrompt, refDataUrl);
+                imageSrc = await callDoubaoImage(cfg.doubaoApiKey, cfg.doubaoImageModel, enhancedPrompt, refDataUrl, aspectRatio);
             }
             
             loadingStatus.style.display = 'none';
@@ -915,7 +1424,7 @@ OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
         snapshots.push({ src: img.src, prompt: document.getElementById('promptOutput').textContent, time: new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'}) });
         currentSnapshotIndex = snapshots.length - 1;
         renderSnapshots();
-        sync3DReferenceImage(img.src);
+        loadSnapshot(currentSnapshotIndex);
     }
 
     function deleteSnapshot(index, event) {
@@ -938,14 +1447,16 @@ OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
         const snap = snapshots[index];
         if (!snap) return;
         currentSnapshotIndex = index;
-        const img = document.getElementById('resultImage');
-        img.src = snap.src;
-        img.style.display = 'block';
-        document.getElementById('placeholderText').style.display = 'none';
-        document.getElementById('promptOutput').textContent = snap.prompt;
+        
+        const previewImg = document.getElementById('previewImage');
+        previewImg.src = snap.src;
+        previewImg.style.display = 'block';
+        document.getElementById('previewPlaceholder').style.display = 'none';
+        document.getElementById('previewPromptOutput').textContent = snap.prompt;
         document.getElementById('downloadBtn').disabled = false;
+        
         renderSnapshots();
-        sync3DReferenceImage(snap.src);
+        syncMattingImage(snap.src);
     }
 
     function renderSnapshots() {
@@ -960,11 +1471,128 @@ OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
     }
 
     function downloadCurrentImage() {
-        const img = document.getElementById('resultImage');
+        let img = document.getElementById('previewImage');
+        if (!img.src || img.style.display === 'none') {
+            img = document.getElementById('resultImage');
+        }
         if (!img.src || img.style.display === 'none') return;
+        
+        const catId = document.getElementById('productCategory').value;
+        const catName = categoryConfigs[catId].name.replace(/\//g,'_');
+
         const link = document.createElement('a');
         link.href = img.src;
-        link.download = `腰靠设计图_${new Date().toLocaleString('zh-CN', {year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(/[\/\s:]/g,'')}.png`;
+        link.download = `${catName}设计图_${new Date().toLocaleString('zh-CN', {year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(/[\/\s:]/g,'')}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // ====== 预处理：AI 抠图 (白底) 模块 ======
+    let currentMattingSrc = null;
+
+    function handleMattingManualUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) { syncMattingImage(e.target.result); };
+        reader.readAsDataURL(file);
+    }
+
+    function syncMattingImage(src) {
+        currentMattingSrc = src;
+        const mattingImg = document.getElementById('mattingImage');
+        mattingImg.src = src;
+        mattingImg.style.display = 'block';
+
+        document.getElementById('mattingWorkingArea').style.display = 'flex'; 
+        document.getElementById('mattingUploadBox').style.display = 'none';
+        document.getElementById('mattingBtn').style.display = 'block';
+        document.getElementById('downloadMattingBtn').style.display = 'none';
+    }
+
+    function clearMatting() {
+        currentMattingSrc = null;
+        const mattingImg = document.getElementById('mattingImage');
+        mattingImg.src = '';
+        mattingImg.style.display = 'none';
+
+        document.getElementById('mattingWorkingArea').style.display = 'none';
+        document.getElementById('mattingUploadBox').style.display = 'flex';
+        document.getElementById('mattingBtn').style.display = 'none';
+        document.getElementById('downloadMattingBtn').style.display = 'none';
+        document.getElementById('mattingPrompt').value = '';
+    }
+
+    async function startMatting() {
+        const btn = document.getElementById('mattingBtn');
+        const textInput = document.getElementById('mattingPrompt').value.trim();
+        btn.disabled = true;
+        btn.textContent = "⏳ 抠图中...";
+
+        const cfg = getConfig();
+        const imageEngine = document.getElementById('imageModelSelect').value;
+
+        if (imageEngine === 'gemini' && !cfg.geminiImageApiKey) { 
+            alert("请先填写渲染生图模型的 APINebula API Key"); 
+            btn.disabled = false;
+            btn.textContent = "✨ 一键抠图";
+            return; 
+        }
+        if (imageEngine === 'doubao' && (!cfg.doubaoApiKey || !cfg.doubaoImageModel)) { 
+            alert("请先填写火山引擎 API Key 及生图模型接入点"); 
+            btn.disabled = false;
+            btn.textContent = "✨ 一键抠图";
+            return; 
+        }
+
+        try {
+            const basePrompt = "Extract the main subject from the provided reference image, perfectly cut it out, and place it on a pure solid white background. Remove all original background elements.";
+            const finalMattingPrompt = textInput ? `${basePrompt} Additional user requirements: ${textInput}` : basePrompt;
+
+            let resultImageSrc = "";
+            let base64Data = null;
+            let mimeType = 'image/jpeg';
+            
+            if (currentMattingSrc && currentMattingSrc.startsWith('data:')) {
+                const parts = currentMattingSrc.split(',');
+                mimeType = parts[0].split(':')[1].split(';')[0];
+                base64Data = parts[1];
+            } else {
+                throw new Error("参考图格式不正确，无法读取图像数据");
+            }
+
+            if (imageEngine === 'gemini') {
+                resultImageSrc = await callGeminiImageGeneration(cfg.geminiImageApiKey, finalMattingPrompt, mimeType, base64Data, "1:1");
+            } else {
+                resultImageSrc = await callDoubaoImage(cfg.doubaoApiKey, cfg.doubaoImageModel, finalMattingPrompt, currentMattingSrc, "1:1");
+            }
+
+            document.getElementById('mattingImage').src = resultImageSrc;
+            currentMattingSrc = resultImageSrc;
+            
+            btn.textContent = "✅ 抠图完成";
+            document.getElementById('downloadMattingBtn').style.display = 'block';
+
+            sync3DReferenceImage(resultImageSrc);
+
+            setTimeout(() => {
+                btn.textContent = "✨ 重新抠图";
+                btn.disabled = false;
+            }, 2500);
+
+        } catch (err) {
+            alert(`抠图失败: ${err.message}`);
+            btn.textContent = "✨ 重新尝试";
+            btn.disabled = false;
+        }
+    }
+
+    function downloadMatting() {
+        if (!currentMattingSrc) return;
+        const link = document.createElement('a');
+        link.href = currentMattingSrc;
+        link.download = `白底抠图_${new Date().getTime()}.jpg`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -1026,7 +1654,7 @@ OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
     async function start3DGeneration() {
         const cfg = getConfig();
         if (!cfg.doubaoApiKey) { alert('请先在配置区域填写火山引擎 API Key'); return; }
-        if (!model3dCurrentRef) { alert('请先选择一张快照或手动导入参考图'); return; }
+        if (!model3dCurrentRef) { alert('请先进行抠图流转或手动导入 3D 参考图'); return; }
         const modelId = get3DModelId();
         const btn = document.getElementById('model3dGenBtn');
         btn.disabled = true;
@@ -1038,12 +1666,6 @@ OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
         const faceMap = { 'low': '10万', 'medium': '50万', 'high': '100万' };
 
         try {
-            document.getElementById('modelViewerContainer').innerHTML = `
-                <div style="display:flex; flex-direction:column; align-items:center; color:var(--primary);">
-                    <div class="spinner" style="width:36px; height:36px; border-width:2px; margin-bottom:12px;"></div>
-                    <span>云端正在生成 3D 模型中...</span>
-                </div>
-            `;
             const taskId = await create3DTask(cfg.doubaoApiKey, modelId, fileFormat, subdivLevel, textPrompt, model3dCurrentRef);
             model3dTaskId = taskId;
             update3DStatus('queued');
@@ -1060,7 +1682,6 @@ OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
         } catch (err) {
             update3DStatus('failed');
             render3DResult(`<div style="color:#E06C75;">❌ 任务创建失败：${err.message}</div>`);
-            document.getElementById('modelViewerContainer').innerHTML = '生成失败，请重试';
             btn.disabled = false;
             btn.innerHTML = '生成 3D 模型';
         }
@@ -1102,7 +1723,6 @@ OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
                     clearInterval(model3dPollTimer);
                     update3DStatus('failed', '已取消');
                     render3DResult(`<div style="color:#E06C75;">任务已取消</div>`);
-                    document.getElementById('modelViewerContainer').innerHTML = '任务已取消';
                     reset3DGenBtn();
                 }
             } catch (err) { console.error('轮询3D任务出错:', err); }
@@ -1127,30 +1747,6 @@ OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
             <div style="margin-top:24px;"><a href="${fileUrl}" target="_blank" rel="noopener" download style="display:block; background:var(--primary); color:white; text-align:center; padding:10px; border-radius:10px; text-decoration:none; font-weight:600;">⬇️ 下载模型文件</a></div>
             <div style="margin-top:10px;font-size:0.75rem;color:var(--text-muted);text-align:center;">文件 24 小时内有效，请及时下载</div>
         `);
-    
-        const format = document.getElementById('model3dFormat').value;
-        if (fileUrl && (format === 'glb')) {
-            document.getElementById('modelViewerContainer').innerHTML = `
-                <model-viewer id="myModelViewer" src="${fileUrl}" auto-rotate camera-controls shadow-intensity="1" exposure="1" style="width: 100%; height: 100%; display: block; background-color: transparent; outline: none; min-height: 250px;">
-                    <div slot="poster" style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--primary); font-weight:500;">正在加载云端模型文件...</div>
-                </model-viewer>
-            `;
-            setTimeout(() => {
-                const viewer = document.getElementById('myModelViewer');
-                if (viewer) {
-                    viewer.addEventListener('error', () => {
-                        document.getElementById('modelViewerContainer').innerHTML = `
-                            <div style="color:#E06C75; text-align:center; padding:20px; line-height:1.6; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%;">
-                                <span style="font-weight:600; font-size:1rem; margin-bottom:10px;">⚠️ 网页端自动预览失败</span>
-                                <span style="font-size:0.8rem; color:var(--text-muted);">由于 API 跨域保护 (CORS) 限制，无法直接在网页中呈现。<br>👉 <b>请点击右侧按钮下载保存至本地</b> 进行查看。</span>
-                            </div>
-                        `;
-                    });
-                }
-            }, 100);
-        } else {
-            document.getElementById('modelViewerContainer').innerHTML = `<div style="color:var(--text-muted);">当前格式不支持直接在网页预览。<br>请点击右侧按钮下载后查看。</div>`;
-        }
         reset3DGenBtn();
     }
 
@@ -1164,7 +1760,6 @@ OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
             <div class="model3d-info-row"><span class="model3d-info-label">错误信息</span><span class="model3d-info-value" style="color:#E06C75;">${errMsg}</span></div>
             <div style="margin-top:10px;font-size:0.78rem;">请检查参考图是否清晰、API Key 是否开通权限后重试。</div>
         `);
-        document.getElementById('modelViewerContainer').innerHTML = '生成失败';
         reset3DGenBtn();
     }
 
