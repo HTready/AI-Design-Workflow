@@ -31,10 +31,11 @@
             color: var(--text-main);
             margin: 0;
             padding: 24px;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             gap: 24px;
         }
 
@@ -48,24 +49,38 @@
             display: flex; 
             flex-direction: column; 
         }
+
+        /* 顶部主工作区：设计舱大模块正好占满首屏 */
+        .design-cabin-workspace {
+            display: flex;
+            flex-direction: row;
+            gap: 24px;
+            align-items: stretch;
+            width: 100%;
+            height: calc(100vh - 48px);
+            flex-shrink: 0;
+        }
         
+        /* 左侧工作台：与右侧底端对齐，内部独立滚动 */
         .left-panel { 
-            width: 520px; 
+            width: 500px; 
             flex-shrink: 0; 
             height: 100%; 
             display: flex; 
             flex-direction: column; 
+            overflow: hidden;
         }
         .left-scroll-area { 
-            padding: 36px; 
+            padding: 32px 36px; 
+            flex: 1;
+            height: 100%;
             overflow-y: auto; 
-            height: 100%; 
         }
 
         .right-layout {
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 20px;
             flex: 1;
             min-width: 0;
             height: 100%;
@@ -73,7 +88,7 @@
 
         .right-panel { 
             flex: 1; 
-            padding: 24px; 
+            padding: 20px; 
             position: relative; 
             background: var(--bg-card); 
             display: flex; 
@@ -94,19 +109,21 @@
             flex-direction: row; 
             gap: 16px; 
             min-width: 0; 
+            min-height: 0;
         }
         .render-col, .preview-col { 
             flex: 1; 
             display: flex; 
             flex-direction: column; 
-            gap: 16px; 
+            gap: 12px; 
             min-width: 0; 
+            min-height: 0;
         }
         
         .canvas-area { 
             flex: 1; 
             background: var(--bg-input); 
-            border-radius: 24px; 
+            border-radius: 20px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
@@ -116,65 +133,216 @@
         }
         .canvas-area img { width: 100%; height: 100%; object-fit: contain; display: none; }
         
-        .prompt-board { background: #FFFFFF; border-radius: var(--radius-md); padding: 20px; border: 1px solid var(--border); min-height: 100px; max-height: 160px; overflow-y: auto; flex-shrink: 0;}
-        .prompt-board h3 { margin: 0 0 10px 0; font-size: 0.9rem; color: #2C2A29; display: flex; align-items: center; gap: 6px;}
-        .prompt-text { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; word-break: break-word; }
+        .prompt-board { background: #FFFFFF; border-radius: var(--radius-md); padding: 12px 16px; border: 1px solid var(--border); min-height: 64px; max-height: 96px; overflow-y: auto; flex-shrink: 0;}
+        .prompt-board h3 { margin: 0 0 6px 0; font-size: 0.85rem; color: #2C2A29; display: flex; align-items: center; gap: 6px;}
+        .prompt-text { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; word-break: break-word; }
         
         .model3d-panel { 
             height: auto; 
-            min-height: 240px; 
             flex-shrink: 0; 
-            padding: 20px 28px; 
+            padding: 16px 24px; 
             display: flex;
             flex-direction: column;
         }
-        .model3d-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+        .model3d-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .model3d-header-right { display: flex; align-items: center; gap: 12px; }
-        .model3d-header h2 { font-size: 1.1rem; font-weight: 600; margin: 0; color: #2C2A29; display: flex; align-items: center; gap: 8px; }
-        .model3d-body { display: flex; gap: 20px; flex: 1; min-height: 0; }
+        .model3d-header h2 { font-size: 1.05rem; font-weight: 600; margin: 0; color: #2C2A29; display: flex; align-items: center; gap: 8px; }
+        .model3d-body { display: flex; gap: 18px; flex: 1; min-height: 0; }
         
-        .model3d-ref { width: 160px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
-        .model3d-ref-label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-        .model3d-ref-img { flex: 1; background: var(--bg-input); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; min-height: 120px; }
+        .model3d-ref { width: 150px; flex-shrink: 0; display: flex; flex-direction: column; gap: 6px; }
+        .model3d-ref-label { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .model3d-ref-img { flex: 1; background: var(--bg-input); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; min-height: 100px; }
         .model3d-ref-img img { width: 100%; height: 100%; object-fit: contain; display: none; }
         .model3d-ref-tag { position: absolute; top: 6px; left: 6px; background: rgba(212, 154, 137, 0.9); color: white; font-size: 0.65rem; padding: 2px 8px; border-radius: 10px; font-weight: 500; display: none; }
         
-        .model3d-upload-box { background: var(--bg-input); border: 1px dashed #CFCACA; border-radius: var(--radius-sm); padding: 24px 10px; text-align: center; cursor: pointer; transition: all 0.2s; font-size: 0.8rem; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; min-height: 120px; justify-content: center; }
+        .model3d-upload-box { background: var(--bg-input); border: 1px dashed #CFCACA; border-radius: var(--radius-sm); padding: 16px 8px; text-align: center; cursor: pointer; transition: all 0.2s; font-size: 0.78rem; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; min-height: 100px; justify-content: center; }
         .model3d-upload-box:hover { background: #FFFFFF; border-color: var(--primary); color: var(--primary); }
         .model3d-ref-del { position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; background: rgba(224,108,117,0.9); color: white; border: none; border-radius: 50%; font-size: 14px; cursor: pointer; display: none; align-items: center; justify-content: center; line-height: 1; z-index: 10; }
         .model3d-ref-img:hover .model3d-ref-del { display: flex; }
         
-        .model3d-params { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; }
-        .model3d-param-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 4px; }
-        .model3d-param-row { display: flex; flex-direction: column; gap: 4px; }
-        .model3d-param-row label { font-size: 0.78rem; font-weight: 500; margin: 0; }
-        .model3d-param-row select { padding: 8px 12px; font-size: 0.85rem; }
+        .model3d-params { width: 210px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
+        .model3d-param-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px; }
+        .model3d-param-row { display: flex; flex-direction: column; gap: 3px; }
+        .model3d-param-row label { font-size: 0.75rem; font-weight: 500; margin: 0; }
+        .model3d-param-row select { padding: 6px 10px; font-size: 0.8rem; }
         
-        .model3d-result { flex: 1; min-width: 240px; background: var(--bg-input); border-radius: var(--radius-md); padding: 18px; display: flex; flex-direction: column; overflow: hidden; }
-        .model3d-result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .model3d-result-title { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
-        .model3d-status { font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; font-weight: 500; }
+        .model3d-result { flex: 1; min-width: 220px; background: var(--bg-input); border-radius: var(--radius-md); padding: 14px; display: flex; flex-direction: column; overflow: hidden; }
+        .model3d-result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .model3d-result-title { font-size: 0.82rem; font-weight: 600; color: var(--text-main); }
+        .model3d-status { font-size: 0.72rem; padding: 2px 8px; border-radius: 12px; font-weight: 500; }
         .model3d-status.idle { background: rgba(143,139,136,0.15); color: var(--text-muted); }
         .model3d-status.queued { background: rgba(212,154,137,0.15); color: var(--primary); }
         .model3d-status.running { background: rgba(212,154,137,0.15); color: var(--primary); }
         .model3d-status.succeeded { background: rgba(163,177,155,0.2); color: #6B7A63; }
         .model3d-status.failed { background: rgba(224,108,117,0.15); color: #E06C75; }
-        .model3d-result-content { flex: 1; overflow-y: auto; font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; }
+        .model3d-result-content { flex: 1; overflow-y: auto; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
         .model3d-result-content a { color: var(--primary); text-decoration: underline; text-underline-offset: 2px; word-break: break-all; }
+
+        /* ====== 最底端：自由图文生图模块 (高度锁定为960px，自适应缩放显示) ====== */
+        .bottom-gen-panel {
+            width: 100%;
+            padding: 28px 36px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            height: 960px;
+            min-height: 960px;
+            max-height: 960px;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .bottom-gen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .bottom-gen-header h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0;
+            color: #2C2A29;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .bottom-gen-body {
+            display: flex;
+            gap: 28px;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+        .bottom-gen-left {
+            width: 440px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            height: 100%;
+            min-height: 0;
+        }
+        .bottom-gen-right {
+            flex: 1;
+            min-width: 0;
+            min-height: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .bottom-upload-box {
+            background: var(--bg-input);
+            border: 1px dashed #CFCACA;
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            min-height: 110px;
+        }
+        .bottom-upload-box:hover {
+            background: #FFFFFF;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .bottom-upload-box input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .bottom-ref-preview {
+            position: relative;
+            width: 100%;
+            height: 120px;
+            background: var(--bg-input);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .bottom-ref-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .bottom-ref-del {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 24px;
+            height: 24px;
+            background: rgba(224,108,117,0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            z-index: 10;
+        }
+        .bottom-canvas-area {
+            flex: 1;
+            background: var(--bg-input);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            min-height: 0;
+        }
+        .bottom-canvas-area img {
+            max-width: 100%;
+            max-height: 100%;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: none;
+        }
+        .bottom-tools-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #FFFFFF;
+            padding: 12px 18px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            gap: 12px;
+            flex-shrink: 0;
+        }
         
         @media (max-width: 1024px) {
-            body { flex-direction: column; height: auto; overflow: auto; }
-            .right-layout { height: auto; display: flex; flex-direction: column; }
-            .left-panel { width: 100%; height: auto; }
-            .right-panel { min-height: 600px; }
+            .design-cabin-workspace { flex-direction: column; height: auto; }
+            .left-panel { width: 100%; height: 750px; }
+            .right-layout { height: auto; }
+            .right-panel { min-height: 560px; }
             .model3d-panel { height: auto; min-height: auto; }
             .model3d-body { flex-direction: column; height: auto; }
             .model3d-ref, .model3d-params { width: 100%; }
             .model3d-ref-img { min-height: 160px; }
             .model3d-result { width: 100%; min-width: 0; }
+            .bottom-gen-panel { height: auto; min-height: auto; max-height: none; }
+            .bottom-gen-body { flex-direction: column; height: auto; overflow: visible; }
+            .bottom-gen-left { width: 100%; height: auto; }
+            .bottom-gen-right { height: auto; }
+            .bottom-canvas-area { min-height: 500px; }
         }
 
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #D1CDCA; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
@@ -259,7 +427,6 @@
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
         }
 
-        /* 参考图控制滑块群组样式 */
         .weight-slider-group {
             background: #FFFFFF;
             border: 1px solid var(--border);
@@ -324,389 +491,461 @@
         body.dark .model3d-result { background: rgba(45,43,41,0.6); }
         body.dark .model3d-upload-box { border-color: #4A4744; }
         body.dark .model3d-upload-box:hover { background: #2A2826; }
+        body.dark .bottom-gen-header h2 { color: var(--text-main); }
+        body.dark .bottom-upload-box { border-color: #4A4744; }
+        body.dark .bottom-upload-box:hover { background: #2A2826; }
+        body.dark .bottom-tools-bar { background: rgba(45, 43, 41, 0.9); border-color: rgba(255, 255, 255, 0.06); }
     </style>
 </head>
 <body>
 
-    <!-- 左侧工作台 -->
-    <aside class="panel left-panel">
-        <div class="left-scroll-area">
-            <div class="app-header">
-                <h1>产品设计舱·4X4矩阵</h1>
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="切换亮暗模式">
-                        <span class="theme-icon-light">☀️</span>
-                        <span class="theme-icon-dark">🌙</span>
-                    </button>
-                    <button class="ghost" onclick="fillPreset()">填入行业示例</button>
-                </div>
-            </div>
-            
-            <div class="section-tag first" style="cursor: pointer; display: inline-flex; align-items: center; gap: 4px; user-select: none;" onclick="toggleEngineConfig()" title="点击折叠/展开配置">
-                01 AI 引擎配置 <span class="model-badge">✨ APINebula 中转集成</span>
-                <svg id="engineConfigIcon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="transition: transform 0.3s; margin-left: 4px; transform: rotate(0deg);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-            </div>
-            
-            <div id="engineConfigContent">
-                <div class="form-row">
-                    <div style="flex:1;">
-                        <label>视觉/解析模型引擎</label>
-                        <select id="visionModelSelect" onchange="updateEngineConfigUI()">
-                            <option value="gemini" selected>APINebula (Gemini)</option>
-                            <option value="doubao">豆包 Vision 大模型</option>
-                        </select>
-                    </div>
-                    <div style="flex:1;">
-                        <label>渲染生图模型引擎</label>
-                        <select id="imageModelSelect" onchange="updateEngineConfigUI()">
-                            <option value="gemini" selected>APINebula (生图)</option>
-                            <option value="doubao">豆包 Seedream 生图</option>
-                        </select>
+    <div class="design-cabin-workspace">
+        <aside class="panel left-panel">
+            <div class="left-scroll-area">
+                <div class="app-header">
+                    <h1>产品设计舱·4X4矩阵</h1>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="切换亮暗模式">
+                            <span class="theme-icon-light">☀️</span>
+                            <span class="theme-icon-dark">🌙</span>
+                        </button>
+                        <button class="ghost" onclick="fillPreset()">填入行业示例</button>
                     </div>
                 </div>
                 
-                <div class="api-config-box">
-                    <div id="geminiCommonConfigArea" style="margin-bottom: 14px;">
-                        <label>APINebula 接口地址 (Base URL)</label>
-                        <input type="text" id="apiNebulaBaseUrl" placeholder="https://apinebula.com/v1" value="https://apinebula.com/v1" style="margin-bottom: 12px;">
-
-                        <div id="geminiVisionConfigArea" style="margin-bottom: 14px;">
-                            <label>视觉解析 · APINebula API Key</label>
-                            <div class="api-key-row" style="margin-bottom: 8px;">
-                                <input type="password" id="geminiVisionApiKey" placeholder="输入 sk- 开头的 APINebula 密钥">
-                                <button class="toggle-key-btn" onclick="toggleKeyVisibility('geminiVisionApiKey', this)">显示</button>
-                            </div>
-                            <label style="font-size:0.8rem;color:var(--text-muted);">视觉解析模型标识</label>
-                            <input type="text" id="geminiVisionModelName" placeholder="如 gemini-3.6-flash" value="gemini-3.6-flash">
+                <div class="section-tag first" style="cursor: pointer; display: inline-flex; align-items: center; gap: 4px; user-select: none;" onclick="toggleEngineConfig()" title="点击折叠/展开配置">
+                    01 AI 引擎配置 <span class="model-badge">✨ APINebula 中转集成</span>
+                    <svg id="engineConfigIcon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="transition: transform 0.3s; margin-left: 4px; transform: rotate(0deg);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+                
+                <div id="engineConfigContent">
+                    <div class="form-row">
+                        <div style="flex:1;">
+                            <label>视觉/解析模型引擎</label>
+                            <select id="visionModelSelect" onchange="updateEngineConfigUI()">
+                                <option value="gemini" selected>APINebula (Gemini)</option>
+                                <option value="doubao">豆包 Vision 大模型</option>
+                            </select>
                         </div>
-
-                        <div id="geminiImageConfigArea" style="margin-bottom: 14px;">
-                            <label>渲染生图 · APINebula API Key</label>
-                            <div class="api-key-row" style="margin-bottom: 8px;">
-                                <input type="password" id="geminiImageApiKey" placeholder="输入用于生图的 Key（留空则复用上方 Key）">
-                                <button class="toggle-key-btn" onclick="toggleKeyVisibility('geminiImageApiKey', this)">显示</button>
-                            </div>
-                            <label style="font-size:0.8rem;color:var(--text-muted);">生图模型标识</label>
-                            <input type="text" id="geminiImageModelName" placeholder="如 gemini-3.1-flash-image" value="gemini-3.1-flash-image">
+                        <div style="flex:1;">
+                            <label>渲染生图模型引擎</label>
+                            <select id="imageModelSelect" onchange="updateEngineConfigUI()">
+                                <option value="gemini" selected>APINebula (生图)</option>
+                                <option value="doubao">豆包 Seedream 生图</option>
+                            </select>
                         </div>
-
-                        <div class="free-hint">
-                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <a href="https://apinebula.ai/01QH2F" target="_blank" rel="noopener">前往 APINebula 控制台获取 API Key →</a>
-                        </div>
-                    </div>
-
-                    <div id="doubaoVisionConfigArea" style="display: none; margin-bottom: 14px;">
-                        <label>视觉解析 · 豆包推理接入点 ID (ep-xxx)</label>
-                        <input type="text" id="doubaoVisionModel" placeholder="填写豆包 Vision 推理接入点 ID">
                     </div>
                     
-                    <div id="doubaoImageConfigArea" style="display: none; margin-bottom: 14px;">
-                        <label>生图渲染 · 豆包推理接入点 ID (ep-xxx)</label>
-                        <input type="text" id="doubaoImageModel" placeholder="填写豆包生图推理接入点 ID">
-                    </div>
+                    <div class="api-config-box">
+                        <div id="geminiCommonConfigArea" style="margin-bottom: 14px;">
+                            <label>APINebula 接口地址 (Base URL)</label>
+                            <input type="text" id="apiNebulaBaseUrl" placeholder="https://apinebula.com/v1" value="https://apinebula.com/v1" style="margin-bottom: 12px;">
 
-                    <div style="margin-top: 16px; border-top: 1px dashed var(--border); padding-top: 14px;">
-                        <label>火山引擎 API Key（豆包通用 / 用于 3D 生成）</label>
-                        <div class="api-key-row" style="margin-bottom: 8px;">
-                            <input type="password" id="doubaoApiKey" placeholder="输入火山方舟 API Key">
-                            <button class="toggle-key-btn" onclick="toggleKeyVisibility('doubaoApiKey', this)">显示</button>
+                            <div id="geminiVisionConfigArea" style="margin-bottom: 14px;">
+                                <label>视觉解析 · APINebula API Key</label>
+                                <div class="api-key-row" style="margin-bottom: 8px;">
+                                    <input type="password" id="geminiVisionApiKey" placeholder="输入 sk- 开头的 APINebula 密钥">
+                                    <button class="toggle-key-btn" onclick="toggleKeyVisibility('geminiVisionApiKey', this)">显示</button>
+                                </div>
+                                <label style="font-size:0.8rem;color:var(--text-muted);">视觉解析模型标识</label>
+                                <input type="text" id="geminiVisionModelName" placeholder="如 gemini-3.6-flash" value="gemini-3.6-flash">
+                            </div>
+
+                            <div id="geminiImageConfigArea" style="margin-bottom: 14px;">
+                                <label>渲染生图 · APINebula API Key</label>
+                                <div class="api-key-row" style="margin-bottom: 8px;">
+                                    <input type="password" id="geminiImageApiKey" placeholder="输入用于生图的 Key（留空则复用上方 Key）">
+                                    <button class="toggle-key-btn" onclick="toggleKeyVisibility('geminiImageApiKey', this)">显示</button>
+                                </div>
+                                <label style="font-size:0.8rem;color:var(--text-muted);">生图模型标识</label>
+                                <input type="text" id="geminiImageModelName" placeholder="如 gemini-3.1-flash-image" value="gemini-3.1-flash-image">
+                            </div>
+
+                            <div class="free-hint">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <a href="https://apinebula.ai/01QH2F" target="_blank" rel="noopener">前往 APINebula 控制台获取 API Key →</a>
+                            </div>
                         </div>
-                        <label>3D 生成 · 推理接入点 ID / 模型 ID</label>
-                        <input type="text" id="doubao3DModel" placeholder="ep-xxxxxxxxxx 或 doubao-seed3d-2-0-260328" value="doubao-seed3d-2-0-260328">
-                        <div class="free-hint">
-                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <a href="https://console.volcengine.com/ark/region:ark+cn-beijing/apiKey" target="_blank" rel="noopener">获取火山引擎 API Key →</a>
+
+                        <div id="doubaoVisionConfigArea" style="display: none; margin-bottom: 14px;">
+                            <label>视觉解析 · 豆包推理接入点 ID (ep-xxx)</label>
+                            <input type="text" id="doubaoVisionModel" placeholder="填写豆包 Vision 推理接入点 ID">
+                        </div>
+                        
+                        <div id="doubaoImageConfigArea" style="display: none; margin-bottom: 14px;">
+                            <label>生图渲染 · 豆包推理接入点 ID (ep-xxx)</label>
+                            <input type="text" id="doubaoImageModel" placeholder="填写豆包生图推理接入点 ID">
+                        </div>
+
+                        <div style="margin-top: 16px; border-top: 1px dashed var(--border); padding-top: 14px;">
+                            <label>火山引擎 API Key（豆包通用 / 用于 3D 生成）</label>
+                            <div class="api-key-row" style="margin-bottom: 8px;">
+                                <input type="password" id="doubaoApiKey" placeholder="输入火山方舟 API Key">
+                                <button class="toggle-key-btn" onclick="toggleKeyVisibility('doubaoApiKey', this)">显示</button>
+                            </div>
+                            <label>3D 生成 · 推理接入点 ID / 模型 ID</label>
+                            <input type="text" id="doubao3DModel" placeholder="ep-xxxxxxxxxx 或 doubao-seed3d-2-0-260328" value="doubao-seed3d-2-0-260328">
+                            <div class="free-hint">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <a href="https://console.volcengine.com/ark/region:ark+cn-beijing/apiKey" target="_blank" rel="noopener">获取火山引擎 API Key →</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="section-tag">02 竞品/参考图导入 (多品类场景适配)</div>
-            
-            <div style="margin-bottom: 16px;">
-                <label>选择设计产品品类 (决定矩阵内容与生图场景逻辑)</label>
-                <select id="productCategory" onchange="changeCategory(); safeSave(STORAGE_CATEGORY, this.value);" style="background: #FFFFFF; font-weight: 600; color: var(--primary);">
-                    <option value="lumbar_support" selected>居家/车载腰靠 (记忆棉)</option>
-                    <option value="car_headrest">汽车头枕 (记忆棉)</option>
-                    <option value="u_pillow">U型枕 (记忆棉)</option>
-                    <option value="desk_nap_pillow">趴睡枕 (记忆棉)</option>
-                    <option value="bedside_cushion">床头靠垫 (记忆棉)</option>
-                    <option value="hemorrhoid_cushion">痔疮垫 (记忆棉)</option>
-                </select>
-            </div>
-
-            <div class="upload-area" id="uploadArea">
-                <input type="file" id="imageInput" accept="image/*" onchange="handleImageUpload(event)">
-                <div id="uploadText">
-                    <svg style="width:36px;height:36px;color:#AFAAA7;margin-bottom:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path></svg>
-                    <div style="font-weight: 500;">点击或拖拽上传参考图</div>
+                
+                <div class="section-tag">02 竞品/参考图导入 (多品类场景适配)</div>
+                
+                <div style="margin-bottom: 16px;">
+                    <label>选择设计产品品类 (决定矩阵内容与生图场景逻辑)</label>
+                    <select id="productCategory" onchange="changeCategory(); safeSave(STORAGE_CATEGORY, this.value);" style="background: #FFFFFF; font-weight: 600; color: var(--primary);">
+                        <option value="lumbar_support" selected>居家/车载腰靠 (记忆棉)</option>
+                        <option value="car_headrest">汽车头枕 (记忆棉)</option>
+                        <option value="u_pillow">U型枕 (记忆棉)</option>
+                        <option value="desk_nap_pillow">趴睡枕 (记忆棉)</option>
+                        <option value="bedside_cushion">床头靠垫 (记忆棉)</option>
+                        <option value="hemorrhoid_cushion">痔疮垫 (记忆棉)</option>
+                    </select>
                 </div>
-                <img id="refImagePreview" class="preview-img" alt="预览">
-                <button type="button" id="removeRefBtn" class="remove-ref-btn" onclick="removeReferenceImage()" style="display:none;" title="删除参考图">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+
+                <div class="upload-area" id="uploadArea">
+                    <input type="file" id="imageInput" accept="image/*" onchange="handleImageUpload(event)">
+                    <div id="uploadText">
+                        <svg style="width:36px;height:36px;color:#AFAAA7;margin-bottom:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path></svg>
+                        <div style="font-weight: 500;">点击或拖拽上传参考图</div>
+                    </div>
+                    <img id="refImagePreview" class="preview-img" alt="预览">
+                    <button type="button" id="removeRefBtn" class="remove-ref-btn" onclick="removeReferenceImage()" style="display:none;" title="删除参考图">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                <button id="extractBtn" style="width: 100%; margin-top: 12px; display: none; background: #68605B;" onclick="extractFeatures()">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    ✨ 智能识别参考图，提取 4X4 参数
                 </button>
-            </div>
-            <button id="extractBtn" style="width: 100%; margin-top: 12px; display: none; background: #68605B;" onclick="extractFeatures()">
-                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                ✨ 智能识别参考图，提取 4X4 参数
-            </button>
-            <div id="extractError" class="error"></div>
-            
-            <!-- 核心升级：三维精细控制滑块群组 -->
-            <div id="refineControl" class="weight-slider-group" style="display: none;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
-                    <label style="margin: 0; font-size: 0.85rem; font-weight: 600;">参考图贴合度控制 (Reference Adherence)</label>
-                    <span style="font-size: 0.72rem; color: var(--text-muted);">0% 放飞 · 100% 贴合</span>
-                </div>
-
-                <!-- 1. 造型轮廓 -->
-                <div class="weight-slider-item">
-                    <div class="weight-slider-header">
-                        <span>① 造型轮廓贴合度 (Shape & Contour)</span>
-                        <span id="weightShapeVal" class="val">50%</span>
+                <div id="extractError" class="error"></div>
+                
+                <div id="refineControl" class="weight-slider-group" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
+                        <label style="margin: 0; font-size: 0.85rem; font-weight: 600;">参考图贴合度控制 (Reference Adherence)</label>
+                        <span style="font-size: 0.72rem; color: var(--text-muted);">0% 强制覆盖 · 100% 严格复刻</span>
                     </div>
-                    <input type="range" id="weightShape" min="0" max="100" value="50">
-                    <span class="sub-label" style="margin-bottom:0; font-size:0.7rem;">控制整体外形、边界轮廓与几何起伏的保真度</span>
-                </div>
 
-                <!-- 2. 制版 -->
-                <div class="weight-slider-item">
-                    <div class="weight-slider-header">
-                        <span>② 制版贴合度 (Pattern & Structure)</span>
-                        <span id="weightPatternVal" class="val">50%</span>
+                    <div class="weight-slider-item">
+                        <div class="weight-slider-header">
+                            <span>① 造型轮廓贴合度 (Shape & Contour)</span>
+                            <span id="weightShapeVal" class="val">50%</span>
+                        </div>
+                        <input type="range" id="weightShape" min="0" max="100" value="50">
+                        <span class="sub-label" style="margin-bottom:0; font-size:0.7rem;">越低越依据「①造型维度」重构全新几何与轮廓，越高越贴合原图轮廓</span>
                     </div>
-                    <input type="range" id="weightPattern" min="0" max="100" value="50">
-                    <span class="sub-label" style="margin-bottom:0; font-size:0.7rem;">控制裁片分件、拼接走线与模块结构的保真度</span>
-                </div>
 
-                <!-- 3. 配色 -->
-                <div class="weight-slider-item">
-                    <div class="weight-slider-header">
-                        <span>③ 配色贴合度 (Color Palette)</span>
-                        <span id="weightColorVal" class="val">50%</span>
+                    <div class="weight-slider-item">
+                        <div class="weight-slider-header">
+                            <span>② 制版贴合度 (Pattern & Structure)</span>
+                            <span id="weightPatternVal" class="val">50%</span>
+                        </div>
+                        <input type="range" id="weightPattern" min="0" max="100" value="50">
+                        <span class="sub-label" style="margin-bottom:0; font-size:0.7rem;">越低越依据「②功能维度」重塑裁片与拼接结构，越高越贴合原图走线</span>
                     </div>
-                    <input type="range" id="weightColor" min="0" max="100" value="50">
-                    <span class="sub-label" style="margin-bottom:0; font-size:0.7rem;">控制主次色调、材质色彩与视觉氛围的保真度</span>
+
+                    <div class="weight-slider-item">
+                        <div class="weight-slider-header">
+                            <span>③ 配色贴合度 (Color & CMF)</span>
+                            <span id="weightColorVal" class="val">50%</span>
+                        </div>
+                        <input type="range" id="weightColor" min="0" max="100" value="50">
+                        <span class="sub-label" style="margin-bottom:0; font-size:0.7rem;">越低越依据「③颜值维度」强制覆盖色彩与材质，越高越贴合原图主色</span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="section-tag">03 产品设计 4X4 矩阵定义 (可迭代微调)</div>
-            
-            <div class="form-group">
-                <label for="dim1">① 造型维度 (Form)</label>
-                <span class="sub-label">包含：1. 整体外形弧度尺寸比例 | 2. 线条与曲面特征 | 3. 部件与分件形态 | 4. 细节特征</span>
-                <textarea id="dim1" placeholder="请描述造型..."></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="dim2">② 功能维度 (Function)</label>
-                <span class="sub-label">包含：1. 核心支撑与减压 | 2. 舒适与适配调节 | 3. 辅助与附加功能 | 4. 维护与耐用功能</span>
-                <textarea id="dim2" placeholder="请描述功能..."></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="dim3">③ 颜值维度 (Aesthetics)</label>
-                <span class="sub-label">包含：1. 主色彩与配色 | 2. 主要材质观感 | 3. 表面工艺与纹理 | 4. 装饰元素与细节点缀</span>
-                <textarea id="dim3" placeholder="请描述颜值..."></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="dim4">④ 价值感维度 (Value)</label>
-                <span class="sub-label">包含：1. 品牌认知与健康信任 | 2. 品质质感与耐用承诺 | 3. 创新与技术领先感 | 4. 情感与生态附加值</span>
-                <textarea id="dim4" placeholder="请描述价值..."></textarea>
-            </div>
+                <div class="section-tag">03 产品设计 4X4 矩阵定义 (可迭代微调)</div>
+                
+                <div class="form-group">
+                    <label for="dim1">① 造型维度 (Form)</label>
+                    <span class="sub-label">包含：1. 整体外形弧度尺寸比例 | 2. 线条与曲面特征 | 3. 部件与分件形态 | 4. 细节特征</span>
+                    <textarea id="dim1" placeholder="请描述造型..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dim2">② 功能维度 (Function)</label>
+                    <span class="sub-label">包含：1. 核心支撑与减压 | 2. 舒适与适配调节 | 3. 辅助与附加功能 | 4. 维护与耐用功能</span>
+                    <textarea id="dim2" placeholder="请描述功能..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dim3">③ 颜值维度 (Aesthetics)</label>
+                    <span class="sub-label">包含：1. 主色彩与配色 | 2. 主要材质观感 | 3. 表面工艺与纹理 | 4. 装饰元素与细节点缀</span>
+                    <textarea id="dim3" placeholder="请描述颜值..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dim4">④ 价值感维度 (Value)</label>
+                    <span class="sub-label">包含：1. 品牌认知与健康信任 | 2. 品质质感与耐用承诺 | 3. 创新与技术领先感 | 4. 情感与生态附加值</span>
+                    <textarea id="dim4" placeholder="请描述价值..."></textarea>
+                </div>
 
-            <div class="section-tag">04 产品设计等级</div>
-            <div class="level-box" style="margin-bottom: 16px;">
-                <label for="designLevel">决定 AI 产品的创新跨度</label>
-                <select id="designLevel" onchange="updateLevelDesc()" style="margin-bottom: 12px; font-weight: 500; background: #FFFFFF;">
-                    <option value="1">等级1：已有产品模仿</option>
-                    <option value="2">等级2：类似产品瓜分市场</option>
-                    <option value="3" selected>等级3：产品微升级</option>
-                    <option value="4">等级4：产品级升级</option>
-                    <option value="5">等级5：品类级创新</option>
-                </select>
-                <span class="sub-label" id="levelDesc" style="margin-bottom: 0; color: #D49A89; font-weight: 500;">
-                    标准：在造型、功能上存在一定升级超越竞品。
-                </span>
-            </div>
+                <div class="section-tag">04 产品设计等级</div>
+                <div class="level-box" style="margin-bottom: 16px;">
+                    <label for="designLevel">决定 AI 产品的创新跨度</label>
+                    <select id="designLevel" onchange="updateLevelDesc()" style="margin-bottom: 12px; font-weight: 500; background: #FFFFFF;">
+                        <option value="1">等级1：已有产品模仿</option>
+                        <option value="2">等级2：类似产品瓜分市场</option>
+                        <option value="3" selected>等级3：产品微升级</option>
+                        <option value="4">等级4：产品级升级</option>
+                        <option value="5">等级5：品类级创新</option>
+                    </select>
+                    <span class="sub-label" id="levelDesc" style="margin-bottom: 0; color: #D49A89; font-weight: 500;">
+                        标准：在造型、功能上存在一定升级超越竞品。
+                    </span>
+                </div>
 
-            <div class="form-group" style="margin-bottom: 24px;">
-                <label for="imageAspectRatio">生图尺寸比例 (Aspect Ratio)</label>
-                <select id="imageAspectRatio" style="background: #FFFFFF;">
-                    <option value="1:1" selected>1:1 (正方形 - 推荐用于独立产品展示)</option>
-                    <option value="3:4">3:4 (竖版 - 适合社交媒体/海报)</option>
-                    <option value="4:3">4:3 (横版 - 适合网页/电脑端查看)</option>
-                    <option value="16:9">16:9 (宽屏 - 适合横向场景/展示)</option>
-                    <option value="9:16">9:16 (全面屏 - 适合手机满屏)</option>
-                </select>
-            </div>
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label for="imageAspectRatio">生图尺寸比例 (Aspect Ratio)</label>
+                    <select id="imageAspectRatio" style="background: #FFFFFF;">
+                        <option value="1:1" selected>1:1 (正方形 - 推荐用于独立产品展示)</option>
+                        <option value="3:4">3:4 (竖版 - 适合社交媒体/海报)</option>
+                        <option value="4:3">4:3 (横版 - 适合网页/电脑端查看)</option>
+                        <option value="16:9">16:9 (宽屏 - 适合横向场景/展示)</option>
+                        <option value="9:16">9:16 (全面屏 - 适合手机满屏)</option>
+                    </select>
+                </div>
 
-            <button id="generateBtn" class="main-btn" onclick="startGeneration()">
-                🚀 渲染生成设计图
-            </button>
-            <div id="errorMsg" class="error"></div>
+                <button id="generateBtn" class="main-btn" onclick="startGeneration()">
+                    🚀 渲染生成设计图
+                </button>
+                <div id="errorMsg" class="error"></div>
+            </div>
+        </aside>
+
+        <div class="right-layout">
+            <main class="panel right-panel">
+                <div class="gallery-wrapper">
+                    <div class="main-display">
+                        <div class="render-col">
+                            <div class="canvas-area" id="imageContainer">
+                                <div id="loadingStatus" class="loading">
+                                    <div class="spinner"></div>
+                                    <div id="loadingText">正在处理...</div>
+                                </div>
+                                <div id="placeholderText" class="placeholder">
+                                    渲染结果将在此呈现
+                                </div>
+                                <img id="resultImage" alt="Generated Design">
+                            </div>
+                            <div class="prompt-board">
+                                <h3>
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M4 18h16a2 2 0 002-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                    当前生图提示词：
+                                </h3>
+                                <div id="promptOutput" class="prompt-text">等待解析...</div>
+                            </div>
+                        </div>
+
+                        <div class="preview-col">
+                            <div class="canvas-area" id="previewContainer">
+                                <div id="previewPlaceholder" class="placeholder">点击快照在此预览</div>
+                                <img id="previewImage" alt="Snapshot Preview">
+                            </div>
+                            <div class="prompt-board">
+                                <h3>
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                    快照提示词：
+                                </h3>
+                                <div id="previewPromptOutput" class="prompt-text">暂无快照数据...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="snapshot-panel">
+                        <div class="snapshot-header">
+                            <span>生图快照</span>
+                            <button class="snapshot-clear" onclick="clearSnapshots()" title="清空全部快照">清空</button>
+                        </div>
+                        <div class="snapshot-list" id="snapshotList">
+                            <div class="snapshot-empty" id="snapshotEmpty">暂无快照<br>生成后点击保存</div>
+                        </div>
+                        <div class="snapshot-actions">
+                            <button class="snap-btn primary" id="saveSnapBtn" onclick="saveSnapshot()" disabled>
+                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                                保存快照
+                            </button>
+                            <button class="snap-btn secondary" id="downloadBtn" onclick="downloadCurrentImage()" disabled>
+                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                下载当前预览图
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <section class="panel model3d-panel">
+                <div class="model3d-header">
+                    <h2>
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"></path></svg>
+                        3D 模型生成
+                        <span class="model-badge">Seed3D-2.0</span>
+                    </h2>
+                    <div class="model3d-header-right">
+                        <span class="model3d-status idle" id="model3dStatus">待机</span>
+                        <button class="model3d-gen-btn" id="model3dGenBtn" onclick="start3DGeneration()" disabled>
+                            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            生成 3D 模型
+                        </button>
+                    </div>
+                </div>
+                <div class="model3d-body">
+                    <div class="model3d-ref" style="width: 150px; display: flex; flex-direction: column;">
+                        <span class="model3d-ref-label">1. AI 抠图 (白底)</span>
+                        <label class="model3d-upload-box" id="mattingUploadBox" style="flex: 1;">
+                            <input type="file" accept="image/*" style="display:none;" onchange="handleMattingManualUpload(event)">
+                            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path></svg>
+                            <span>点击导入<br>或点选快照</span>
+                        </label>
+                        <div id="mattingWorkingArea" style="display:none; flex: 1; flex-direction: column;">
+                            <div class="model3d-ref-img" id="mattingImgContainer" style="background: transparent; flex: 1;">
+                                <img id="mattingImage" alt="待抠图">
+                                <button class="model3d-ref-del" onclick="clearMatting()" title="删除图片">×</button>
+                            </div>
+                            <textarea id="mattingPrompt" class="matting-textarea" placeholder="附加要求(选填)，如：纯白底色、保留阴影..."></textarea>
+                        </div>
+                        
+                        <button id="mattingBtn" class="snap-btn primary" style="display:none; margin-top: 6px; padding: 6px 10px;" onclick="startMatting()">✨ 一键抠图</button>
+                        <button id="downloadMattingBtn" class="snap-btn secondary" style="display:none; margin-top: 4px; padding: 6px 10px;" onclick="downloadMatting()">⬇️ 下载白底图</button>
+                    </div>
+
+                    <div class="model3d-ref" style="width: 150px;">
+                        <span class="model3d-ref-label">2. 3D 参考图</span>
+                        <label class="model3d-upload-box" id="model3dUploadBox">
+                            <input type="file" accept="image/*" style="display:none;" onchange="handle3DManualUpload(event)">
+                            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path></svg>
+                            <span>点击手动导入<br>或等待抠图推流</span>
+                        </label>
+                        <div class="model3d-ref-img" id="model3dRefImg" style="display:none;">
+                            <img id="model3dRefImage" alt="3D参考图">
+                            <span class="model3d-ref-tag" id="model3dRefTag">已导入</span>
+                            <button class="model3d-ref-del" onclick="clear3DReference()" title="删除参考图">×</button>
+                        </div>
+                    </div>
+                
+                    <div class="model3d-params" style="width: 210px;">
+                        <div class="model3d-param-list">
+                        <div class="model3d-param-row">
+                            <label>模型文件格式</label>
+                            <select id="model3dFormat">
+                                <option value="glb" selected>GLB</option>
+                                <option value="obj">OBJ</option>
+                                <option value="usd">USD</option>
+                                <option value="usdz">USDZ</option>
+                            </select>
+                        </div>
+                        <div class="model3d-param-row">
+                            <label>模型面数</label>
+                            <select id="model3dFace">
+                                <option value="low">10万（轻量）</option>
+                                <option value="medium" selected>50万（均衡）</option>
+                                <option value="high">100万（精细）</option>
+                            </select>
+                        </div>
+                        <div class="model3d-param-row">
+                            <label>文本提示词（可选）</label>
+                            <textarea id="model3dPrompt" placeholder="描述期望细节，留空则纯图生3D" style="min-height:50px;padding:6px 10px;font-size:0.8rem;"></textarea>
+                        </div>
+                        </div>
+                    </div>
+                
+                    <div class="model3d-result">
+                        <div class="model3d-result-header">
+                            <span class="model3d-result-title">任务信息</span>
+                        </div>
+                        <div class="model3d-result-content" id="model3dResultContent">
+                            <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);font-size:0.8rem;text-align:center;">
+                                导入参考图后点击「生成 3D 模型」，将依据参考图生成带 PBR 材质的模型。<br>模型生成后，点击右侧提供的专属链接进行下载。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
-    </aside>
+    </div>
 
-    <!-- 右侧大区 -->
-    <div class="right-layout">
-        <main class="panel right-panel">
-            <div class="gallery-wrapper">
-                <div class="main-display">
-                    <div class="render-col">
-                        <div class="canvas-area" id="imageContainer">
-                            <div id="loadingStatus" class="loading">
-                                <div class="spinner"></div>
-                                <div id="loadingText">正在处理...</div>
-                            </div>
-                            <div id="placeholderText" class="placeholder">
-                                渲染结果将在此呈现
-                            </div>
-                            <img id="resultImage" alt="Generated Design">
-                        </div>
-                        <div class="prompt-board">
-                            <h3>
-                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M4 18h16a2 2 0 002-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                                当前生图提示词：
-                            </h3>
-                            <div id="promptOutput" class="prompt-text">等待解析...</div>
-                        </div>
+    <section class="panel bottom-gen-panel">
+        <div class="bottom-gen-header">
+            <h2>
+                <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                快捷自由图文生图
+                <span class="model-badge" id="bottomGenEngineBadge">当前引擎: APINebula</span>
+            </h2>
+        </div>
+
+        <div class="bottom-gen-body">
+            <div class="bottom-gen-left">
+                <div>
+                    <label style="display:flex; justify-content:space-between; align-items:center;">
+                        <span>导入参考图 (可选，支持垫图/图生图)</span>
+                    </label>
+                    <div class="bottom-upload-box" id="bottomUploadBox">
+                        <input type="file" id="bottomImageInput" accept="image/*" onchange="handleBottomImageUpload(event)">
+                        <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path></svg>
+                        <span>点击或拖拽上传参考图片</span>
                     </div>
-
-                    <div class="preview-col">
-                        <div class="canvas-area" id="previewContainer">
-                            <div id="previewPlaceholder" class="placeholder">点击快照在此预览</div>
-                            <img id="previewImage" alt="Snapshot Preview">
-                        </div>
-                        <div class="prompt-board">
-                            <h3>
-                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                快照提示词：
-                            </h3>
-                            <div id="previewPromptOutput" class="prompt-text">暂无快照数据...</div>
-                        </div>
+                    <div class="bottom-ref-preview" id="bottomRefPreview">
+                        <img id="bottomRefImage" alt="参考图预览">
+                        <button type="button" class="bottom-ref-del" onclick="removeBottomRefImage()" title="删除参考图">×</button>
                     </div>
                 </div>
 
-                <div class="snapshot-panel">
-                    <div class="snapshot-header">
-                        <span>生图快照</span>
-                        <button class="snapshot-clear" onclick="clearSnapshots()" title="清空全部快照">清空</button>
-                    </div>
-                    <div class="snapshot-list" id="snapshotList">
-                        <div class="snapshot-empty" id="snapshotEmpty">暂无快照<br>生成后点击保存</div>
-                    </div>
-                    <div class="snapshot-actions">
-                        <button class="snap-btn primary" id="saveSnapBtn" onclick="saveSnapshot()" disabled>
-                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
-                            保存快照
-                        </button>
-                        <button class="snap-btn secondary" id="downloadBtn" onclick="downloadCurrentImage()" disabled>
-                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                            下载当前预览图
-                        </button>
-                    </div>
+                <div style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+                    <label for="bottomPromptInput">画面构想与文字描述 (Prompt)</label>
+                    <textarea id="bottomPromptInput" style="flex: 1; min-height: 140px;" placeholder="请详细描述期望生成的画面内容、主体材质、造型、色彩风格、视角构图及环境光影..."></textarea>
                 </div>
+
+                <div style="display: flex; gap: 12px; align-items: flex-end; flex-shrink: 0;">
+                    <div style="width: 140px;">
+                        <label for="bottomAspectRatio" style="font-size:0.8rem;">尺寸比例</label>
+                        <select id="bottomAspectRatio" style="padding: 10px 12px; font-size: 0.85rem; background: #FFFFFF;">
+                            <option value="1:1" selected>1:1 (方图)</option>
+                            <option value="3:4">3:4 (竖图)</option>
+                            <option value="4:3">4:3 (横图)</option>
+                            <option value="16:9">16:9 (宽屏)</option>
+                            <option value="9:16">9:16 (全面屏)</option>
+                        </select>
+                    </div>
+                    <button id="bottomGenBtn" class="main-btn" style="flex:1; margin-top:0; padding:12px 18px;" onclick="startBottomGeneration()">
+                        🚀 立即生成图片
+                    </button>
+                </div>
+
+                <div id="bottomErrorMsg" class="error" style="margin-top:4px;"></div>
             </div>
-        </main>
 
-        <section class="panel model3d-panel">
-            <div class="model3d-header">
-                <h2>
-                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"></path></svg>
-                    3D 模型生成
-                    <span class="model-badge">Seed3D-2.0</span>
-                </h2>
-                <div class="model3d-header-right">
-                    <span class="model3d-status idle" id="model3dStatus">待机</span>
-                    <button class="model3d-gen-btn" id="model3dGenBtn" onclick="start3DGeneration()" disabled>
-                        <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                        生成 3D 模型
+            <div class="bottom-gen-right">
+                <div class="bottom-canvas-area" id="bottomCanvasArea">
+                    <div id="bottomLoadingStatus" class="loading">
+                        <div class="spinner"></div>
+                        <div id="bottomLoadingText">正在调用所选生图大模型渲染中...</div>
+                    </div>
+                    <div id="bottomPlaceholder" class="placeholder">
+                        生成图像将在此呈现
+                    </div>
+                    <img id="bottomResultImage" alt="Generated Result">
+                </div>
+
+                <div class="bottom-tools-bar">
+                    <div style="font-size:0.82rem; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1;" id="bottomPromptInfo">
+                        等待发起生成任务...
+                    </div>
+                    <button id="bottomDownloadBtn" class="snap-btn secondary" style="display:none; white-space:nowrap; padding:8px 16px;" onclick="downloadBottomImage()">
+                        ⬇️ 下载生成图
                     </button>
                 </div>
             </div>
-            <div class="model3d-body">
-                
-                <div class="model3d-ref" style="width: 160px; display: flex; flex-direction: column;">
-                    <span class="model3d-ref-label">1. AI 抠图 (白底)</span>
-                    <label class="model3d-upload-box" id="mattingUploadBox" style="flex: 1;">
-                        <input type="file" accept="image/*" style="display:none;" onchange="handleMattingManualUpload(event)">
-                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path></svg>
-                        <span>点击导入<br>或点选快照</span>
-                    </label>
-                    <div id="mattingWorkingArea" style="display:none; flex: 1; flex-direction: column;">
-                        <div class="model3d-ref-img" id="mattingImgContainer" style="background: transparent; flex: 1;">
-                            <img id="mattingImage" alt="待抠图">
-                            <button class="model3d-ref-del" onclick="clearMatting()" title="删除图片">×</button>
-                        </div>
-                        <textarea id="mattingPrompt" class="matting-textarea" placeholder="附加要求(选填)，如：纯白底色、保留阴影..."></textarea>
-                    </div>
-                    
-                    <button id="mattingBtn" class="snap-btn primary" style="display:none; margin-top: 8px;" onclick="startMatting()">✨ 一键抠图</button>
-                    <button id="downloadMattingBtn" class="snap-btn secondary" style="display:none; margin-top: 6px;" onclick="downloadMatting()">⬇️ 下载白底图</button>
-                </div>
-
-                <div class="model3d-ref" style="width: 160px;">
-                    <span class="model3d-ref-label">2. 3D 参考图</span>
-                    <label class="model3d-upload-box" id="model3dUploadBox">
-                        <input type="file" accept="image/*" style="display:none;" onchange="handle3DManualUpload(event)">
-                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path></svg>
-                        <span>点击手动导入<br>或等待抠图推流</span>
-                    </label>
-                    <div class="model3d-ref-img" id="model3dRefImg" style="display:none;">
-                        <img id="model3dRefImage" alt="3D参考图">
-                        <span class="model3d-ref-tag" id="model3dRefTag">已导入</span>
-                        <button class="model3d-ref-del" onclick="clear3DReference()" title="删除参考图">×</button>
-                    </div>
-                </div>
-            
-                <div class="model3d-params" style="width: 220px;">
-                    <div class="model3d-param-list">
-                    <div class="model3d-param-row">
-                        <label>模型文件格式</label>
-                        <select id="model3dFormat">
-                            <option value="glb" selected>GLB</option>
-                            <option value="obj">OBJ</option>
-                            <option value="usd">USD</option>
-                            <option value="usdz">USDZ</option>
-                        </select>
-                    </div>
-                    <div class="model3d-param-row">
-                        <label>模型面数</label>
-                        <select id="model3dFace">
-                            <option value="low">10万（轻量）</option>
-                            <option value="medium" selected>50万（均衡）</option>
-                            <option value="high">100万（精细）</option>
-                        </select>
-                    </div>
-                    <div class="model3d-param-row">
-                        <label>文本提示词（可选）</label>
-                        <textarea id="model3dPrompt" placeholder="描述期望的3D模型细节，留空则纯图生3D" style="min-height:60px;padding:8px 12px;font-size:0.85rem;"></textarea>
-                    </div>
-                    </div>
-                </div>
-            
-                <div class="model3d-result">
-                    <div class="model3d-result-header">
-                        <span class="model3d-result-title">任务信息</span>
-                    </div>
-                    <div class="model3d-result-content" id="model3dResultContent">
-                        <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);font-size:0.85rem;text-align:center;">
-                            导入参考图后点击「生成 3D 模型」，将依据参考图生成带 PBR 材质的模型。<br>模型生成后，点击右侧提供的专属链接进行下载。
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
+        </div>
+    </section>
     
 <script>
     let uploadedImageBase64 = null;
     let uploadedImageMimeType = null;
 
-    // ========== localStorage 持久化配置 ==========
     const STORAGE_BASE_URL = 'apinebula_base_url';
     const STORAGE_VISION_KEY = 'gemini_vision_api_key';
     const STORAGE_IMAGE_KEY = 'gemini_image_api_key';
@@ -728,7 +967,6 @@
     const STORAGE_DIM4 = 'design_dim4';
     const STORAGE_DESIGN_LEVEL = 'design_level';
     
-    // 三维贴合度控制
     const STORAGE_WEIGHT_SHAPE = 'weight_shape_val';
     const STORAGE_WEIGHT_PATTERN = 'weight_pattern_val';
     const STORAGE_WEIGHT_COLOR = 'weight_color_val';
@@ -740,7 +978,6 @@
         try { localStorage.setItem(key, value); } catch (e) { console.warn('localStorage 保存失败'); }
     }
 
-    // ====== 品类与生图场景逻辑配置 ======
     const genericMemoryFoam = function(name, enName, scene) {
         return {
             name: name,
@@ -817,6 +1054,19 @@
         }
     }
 
+    function updateBottomGenBadge() {
+        const imageSelect = document.getElementById('imageModelSelect');
+        const badge = document.getElementById('bottomGenEngineBadge');
+        if (!badge || !imageSelect) return;
+        if (imageSelect.value === 'gemini') {
+            const mName = document.getElementById('geminiImageModelName').value.trim() || 'gemini-3.1-flash-image';
+            badge.textContent = `当前生图引擎: APINebula (${mName})`;
+        } else {
+            const mName = document.getElementById('doubaoImageModel').value.trim() || '豆包 Seedream';
+            badge.textContent = `当前生图引擎: 豆包 Seedream (${mName})`;
+        }
+    }
+
     function updateEngineConfigUI() {
         const vision = document.getElementById('visionModelSelect').value;
         const image = document.getElementById('imageModelSelect').value;
@@ -829,6 +1079,8 @@
         
         document.getElementById('geminiImageConfigArea').style.display = image === 'gemini' ? 'block' : 'none';
         document.getElementById('doubaoImageConfigArea').style.display = image === 'doubao' ? 'block' : 'none';
+
+        updateBottomGenBadge();
     }
 
     window.addEventListener('DOMContentLoaded', function() {
@@ -893,7 +1145,6 @@
         const level = localStorage.getItem(STORAGE_DESIGN_LEVEL);
         if (level) { document.getElementById('designLevel').value = level; updateLevelDesc(); }
         
-        // 绑定三维贴合度滑块
         const bindSliderInit = (sliderId, labelId, storageKey, defaultVal = "50") => {
             const val = localStorage.getItem(storageKey) || defaultVal;
             const slider = document.getElementById(sliderId);
@@ -930,16 +1181,18 @@
         document.getElementById('apiNebulaBaseUrl').addEventListener('input', function() { safeSave(STORAGE_BASE_URL, this.value.trim()); });
         document.getElementById('geminiVisionApiKey').addEventListener('input', function() { safeSave(STORAGE_VISION_KEY, this.value.trim()); });
         document.getElementById('geminiImageApiKey').addEventListener('input', function() { safeSave(STORAGE_IMAGE_KEY, this.value.trim()); });
-        document.getElementById('geminiVisionModelName').addEventListener('input', function() { safeSave(STORAGE_VISION_MODEL_NAME, this.value.trim()); });
-        document.getElementById('geminiImageModelName').addEventListener('input', function() { safeSave(STORAGE_IMAGE_MODEL_NAME, this.value.trim()); });
+        document.getElementById('geminiVisionModelName').addEventListener('input', function() { safeSave(STORAGE_VISION_MODEL_NAME, this.value.trim()); updateBottomGenBadge(); });
+        document.getElementById('geminiImageModelName').addEventListener('input', function() { safeSave(STORAGE_IMAGE_MODEL_NAME, this.value.trim()); updateBottomGenBadge(); });
 
         document.getElementById('doubaoApiKey').addEventListener('input', function() { safeSave(STORAGE_DOUBAO_KEY, this.value.trim()); });
         document.getElementById('doubaoVisionModel').addEventListener('input', function() { safeSave(STORAGE_DOUBAO_VISION, this.value.trim()); });
-        document.getElementById('doubaoImageModel').addEventListener('input', function() { safeSave(STORAGE_DOUBAO_IMAGE, this.value.trim()); });
+        document.getElementById('doubaoImageModel').addEventListener('input', function() { safeSave(STORAGE_DOUBAO_IMAGE, this.value.trim()); updateBottomGenBadge(); });
         document.getElementById('doubao3DModel').addEventListener('input', function() { safeSave(STORAGE_3D_MODEL, this.value.trim()); });
         ['dim1','dim2','dim3','dim4'].forEach(id => document.getElementById(id).addEventListener('input', function() { safeSave('design_' + id, this.value); }));
         document.getElementById('designLevel').addEventListener('change', function() { safeSave(STORAGE_DESIGN_LEVEL, this.value); });
         document.getElementById('imageAspectRatio').addEventListener('change', function() { safeSave(STORAGE_ASPECT_RATIO, this.value); });
+        
+        updateBottomGenBadge();
     });
 
     function toggleKeyVisibility(inputId, btn) {
@@ -1033,7 +1286,6 @@
         };
     }
 
-    // ====== APINebula 视觉解析兼容层调用 ======
     async function callGeminiVision(apiKey, systemInstruction, userText, mimeType, base64Data, isJson = false) {
         const cfg = getConfig();
         const url = `${cfg.baseUrl}/chat/completions`;
@@ -1083,10 +1335,9 @@
         return text.trim();
     }
 
-    // ====== APINebula 生图智能路由与多格式提取 ======
     async function callGeminiImageGeneration(apiKey, prompt, mimeType, base64Data, aspectRatio = "1:1") {
         const cfg = getConfig();
-        const ratioPrompt = `\n\n[Mandatory Requirement]: The generated image MUST be strictly in ${aspectRatio} aspect ratio.`;
+        const ratioPrompt = `\n\n[Aspect Ratio Constraint]: strictly generate in ${aspectRatio} aspect ratio.`;
         const fullPrompt = prompt + ratioPrompt;
 
         const isStandardImgModel = cfg.geminiImageModel.toLowerCase().includes('imagen') || 
@@ -1127,10 +1378,16 @@
         }
 
         const userContent = [{ type: "text", text: fullPrompt }];
-        if (base64Data && mimeType) {
+        if (base64Data) {
+            let imgUrl = "";
+            if (base64Data.startsWith('http://') || base64Data.startsWith('https://') || base64Data.startsWith('data:')) {
+                imgUrl = base64Data;
+            } else {
+                imgUrl = `data:${mimeType || 'image/jpeg'};base64,${base64Data}`;
+            }
             userContent.push({
                 type: "image_url",
-                image_url: { url: `data:${mimeType};base64,${base64Data}` }
+                image_url: { url: imgUrl }
             });
         }
 
@@ -1160,24 +1417,31 @@
         if (message.images?.[0]?.url) return message.images[0].url;
         if (message.images?.[0]?.b64_json) return `data:image/png;base64,${message.images[0].b64_json}`;
 
-        const content = message.content || "";
+        const content = (message.content || "").trim();
 
+        // 1. 匹配 Markdown 格式图片语法 ![...](url)
         const mdMatch = content.match(/!\[.*?\]\((https?:\/\/[^\s\)]+)\)/);
         if (mdMatch) return mdMatch[1];
 
+        // 2. 匹配 HTML <img> 标签格式
         const htmlMatch = content.match(/<img[^>]+src=["'](https?:\/\/[^"']+)["']/i);
         if (htmlMatch) return htmlMatch[1];
 
+        // 3. 匹配内嵌 Base64 图片
         const b64Match = content.match(/data:image\/[a-zA-Z]+;base64,[A-Za-z0-9+/=]+/);
         if (b64Match) return b64Match[0];
 
+        // 4. 优先匹配带常见图片后缀的图片直链
         const urlMatch = content.match(/(https?:\/\/[^\s<>"']+?\.(?:png|jpg|jpeg|webp)(?:\?[^\s<>"']*)?)/i);
         if (urlMatch) return urlMatch[1];
+
+        // 5. 兜底匹配：提取任意 HTTP/HTTPS 链接（如 AWS S3 预签名直链、无后缀链接等）
+        const anyUrlMatch = content.match(/https?:\/\/[^\s<>"'\)\]]+/i);
+        if (anyUrlMatch) return anyUrlMatch[0];
 
         throw new Error(`模型返回了文本而非图片数据: "${content.slice(0, 100)}..."`);
     }
 
-    // ====== 豆包 API =======
     const ARK_BASE = 'https://ark.cn-beijing.volces.com/api/v3';
     async function callDoubaoLLM(apiKey, model, sys, userTxt) {
         const url = `${ARK_BASE}/chat/completions`;
@@ -1217,7 +1481,6 @@
         return data.data[0].b64_json ? `data:image/png;base64,${data.data[0].b64_json}` : data.data[0].url;
     }
 
-    // ====== 业务逻辑 ======
     async function extractFeatures() {
         if (!uploadedImageBase64) return;
         const cfg = getConfig();
@@ -1315,28 +1578,51 @@ Example: {"dim1": "...", "dim2": "...", "dim3": "...", "dim4": "..."}`;
         const catId = document.getElementById('productCategory').value;
         const catConfig = categoryConfigs[catId];
 
+        const wShape = parseInt(document.getElementById('weightShape').value, 10);
+        const wPattern = parseInt(document.getElementById('weightPattern').value, 10);
+        const wColor = parseInt(document.getElementById('weightColor').value, 10);
+
         try {
-            const generatePromptSys = `You are a world-class AI Prompt Engineer specializing in Ergonomic Products.
-The subject to be generated is a "${catConfig.enName}" (${catConfig.name}).
-CRITICAL MATERIAL CONSTRAINT: This product is strictly a ${catConfig.material}.
-Ensure the prompt reflects the correct material properties (e.g., memory foam, soft fabric, breathable mesh, foam structure, plush).
-${uploadedImageBase64 ? "I am providing a Reference Image AND user modifications based on a 4-dimensional matrix." : "I am providing 4-dimensional design parameters (Form, Function, Aesthetics, Value)."}
-CRITICAL INNOVATION STRATEGY (Level ${levelVal}): 
-${levelDescText}
-You MUST adjust the final design prompt to reflect this innovation level exactly. 
-If Level 1: stick strictly to the reference style with minor shape tweaks to avoid patents. 
-If Level 2: similar market vibe, but clearly differentiated geometry.
-If Level 3: noticeable upgrades in shape and tech details surpassing competitors.
-If Level 4: next-generation product, significantly more premium and advanced.
-If Level 5: radical paradigm-shifting form or function, completely reinventing the product category.
-Your task: Translate the Chinese 4X4 matrix parameters (scaled by the Innovation Strategy above) into ONE highly detailed, professional English text-to-image prompt.
-Ensure the core subject is CLEARLY identified as a "high-end ergonomic ${catConfig.enName}", and it MUST BE ${catConfig.scene}.
-Focus strictly on: Form & Shape, Visual Function, Aesthetics (CMF), Lighting and rendering style (e.g., soft natural lighting, photorealistic, 8k, Octane render, appropriate environmental context).
-OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
+            const generatePromptSys = `You are a principal industrial design prompt director specializing in ergonomic products.
+Target Product: "${catConfig.enName}" (${catConfig.name}).
+Constraint Material: Strictly ${catConfig.material}.
+Innovation Level: Level ${levelVal} (${levelDescText}).
 
-            const userText = `[Innovation Strategy]: Level ${levelVal}\n[Form Dimension]: ${d1 || 'Ergonomic shape'}\n[Function Dimension]: ${d2 || 'Memory foam support'}\n[Aesthetics Dimension]: ${d3 || 'Cozy fabric, neutral colors'}\n[Value Dimension]: ${d4 || 'High-end quality'}`;
+${uploadedImageBase64 ? `[CRITICAL IMAGE-TO-IMAGE TRANSFORMATION PROTOCOL]:
+A reference image is provided. Downstream text-to-image diffusion models tend to OVER-CLONE reference images.
+You MUST write a forceful differential prompt that commands the diffusion model exactly what to KEEP and what to AGGRESSIVELY OVERWRITE based on the user's 4-dimensional matrix and adherence slider percentages:
+1. Shape Adherence (${wShape}%):
+   - If < 40%: The model MUST COMPLETELY DISCARD the reference silhouette and reconstruct a totally new 3D geometry and contour based on Form Dimension.
+   - If 40-75%: Retain the approximate anatomical scale, but noticeably re-sculpt the curves as specified in Form Dimension.
+   - If > 75%: Faithfully preserve the reference silhouette with minor surface refinement.
+2. Pattern & Parting Line Adherence (${wPattern}%):
+   - If < 40%: Completely overhaul all parting lines, stitching paths, and modular assemblies to reflect Function Dimension.
+   - If 40-75%: Adapt the reference paneling to integrate the functional modules from Function Dimension.
+   - If > 75%: Keep the reference seam lines and module layout.
+3. CMF & Color Palette Adherence (${wColor}%):
+   - If < 40%: FORCEFULLY REPLACE all original colors, materials, and textures with the exact colorway and materials in Aesthetics Dimension.
+   - If 40-75%: Keep the primary tonal feeling, but infuse the new colors and surface textures from Aesthetics Dimension.
+   - If > 75%: Strictly replicate the reference colors and fabrics.
+` : `Synthesize the provided 4-dimension matrix into a state-of-the-art product render prompt.`}
 
-            loadingText.textContent = `[1/2] 正在运用 AI 构建 ${catConfig.name} 提示词...`;
+Output structure:
+- Emphasize the definitive target appearance, physical contours, functional visible modules, and CMF materials.
+- Context: ${catConfig.scene}.
+- Output ONLY the final high-impact English prompt without preamble or markdown formatting.`;
+
+            const userText = `[Product Category]: ${catConfig.enName}
+[Adherence Weights]:
+- Shape & Contour Weight: ${wShape}% (0% = completely new shape, 100% = identical silhouette)
+- Pattern & Structure Weight: ${wPattern}% (0% = completely new parting lines, 100% = identical structure)
+- Color & CMF Weight: ${wColor}% (0% = completely new colors/fabrics, 100% = identical colors)
+
+[Mandatory Design Matrix to Enforce]:
+- Form (造型): ${d1 || 'Ergonomic contours'}
+- Function (功能): ${d2 || 'Memory foam support'}
+- Aesthetics (颜值/CMF): ${d3 || 'Modern calming palette, tactile textiles'}
+- Value (价值感): ${d4 || 'High-end ergonomic craftsmanship'}`;
+
+            loadingText.textContent = `[1/2] 正在深度融合参考图、贴合度(${wShape}/${wPattern}/${wColor}%)与矩阵参数...`;
             let finalPrompt = "";
             if (visionEngine === 'gemini') {
                 finalPrompt = await callGeminiVision(cfg.geminiVisionApiKey, generatePromptSys, userText, uploadedImageMimeType, uploadedImageBase64, false);
@@ -1349,48 +1635,48 @@ OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
                 }
             }
             
-            promptOutput.textContent = finalPrompt;
-            loadingText.textContent = `[2/2] 正在渲染真实产品照...`;
-
-            let enhancedPrompt = finalPrompt;
+            let enhancedPrompt = "";
             if (uploadedImageBase64) {
-                // 读取三维精细控制的数值
-                const wShape = parseInt(document.getElementById('weightShape').value, 10);
-                const wPattern = parseInt(document.getElementById('weightPattern').value, 10);
-                const wColor = parseInt(document.getElementById('weightColor').value, 10);
-
-                // 造型轮廓贴合度约束
-                let shapeConstraint = "";
-                if (wShape >= 70) {
-                    shapeConstraint = `[Shape & Contour: ${wShape}%] Strictly preserve the exact silhouette, 3D geometry, and ergonomic contours of the reference image.`;
-                } else if (wShape >= 30) {
-                    shapeConstraint = `[Shape & Contour: ${wShape}%] Maintain the recognizable overall shape from the reference, allowing moderate ergonomic curve refinements.`;
+                let shapeDirective = "";
+                if (wShape <= 30) {
+                    shapeDirective = `OVERRIDE & RE-SCULPT SHAPE: Discard the reference silhouette; sculpt a completely new outer geometry: ${d1 || 'redesigned form'}.`;
+                } else if (wShape <= 70) {
+                    shapeDirective = `ALTER SHAPE CONTOUR: Transform reference contours into: ${d1 || 'upgraded ergonomic curves'}.`;
                 } else {
-                    shapeConstraint = `[Shape & Contour: ${wShape}%] Radically re-imagine the shape and silhouette with minimal constraint from the reference.`;
+                    shapeDirective = `PRESERVE SHAPE: Retain exact reference contour with subtle refinements: ${d1 || 'fine form tweaks'}.`;
                 }
 
-                // 制版贴合度约束
-                let patternConstraint = "";
-                if (wPattern >= 70) {
-                    patternConstraint = `[Pattern & Structure: ${wPattern}%] Strictly retain the paneling, structural lines, stitching seams, and module layout of the reference.`;
-                } else if (wPattern >= 30) {
-                    patternConstraint = `[Pattern & Structure: ${wPattern}%] Keep the core structural logic and paneling style, but modernize the seams and part divisions.`;
+                let patternDirective = "";
+                if (wPattern <= 30) {
+                    patternDirective = `OVERHAUL STRUCTURE: Replace reference seamlines and modules with new layout: ${d2 || 'new functional structure'}.`;
+                } else if (wPattern <= 70) {
+                    patternDirective = `MODIFY STRUCTURE: Update parting lines and seams to incorporate: ${d2 || 'functional parts'}.`;
                 } else {
-                    patternConstraint = `[Pattern & Structure: ${wPattern}%] Innovate entirely new paneling, structure, and assembly logic, discarding the reference's pattern.`;
+                    patternDirective = `PRESERVE STRUCTURE: Keep reference module layout and stitch seams.`;
                 }
 
-                // 配色贴合度约束
-                let colorConstraint = "";
-                if (wColor >= 70) {
-                    colorConstraint = `[Color Palette: ${wColor}%] Strictly replicate the color scheme, tonal balance, and material colorway of the reference image.`;
-                } else if (wColor >= 30) {
-                    colorConstraint = `[Color Palette: ${wColor}%] Keep the foundational color tone of the reference, but introduce upgraded or complementary CMF details.`;
+                let colorDirective = "";
+                if (wColor <= 30) {
+                    colorDirective = `FORCE RECOLOR & REMATERIALIZE: Completely replace original colors and fabrics with: ${d3 || 'new CMF palette'}.`;
+                } else if (wColor <= 70) {
+                    colorDirective = `UPDATE CMF PALETTE: Blend reference tones with new colorway and fabrics: ${d3 || 'enhanced CMF details'}.`;
                 } else {
-                    colorConstraint = `[Color Palette: ${wColor}%] Explore bold, entirely new color palettes and futuristic colorways independent of the reference.`;
+                    colorDirective = `PRESERVE COLORWAY: Strictly match reference image color scheme and fabrics.`;
                 }
 
-                enhancedPrompt = `${finalPrompt}\n\n[Fine-Grained Weighting Controls]:\n- ${shapeConstraint}\n- ${patternConstraint}\n- ${colorConstraint}`;
+                enhancedPrompt = `[PRIORITY IMAGE TRANSFORMATION INSTRUCTIONS]:
+${shapeDirective}
+${patternDirective}
+${colorDirective}
+
+[TARGET PRODUCT RENDERING]:
+${finalPrompt}`;
+            } else {
+                enhancedPrompt = finalPrompt;
             }
+
+            promptOutput.textContent = enhancedPrompt;
+            loadingText.textContent = `[2/2] 正在协同参考图渲染全新设计图...`;
 
             let imageSrc = "";
             if (imageEngine === 'gemini') {
@@ -1470,7 +1756,7 @@ OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
         `).join('');
     }
 
-    function downloadCurrentImage() {
+    async function downloadCurrentImage() {
         let img = document.getElementById('previewImage');
         if (!img.src || img.style.display === 'none') {
             img = document.getElementById('resultImage');
@@ -1479,16 +1765,33 @@ OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
         
         const catId = document.getElementById('productCategory').value;
         const catName = categoryConfigs[catId].name.replace(/\//g,'_');
+        const filename = `${catName}设计图_${new Date().toLocaleString('zh-CN', {year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(/[\/\s:]/g,'')}.png`;
 
-        const link = document.createElement('a');
-        link.href = img.src;
-        link.download = `${catName}设计图_${new Date().toLocaleString('zh-CN', {year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(/[\/\s:]/g,'')}.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        try {
+            if (img.src.startsWith('data:')) {
+                const link = document.createElement('a');
+                link.href = img.src;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                const response = await fetch(img.src);
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(blobUrl);
+            }
+        } catch (e) {
+            window.open(img.src, '_blank');
+        }
     }
 
-    // ====== 预处理：AI 抠图 (白底) 模块 ======
     let currentMattingSrc = null;
 
     function handleMattingManualUpload(event) {
@@ -1558,6 +1861,21 @@ OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
                 const parts = currentMattingSrc.split(',');
                 mimeType = parts[0].split(':')[1].split(';')[0];
                 base64Data = parts[1];
+            } else if (currentMattingSrc && (currentMattingSrc.startsWith('http://') || currentMattingSrc.startsWith('https://'))) {
+                // 如果是远程直链图片，尝试获取 Blob 或直接传递 URL
+                try {
+                    const resp = await fetch(currentMattingSrc);
+                    const blob = await resp.blob();
+                    mimeType = blob.type || 'image/jpeg';
+                    base64Data = await new Promise((resolve, reject) => {
+                        const r = new FileReader();
+                        r.onload = () => resolve(r.result.split(',')[1]);
+                        r.onerror = reject;
+                        r.readAsDataURL(blob);
+                    });
+                } catch (e) {
+                    base64Data = currentMattingSrc;
+                }
             } else {
                 throw new Error("参考图格式不正确，无法读取图像数据");
             }
@@ -1588,17 +1906,33 @@ OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
         }
     }
 
-    function downloadMatting() {
+    async function downloadMatting() {
         if (!currentMattingSrc) return;
-        const link = document.createElement('a');
-        link.href = currentMattingSrc;
-        link.download = `白底抠图_${new Date().getTime()}.jpg`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        try {
+            if (currentMattingSrc.startsWith('data:')) {
+                const link = document.createElement('a');
+                link.href = currentMattingSrc;
+                link.download = `白底抠图_${Date.now()}.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                const response = await fetch(currentMattingSrc);
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = `白底抠图_${Date.now()}.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(blobUrl);
+            }
+        } catch (e) {
+            window.open(currentMattingSrc, '_blank');
+        }
     }
 
-    // ====== 3D 模型生成 (火山引擎) ======
     const SEED3D_DEFAULT_MODEL = 'doubao-seed3d-2-0-260328';
     const ARK_3D_TASK_URL = `${ARK_BASE}/contents/generations/tasks`;
     let model3dCurrentRef = null;   
@@ -1767,6 +2101,140 @@ OUTPUT ONLY THE FINAL ENGLISH PROMPT. No conversational text.`;
         const btn = document.getElementById('model3dGenBtn');
         btn.disabled = false;
         btn.innerHTML = '生成 3D 模型';
+    }
+
+    let bottomRefBase64 = null;
+    let bottomRefMimeType = null;
+
+    function handleBottomImageUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const dataUrl = e.target.result;
+            bottomRefMimeType = file.type || 'image/jpeg';
+            bottomRefBase64 = dataUrl.split(',')[1];
+            
+            document.getElementById('bottomRefImage').src = dataUrl;
+            document.getElementById('bottomRefPreview').style.display = 'flex';
+            document.getElementById('bottomUploadBox').style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function removeBottomRefImage() {
+        bottomRefBase64 = null;
+        bottomRefMimeType = null;
+        document.getElementById('bottomImageInput').value = '';
+        document.getElementById('bottomRefImage').src = '';
+        document.getElementById('bottomRefPreview').style.display = 'none';
+        document.getElementById('bottomUploadBox').style.display = 'flex';
+    }
+
+    async function startBottomGeneration() {
+        const cfg = getConfig();
+        const imageEngine = document.getElementById('imageModelSelect').value;
+        const promptText = document.getElementById('bottomPromptInput').value.trim();
+        const aspectRatio = document.getElementById('bottomAspectRatio').value;
+        const btn = document.getElementById('bottomGenBtn');
+        const err = document.getElementById('bottomErrorMsg');
+        const loadingStatus = document.getElementById('bottomLoadingStatus');
+        const placeholder = document.getElementById('bottomPlaceholder');
+        const resultImg = document.getElementById('bottomResultImage');
+        const downloadBtn = document.getElementById('bottomDownloadBtn');
+        const promptInfo = document.getElementById('bottomPromptInfo');
+
+        if (!promptText && !bottomRefBase64) {
+            err.style.display = 'block';
+            err.textContent = '请至少输入画面描述文字或上传一张参考图！';
+            return;
+        }
+
+        if (imageEngine === 'gemini' && !cfg.geminiImageApiKey) {
+            err.style.display = 'block';
+            err.textContent = '请先在上方 AI 引擎配置区填写渲染生图模型的 APINebula API Key';
+            return;
+        }
+
+        if (imageEngine === 'doubao' && (!cfg.doubaoApiKey || !cfg.doubaoImageModel)) {
+            err.style.display = 'block';
+            err.textContent = '请先在上方 AI 引擎配置区填写火山引擎 API Key 及生图模型接入点';
+            return;
+        }
+
+        err.style.display = 'none';
+        btn.disabled = true;
+        btn.innerHTML = '⏳ 正在渲染中...';
+        resultImg.style.display = 'none';
+        placeholder.style.display = 'none';
+        loadingStatus.style.display = 'flex';
+        downloadBtn.style.display = 'none';
+
+        try {
+            let imageSrc = '';
+            const effectivePrompt = promptText || 'High-end ergonomic industrial design product photography, clean lighting, 8k resolution, studio render.';
+
+            if (imageEngine === 'gemini') {
+                imageSrc = await callGeminiImageGeneration(
+                    cfg.geminiImageApiKey,
+                    effectivePrompt,
+                    bottomRefMimeType,
+                    bottomRefBase64,
+                    aspectRatio
+                );
+            } else {
+                const refDataUrl = bottomRefBase64 ? `data:${bottomRefMimeType};base64,${bottomRefBase64}` : null;
+                imageSrc = await callDoubaoImage(
+                    cfg.doubaoApiKey,
+                    cfg.doubaoImageModel,
+                    effectivePrompt,
+                    refDataUrl,
+                    aspectRatio
+                );
+            }
+
+            loadingStatus.style.display = 'none';
+            resultImg.src = imageSrc;
+            resultImg.style.display = 'block';
+            downloadBtn.style.display = 'inline-flex';
+            promptInfo.textContent = `提示词：${effectivePrompt}`;
+        } catch (error) {
+            loadingStatus.style.display = 'none';
+            placeholder.style.display = 'block';
+            err.style.display = 'block';
+            err.textContent = `生成失败: ${error.message}`;
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '🚀 立即生成图片';
+        }
+    }
+
+    async function downloadBottomImage() {
+        const img = document.getElementById('bottomResultImage');
+        if (!img.src || img.style.display === 'none') return;
+        try {
+            if (img.src.startsWith('data:')) {
+                const link = document.createElement('a');
+                link.href = img.src;
+                link.download = `快捷生图_${Date.now()}.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                const response = await fetch(img.src);
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = `快捷生图_${Date.now()}.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(blobUrl);
+            }
+        } catch (e) {
+            window.open(img.src, '_blank');
+        }
     }
 </script>
 </body>
