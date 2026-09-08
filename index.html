@@ -3,1134 +3,1573 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>产品4X4矩阵设计舱 · 多品类自适应版</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>AURA · 人体工学产品4X4矩阵AI智造舱 (全屏版)</title>
+    
+    <!-- 引入高品质现代西文字体与中文无衬线体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Three.js 核心及 3D 模型格式转换插件 (用于客户端动态转码导出 OBJ / USDZ) -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.148.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.148.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.148.0/examples/js/exporters/OBJExporter.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.148.0/examples/js/exporters/USDZExporter.js"></script>
+
     <style>
         :root {
-            --primary: #D49A89;
-            --primary-hover: #C38370;
-            --bg-app: #EBE6E0;
-            --bg-card: rgba(255, 255, 255, 0.95);
-            --bg-input: #F4F2F0;
-            --text-main: #3E3A39;
-            --text-muted: #8F8B88;
-            --border: rgba(0, 0, 0, 0.05);
-            --accent: #A3B19B;
-            --radius-lg: 32px;
-            --radius-md: 20px;
-            --radius-sm: 14px;
-            --shadow-float: 0 24px 48px rgba(100, 90, 80, 0.08);
-            --shadow-inner: inset 0 2px 4px rgba(0,0,0,0.02);
+            /* 品牌基准色：自然陶土赭 + 鼠尾草绿 + 亚麻暖沙 (Home Health & Bio-Ergonomics) */
+            --primary: #B8684A;
+            --primary-hover: #A3593D;
+            --primary-light: rgba(184, 104, 74, 0.1);
+            --primary-glow: rgba(184, 104, 74, 0.25);
+
+            --accent-sage: #4E7A5D;
+            --accent-sage-light: rgba(78, 122, 93, 0.12);
+            
+            --bg-canvas: #F5F2ED;
+            --bg-card: #FFFFFF;
+            --bg-card-subtle: #FAF8F5;
+            --bg-input: #EFECE6;
+            --bg-input-focus: #FFFFFF;
+
+            --text-main: #272422;
+            --text-secondary: #6B6560;
+            --text-muted: #9C958E;
+            --border-subtle: rgba(160, 150, 140, 0.2);
+            --border-hover: rgba(184, 104, 74, 0.4);
+
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --radius-pill: 9999px;
+
+            --shadow-subtle: 0 4px 16px rgba(40, 30, 20, 0.03);
+            --shadow-card: 0 16px 36px -8px rgba(40, 30, 20, 0.06);
+            --shadow-float: 0 24px 54px -12px rgba(40, 30, 20, 0.1);
+            --shadow-glow: 0 10px 28px rgba(184, 104, 74, 0.28);
+
+            --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        * { box-sizing: border-box; }
+
+        body.dark {
+            --primary: #D97E5E;
+            --primary-hover: #E88F71;
+            --primary-light: rgba(217, 126, 94, 0.15);
+            --primary-glow: rgba(217, 126, 94, 0.3);
+
+            --accent-sage: #6EA580;
+            --accent-sage-light: rgba(110, 165, 128, 0.15);
+
+            --bg-canvas: #141312;
+            --bg-card: #1D1C1A;
+            --bg-card-subtle: #242220;
+            --bg-input: #292724;
+            --bg-input-focus: #312E2A;
+
+            --text-main: #EFECE8;
+            --text-secondary: #9E9891;
+            --text-muted: #6E6862;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(217, 126, 94, 0.4);
+
+            --shadow-subtle: 0 4px 16px rgba(0, 0, 0, 0.2);
+            --shadow-card: 0 16px 36px -8px rgba(0, 0, 0, 0.45);
+            --shadow-float: 0 24px 54px -12px rgba(0, 0, 0, 0.6);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+        
+        html, body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
         body {
-            font-family: 'Inter', 'Noto Sans SC', sans-serif;
-            background-color: var(--bg-app);
-            background-image: radial-gradient(at 100% 0%, #FFFFFF 0%, transparent 50%), 
-                              radial-gradient(at 0% 100%, #FFFFFF 0%, transparent 50%);
+            font-family: 'Plus Jakarta Sans', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-canvas);
+            background-image: 
+                radial-gradient(at 10% 10%, rgba(184, 104, 74, 0.05) 0px, transparent 40%),
+                radial-gradient(at 90% 90%, rgba(78, 122, 93, 0.05) 0px, transparent 40%);
             color: var(--text-main);
-            margin: 0;
-            padding: 24px;
-            min-height: 100vh;
-            overflow-y: auto;
-            overflow-x: hidden;
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        .panel { 
-            background: var(--bg-card); 
-            border-radius: var(--radius-lg); 
-            box-shadow: var(--shadow-float); 
-            backdrop-filter: blur(20px); 
-            border: 1px solid rgba(255, 255, 255, 0.5); 
-            overflow: hidden; 
-            display: flex; 
-            flex-direction: column; 
-        }
-
-        /* 顶部主工作区：设计舱大模块正好占满首屏 */
-        .design-cabin-workspace {
+        /* ====== 顶部全局导航栏 ====== */
+        .app-navbar {
+            height: 64px;
+            padding: 0 24px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-subtle);
             display: flex;
-            flex-direction: row;
-            gap: 24px;
-            align-items: stretch;
-            width: 100%;
-            height: calc(100vh - 48px);
-            flex-shrink: 0;
-        }
-        
-        /* 左侧工作台：与右侧底端对齐，内部独立滚动 */
-        .left-panel { 
-            width: 500px; 
-            flex-shrink: 0; 
-            height: 100%; 
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden;
-        }
-        .left-scroll-area { 
-            padding: 32px 36px; 
-            flex: 1;
-            height: 100%;
-            overflow-y: auto; 
-        }
-
-        .right-layout {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            flex: 1;
-            min-width: 0;
-            height: 100%;
-        }
-
-        .right-panel { 
-            flex: 1; 
-            padding: 20px; 
-            position: relative; 
-            background: var(--bg-card); 
-            display: flex; 
-            flex-direction: column; 
-            min-height: 0; 
-        }
-        
-        .gallery-wrapper { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: row; 
-            gap: 16px; 
-            min-height: 0; 
-        }
-        .main-display { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: row; 
-            gap: 16px; 
-            min-width: 0; 
-            min-height: 0;
-        }
-        .render-col, .preview-col { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 12px; 
-            min-width: 0; 
-            min-height: 0;
-        }
-        
-        .canvas-area { 
-            flex: 1; 
-            background: var(--bg-input); 
-            border-radius: 20px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            position: relative; 
-            overflow: hidden; 
-            min-height: 0; 
-        }
-        .canvas-area img { width: 100%; height: 100%; object-fit: contain; display: none; }
-        
-        .prompt-board { background: #FFFFFF; border-radius: var(--radius-md); padding: 12px 16px; border: 1px solid var(--border); min-height: 64px; max-height: 96px; overflow-y: auto; flex-shrink: 0;}
-        .prompt-board h3 { margin: 0 0 6px 0; font-size: 0.85rem; color: #2C2A29; display: flex; align-items: center; gap: 6px;}
-        .prompt-text { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; word-break: break-word; }
-        
-        .model3d-panel { 
-            height: auto; 
-            flex-shrink: 0; 
-            padding: 16px 24px; 
-            display: flex;
-            flex-direction: column;
-        }
-        .model3d-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .model3d-header-right { display: flex; align-items: center; gap: 12px; }
-        .model3d-header h2 { font-size: 1.05rem; font-weight: 600; margin: 0; color: #2C2A29; display: flex; align-items: center; gap: 8px; }
-        .model3d-body { display: flex; gap: 18px; flex: 1; min-height: 0; }
-        
-        .model3d-ref { width: 150px; flex-shrink: 0; display: flex; flex-direction: column; gap: 6px; }
-        .model3d-ref-label { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-        .model3d-ref-img { flex: 1; background: var(--bg-input); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; min-height: 100px; }
-        .model3d-ref-img img { width: 100%; height: 100%; object-fit: contain; display: none; }
-        .model3d-ref-tag { position: absolute; top: 6px; left: 6px; background: rgba(212, 154, 137, 0.9); color: white; font-size: 0.65rem; padding: 2px 8px; border-radius: 10px; font-weight: 500; display: none; }
-        
-        .model3d-upload-box { background: var(--bg-input); border: 1px dashed #CFCACA; border-radius: var(--radius-sm); padding: 16px 8px; text-align: center; cursor: pointer; transition: all 0.2s; font-size: 0.78rem; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; min-height: 100px; justify-content: center; }
-        .model3d-upload-box:hover { background: #FFFFFF; border-color: var(--primary); color: var(--primary); }
-        .model3d-ref-del { position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; background: rgba(224,108,117,0.9); color: white; border: none; border-radius: 50%; font-size: 14px; cursor: pointer; display: none; align-items: center; justify-content: center; line-height: 1; z-index: 10; }
-        .model3d-ref-img:hover .model3d-ref-del { display: flex; }
-        
-        .model3d-params { width: 210px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
-        .model3d-param-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px; }
-        .model3d-param-row { display: flex; flex-direction: column; gap: 3px; }
-        .model3d-param-row label { font-size: 0.75rem; font-weight: 500; margin: 0; }
-        .model3d-param-row select { padding: 6px 10px; font-size: 0.8rem; }
-        
-        .model3d-result { flex: 1; min-width: 220px; background: var(--bg-input); border-radius: var(--radius-md); padding: 14px; display: flex; flex-direction: column; overflow: hidden; }
-        .model3d-result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .model3d-result-title { font-size: 0.82rem; font-weight: 600; color: var(--text-main); }
-        .model3d-status { font-size: 0.72rem; padding: 2px 8px; border-radius: 12px; font-weight: 500; }
-        .model3d-status.idle { background: rgba(143,139,136,0.15); color: var(--text-muted); }
-        .model3d-status.queued { background: rgba(212,154,137,0.15); color: var(--primary); }
-        .model3d-status.running { background: rgba(212,154,137,0.15); color: var(--primary); }
-        .model3d-status.succeeded { background: rgba(163,177,155,0.2); color: #6B7A63; }
-        .model3d-status.failed { background: rgba(224,108,117,0.15); color: #E06C75; }
-        .model3d-result-content { flex: 1; overflow-y: auto; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
-        .model3d-result-content a { color: var(--primary); text-decoration: underline; text-underline-offset: 2px; word-break: break-all; }
-
-        /* ====== 最底端：左(图文生图) + 右(AI视觉对话) 深度协同模块 ====== */
-        .bottom-gen-panel {
-            width: 100%;
-            padding: 24px 28px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            height: 960px;
-            min-height: 960px;
-            max-height: 960px;
-            flex-shrink: 0;
-            overflow: hidden;
-        }
-
-        .bottom-split-container {
-            display: flex;
-            flex-direction: row;
-            gap: 24px;
-            flex: 1;
-            min-height: 0;
-            overflow: hidden;
-        }
-
-        /* --- 左半部分：图文生图模块 --- */
-        .bottom-left-panel {
-            flex: 1.15;
-            min-width: 0;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            overflow: hidden;
-        }
-
-        .bottom-header-row {
-            display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
             flex-shrink: 0;
+            z-index: 100;
+            transition: var(--transition);
         }
-        .bottom-header-row h2 {
-            font-size: 1.15rem;
-            font-weight: 600;
-            margin: 0;
-            color: #2C2A29;
+        body.dark .app-navbar {
+            background: rgba(20, 19, 18, 0.85);
+        }
+
+        .brand-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary) 0%, #D49A89 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 14px var(--primary-glow);
+        }
+        .brand-title {
+            display: flex;
+            flex-direction: column;
+        }
+        .brand-title h1 {
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            color: var(--text-main);
             display: flex;
             align-items: center;
             gap: 8px;
         }
-
-        .bottom-gen-body {
-            display: flex;
-            gap: 18px;
-            flex: 1;
-            min-height: 0;
-            overflow: hidden;
+        .brand-badge {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--accent-sage);
+            background: var(--accent-sage-light);
+            padding: 2px 8px;
+            border-radius: var(--radius-pill);
         }
-        .bottom-gen-left {
-            width: 320px;
+        .brand-subtitle {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        /* 核心工作流导航切换器 */
+        .workspace-tabs {
+            display: flex;
+            align-items: center;
+            background: var(--bg-input);
+            padding: 4px;
+            border-radius: var(--radius-pill);
+            border: 1px solid var(--border-subtle);
+            gap: 4px;
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 7px 16px;
+            border-radius: var(--radius-pill);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .tab-btn:hover {
+            color: var(--text-main);
+        }
+        .tab-btn.active {
+            background: var(--bg-card);
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .category-select-nav {
+            padding: 7px 12px;
+            border-radius: var(--radius-pill);
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            transition: var(--transition);
+        }
+        .category-select-nav:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            position: relative;
+        }
+        .icon-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-1px);
+        }
+        .status-dot-pulse {
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-sage);
+            box-shadow: 0 0 0 2px var(--bg-card);
+        }
+
+        /* ====== 主工作区通用卡片与全屏容器 ====== */
+        .main-container {
+            flex: 1;
+            width: 100vw;
+            height: calc(100vh - 64px);
+            padding: 16px 20px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-sizing: border-box;
+            gap: 16px;
+        }
+
+        .studio-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+
+        /* ====== 视图 1: 4X4 矩阵设计舱全屏布局 ====== */
+        .workspace-matrix-view {
+            display: flex;
+            gap: 16px;
+            width: 100%;
+            height: 100%;
+            min-height: 0;
+        }
+
+        .left-sidebar-deck {
+            width: 450px;
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
-            gap: 12px;
             height: 100%;
             min-height: 0;
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
         }
-        .bottom-gen-right {
-            flex: 1;
-            min-width: 0;
-            min-height: 0;
-            height: 100%;
+        .sidebar-scroll-content {
+            padding: 18px 22px;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 18px;
+            height: 100%;
         }
-        .bottom-upload-box {
-            background: var(--bg-input);
-            border: 1px dashed #CFCACA;
-            border-radius: var(--radius-sm);
-            padding: 14px 10px;
+
+        .section-header-pill {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.74rem;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 5px 12px;
+            border-radius: var(--radius-pill);
+            margin-bottom: 2px;
+        }
+
+        .modern-upload-card {
+            border: 1.5px dashed var(--border-subtle);
+            border-radius: var(--radius-lg);
+            background: var(--bg-card-subtle);
+            padding: 18px 14px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.8rem;
-            color: var(--text-muted);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            position: relative;
-            min-height: 90px;
+            min-height: 105px;
         }
-        .bottom-upload-box:hover {
-            background: #FFFFFF;
+        .modern-upload-card:hover {
             border-color: var(--primary);
-            color: var(--primary);
+            background: var(--bg-input);
         }
-        .bottom-upload-box input[type="file"] {
+        .modern-upload-card input[type="file"] {
             position: absolute;
             inset: 0;
             opacity: 0;
             cursor: pointer;
         }
-        .bottom-ref-preview {
+        .upload-icon-wrap {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            margin-bottom: 6px;
+            box-shadow: var(--shadow-subtle);
+        }
+        .upload-hint-title {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 2px;
+        }
+        .upload-hint-sub {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+        .ref-preview-frame {
             position: relative;
             width: 100%;
-            height: 95px;
-            background: var(--bg-input);
-            border-radius: var(--radius-sm);
+            height: 130px;
+            border-radius: var(--radius-md);
             overflow: hidden;
+            background: var(--bg-input);
             display: none;
             align-items: center;
             justify-content: center;
         }
-        .bottom-ref-preview img {
+        .ref-preview-frame img {
             width: 100%;
             height: 100%;
             object-fit: contain;
         }
-        .bottom-ref-del {
+        .ref-del-pill {
             position: absolute;
             top: 6px;
             right: 6px;
-            width: 22px;
-            height: 22px;
-            background: rgba(224,108,117,0.9);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(30, 28, 26, 0.75);
+            backdrop-filter: blur(4px);
             color: white;
             border: none;
-            border-radius: 50%;
-            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1;
-            z-index: 10;
+            transition: var(--transition);
         }
-        .bottom-canvas-area {
-            flex: 1;
-            background: var(--bg-input);
-            border-radius: 20px;
+        .ref-del-pill:hover {
+            background: #E06C75;
+            transform: scale(1.08);
+        }
+
+        .adherence-box {
+            background: var(--bg-card-subtle);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .slider-row {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .slider-info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.74rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        .slider-val-badge {
+            color: var(--primary);
+            font-family: monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            background: var(--primary-light);
+            padding: 1px 6px;
+            border-radius: var(--radius-pill);
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 5px;
+            background: var(--border-subtle);
+            border-radius: var(--radius-pill);
+            outline: none;
+            cursor: pointer;
+            margin: 3px 0;
+            transition: var(--transition);
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 2px 6px var(--primary-glow);
+            border: 2px solid #FFFFFF;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        /* 4X4 矩阵输入字段容器与高度扩充样式 */
+        .matrix-field-card {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: var(--bg-card-subtle);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            transition: var(--transition);
+        }
+        .matrix-field-card:focus-within {
+            border-color: var(--primary);
+            background: var(--bg-card);
+            box-shadow: 0 4px 14px var(--primary-light);
+        }
+        .matrix-label-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .matrix-label {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .matrix-subhint {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            line-height: 1.35;
+        }
+
+        /* 提升 4X4 矩阵文本输入框高度，方便完整审阅与多行编辑 */
+        textarea.matrix-textarea {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 0.84rem;
+            color: var(--text-main);
+            line-height: 1.6;
+            resize: vertical;
+            min-height: 115px; /* 扩展高度，舒适容纳 5~6 行参数描述 */
+            outline: none;
+            padding: 4px 0 0 0;
+        }
+
+        .cta-btn-primary {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, #D49A89 100%);
+            color: #FFFFFF;
+            border: none;
+            padding: 14px 20px;
+            border-radius: var(--radius-lg);
+            font-size: 0.94rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            box-shadow: var(--shadow-glow);
+            transition: var(--transition);
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-            overflow: hidden;
+            gap: 8px;
+        }
+        .cta-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px var(--primary-glow);
+        }
+        .cta-btn-primary:disabled {
+            background: #CFCACA;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ====== 中间与右侧：双重画廊比对台与快照胶卷 ====== */
+        .matrix-stage-deck {
+            flex: 1;
+            display: flex;
+            gap: 16px;
+            height: 100%;
+            min-width: 0;
             min-height: 0;
         }
-        .bottom-canvas-area img {
+
+        .dual-canvas-wrapper {
+            flex: 1;
+            display: flex;
+            gap: 14px;
+            min-width: 0;
+            height: 100%;
+            min-height: 0;
+        }
+        .canvas-card-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 0;
+            height: 100%;
+            min-height: 0;
+        }
+
+        .canvas-viewport {
+            flex: 1;
+            border-radius: var(--radius-xl);
+            background: var(--bg-card-subtle);
+            border: 1px solid var(--border-subtle);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: radial-gradient(circle, var(--border-subtle) 1px, transparent 1px);
+            background-size: 22px 22px;
+            min-height: 0;
+        }
+        .canvas-viewport img {
             max-width: 100%;
             max-height: 100%;
             width: 100%;
             height: 100%;
             object-fit: contain;
             display: none;
+            transition: var(--transition);
         }
-        .bottom-tools-bar {
+
+        .canvas-floating-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 3px 10px;
+            border-radius: var(--radius-pill);
+            border: 1px solid var(--border-subtle);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-secondary);
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            background: #FFFFFF;
+            gap: 5px;
+            z-index: 2;
+        }
+        body.dark .canvas-floating-badge {
+            background: rgba(30, 28, 26, 0.85);
+        }
+
+        .canvas-action-overlay {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            gap: 6px;
+            z-index: 2;
+        }
+        .canvas-tool-btn {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-pill);
+            padding: 5px 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        body.dark .canvas-tool-btn {
+            background: rgba(30, 28, 26, 0.85);
+        }
+        .canvas-tool-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .prompt-inspector-card {
+            height: 74px;
+            flex-shrink: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
             padding: 10px 14px;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border);
-            gap: 10px;
-            flex-shrink: 0;
-        }
-
-        /* --- 中间细微分割线 --- */
-        .bottom-split-divider {
-            width: 1px;
-            background: var(--border);
-            flex-shrink: 0;
-            height: 100%;
-        }
-
-        /* --- 右半部分：AI 视觉解析大模型对话框 --- */
-        .bottom-right-panel {
-            flex: 0.95;
-            min-width: 0;
-            height: 100%;
-            background: #FFFFFF;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border);
-            padding: 18px 20px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.02);
+            gap: 3px;
+            overflow-y: auto;
+        }
+        .prompt-inspector-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .prompt-inspector-body {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+            word-break: break-word;
+        }
+
+        /* 侧边快照胶卷 */
+        .snapshot-film-deck {
+            width: 165px;
+            flex-shrink: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 14px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            height: 100%;
             min-height: 0;
         }
-        .chat-header-actions {
+        .snapshot-deck-header {
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: space-between;
         }
-        .chat-attach-toggle {
+        .snapshot-deck-header h3 {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .snapshot-scroll-list {
+            flex: 1;
+            overflow-y: auto;
             display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.76rem;
-            color: var(--text-muted);
+            flex-direction: column;
+            gap: 8px;
+            padding-right: 2px;
+            min-height: 0;
+        }
+        .snapshot-tile {
+            position: relative;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            aspect-ratio: 1;
+            border: 2px solid transparent;
             cursor: pointer;
-            user-select: none;
+            transition: var(--transition);
             background: var(--bg-input);
-            padding: 4px 10px;
-            border-radius: 20px;
-            transition: all 0.2s;
         }
-        .chat-attach-toggle:hover {
-            color: var(--primary);
+        .snapshot-tile img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
-        .chat-attach-toggle input[type="checkbox"] {
+        .snapshot-tile.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+        .snapshot-tile-del {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 18px;
+            height: 18px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            border: none;
             cursor: pointer;
-            margin: 0;
-            accent-color: var(--primary);
         }
-        .bottom-chat-messages {
+        .snapshot-tile:hover .snapshot-tile-del {
+            display: flex;
+        }
+
+        /* ====== 视图 2: 3D 空间建模室全屏布局 ====== */
+        .model3d-studio-view {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 100%;
+            height: 100%;
+            min-height: 0;
+        }
+        .model3d-pipeline-grid {
+            display: grid;
+            grid-template-columns: 320px 340px 1fr;
+            gap: 16px;
+            height: 100%;
+            min-height: 0;
+        }
+        .pipeline-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            box-shadow: var(--shadow-card);
+            height: 100%;
+            min-height: 0;
+            overflow: hidden;
+        }
+        .pipeline-card-title {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ====== 视图 3: 自由探索与视觉智囊全屏布局 ====== */
+        .creative-copilot-view {
+            display: grid;
+            grid-template-columns: 1.15fr 1fr;
+            gap: 16px;
+            width: 100%;
+            height: 100%;
+            min-height: 0;
+        }
+
+        .chat-studio-card {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 18px 20px;
+            gap: 12px;
+            box-shadow: var(--shadow-card);
+            height: 100%;
+            min-height: 0;
+            overflow: hidden;
+        }
+        .chat-messages-scroll {
             flex: 1;
             min-height: 0;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            padding-right: 6px;
+            padding-right: 4px;
         }
-        .chat-welcome {
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-            background: var(--bg-input);
-            padding: 14px 16px;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border);
-            font-size: 0.82rem;
-            line-height: 1.6;
-        }
-        .chat-avatar-ai {
-            font-size: 1.3rem;
-            flex-shrink: 0;
-        }
-        .chat-msg-row {
+        .chat-bubble-row {
             display: flex;
             flex-direction: column;
             width: 100%;
         }
-        .chat-msg-row.user {
-            align-items: flex-end;
-        }
-        .chat-msg-row.ai {
-            align-items: flex-start;
-        }
-        .chat-bubble {
-            max-width: 88%;
+        .chat-bubble-row.user { align-items: flex-end; }
+        .chat-bubble-row.ai { align-items: flex-start; }
+        
+        .chat-bubble-box {
+            max-width: 86%;
             padding: 10px 14px;
-            font-size: 0.83rem;
-            line-height: 1.6;
+            border-radius: 16px;
+            font-size: 0.82rem;
+            line-height: 1.55;
             word-break: break-word;
         }
-        .chat-bubble.user {
-            background: var(--primary);
+        .chat-bubble-box.user {
+            background: linear-gradient(135deg, var(--primary) 0%, #D49A89 100%);
             color: #FFFFFF;
-            border-radius: 16px 16px 4px 16px;
-            box-shadow: 0 4px 12px rgba(212, 154, 137, 0.25);
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 14px var(--primary-glow);
         }
-        .chat-bubble.ai {
+        .chat-bubble-box.ai {
             background: var(--bg-input);
             color: var(--text-main);
-            border-radius: 16px 16px 16px 4px;
-            border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+            border: 1px solid var(--border-subtle);
         }
-        .chat-image-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 0.72rem;
-            padding: 2px 8px;
-            background: rgba(255, 255, 255, 0.25);
-            border-radius: 10px;
-            margin-bottom: 6px;
-        }
-        .chat-quick-tags {
+
+        .quick-prompts-flex {
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
-            padding-top: 4px;
             flex-shrink: 0;
         }
-        .chat-tag {
+        .quick-prompt-tag {
             background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 4px 10px;
-            font-size: 0.74rem;
-            color: var(--text-muted);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-pill);
+            padding: 5px 10px;
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: var(--text-secondary);
             cursor: pointer;
-            transition: all 0.2s;
-            user-select: none;
+            transition: var(--transition);
         }
-        .chat-tag:hover {
-            background: #FFFFFF;
+        .quick-prompt-tag:hover {
             border-color: var(--primary);
             color: var(--primary);
+            background: var(--bg-card);
             transform: translateY(-1px);
         }
-        .bottom-chat-input-area {
+
+        .chat-input-bar {
             display: flex;
             gap: 8px;
             align-items: flex-end;
             background: var(--bg-input);
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
             padding: 8px 10px;
             flex-shrink: 0;
+            transition: var(--transition);
         }
-        .bottom-chat-input-area textarea {
+        .chat-input-bar:focus-within {
+            border-color: var(--primary);
+            background: var(--bg-card);
+            box-shadow: 0 4px 16px var(--primary-light);
+        }
+        .chat-textarea {
             flex: 1;
+            min-width: 0;
             border: none;
-            box-shadow: none;
-            padding: 4px 6px;
             background: transparent;
-            font-size: 0.85rem;
-            min-height: 44px;
-            max-height: 100px;
-            resize: none;
+            font-family: inherit;
+            font-size: 0.84rem;
             color: var(--text-main);
+            resize: none;
+            outline: none;
+            min-height: 42px;
+            max-height: 100px;
+            line-height: 1.5;
+            padding: 5px 0;
         }
-        .bottom-chat-input-area textarea:focus {
-            border: none;
-            box-shadow: none;
-            background: transparent;
-        }
+
         .chat-send-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 10px 14px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.2s;
             flex-shrink: 0;
+            width: auto;
+            min-width: 74px;
+            height: 36px;
+            padding: 0 14px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--primary) 0%, #D49A89 100%);
+            color: #FFFFFF;
+            border: none;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: var(--shadow-glow);
+            transition: var(--transition);
+            white-space: nowrap;
+            margin-bottom: 2px;
         }
         .chat-send-btn:hover {
-            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px var(--primary-glow);
         }
         .chat-send-btn:disabled {
-            background: #D1CDCA;
+            background: #CFCACA;
+            box-shadow: none;
             cursor: not-allowed;
-        }
-        
-        @media (max-width: 1200px) {
-            .bottom-split-container { flex-direction: column; overflow: visible; }
-            .bottom-gen-panel { height: auto; min-height: auto; max-height: none; }
-            .bottom-split-divider { display: none; }
-            .bottom-left-panel { height: auto; }
-            .bottom-right-panel { height: 600px; }
+            transform: none;
         }
 
-        @media (max-width: 1024px) {
-            .design-cabin-workspace { flex-direction: column; height: auto; }
-            .left-panel { width: 100%; height: 750px; }
-            .right-layout { height: auto; }
-            .right-panel { min-height: 560px; }
-            .model3d-panel { height: auto; min-height: auto; }
-            .model3d-body { flex-direction: column; height: auto; }
-            .model3d-ref, .model3d-params { width: 100%; }
-            .model3d-ref-img { min-height: 160px; }
-            .model3d-result { width: 100%; min-width: 0; }
-            .bottom-gen-body { flex-direction: column; height: auto; overflow: visible; }
-            .bottom-gen-left { width: 100%; height: auto; }
-            .bottom-gen-right { height: auto; }
-            .bottom-canvas-area { min-height: 420px; }
-        }
-
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #D1CDCA; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
-        
-        .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
-        h1 { font-size: 1.4rem; font-weight: 600; margin: 0; letter-spacing: -0.5px; color: #2C2A29; }
-        .section-tag { display: inline-flex; align-items: center; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--primary); background: rgba(212, 154, 137, 0.1); padding: 6px 12px; border-radius: 30px; margin: 32px 0 16px 0; }
-        .section-tag.first { margin-top: 0; }
-        .form-row { display: flex; gap: 12px; margin-bottom: 16px; }
-        .form-group { flex: 1; margin-bottom: 20px; }
-        label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; }
-        .sub-label { font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 8px; line-height: 1.5; }
-        select, input[type="text"], input[type="password"], textarea { width: 100%; padding: 14px 16px; border: 2px solid transparent; border-radius: var(--radius-sm); font-family: inherit; font-size: 0.95rem; background: var(--bg-input); transition: all 0.3s ease; color: var(--text-main); box-shadow: var(--shadow-inner); cursor: pointer; }
-        select:focus, input:focus, textarea:focus { outline: none; border-color: var(--primary); background: #FFFFFF; box-shadow: 0 4px 12px rgba(212, 154, 137, 0.1); cursor: text; }
-        textarea { resize: vertical; min-height: 96px; line-height: 1.5; }
-        .api-config-box { background: #FFFFFF; border-radius: var(--radius-md); padding: 20px; border: 1px solid var(--border); margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
-        .api-key-row { display: flex; gap: 8px; align-items: stretch; }
-        .api-key-row input { flex: 1; }
-        .toggle-key-btn { background: var(--bg-input); border: none; border-radius: var(--radius-sm); padding: 0 14px; cursor: pointer; color: var(--text-muted); font-size: 0.85rem; white-space: nowrap; transition: all 0.2s; }
-        .toggle-key-btn:hover { background: #E8E5E2; color: var(--text-main); }
-        .free-hint { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 0.8rem; color: var(--accent); }
-        .free-hint a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; font-weight: 500; }
-        .model-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(163, 177, 155, 0.12); color: #6B7A63; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 500; margin-left: 8px; }
-        
-        .upload-area { border: 1px dashed #CFCACA; border-radius: var(--radius-md); padding: 32px 20px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: var(--bg-input); position: relative; overflow: hidden; }
-        .upload-area:hover { background: #FFFFFF; border-color: var(--primary); }
-        .upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-        .preview-img { max-height: 150px; border-radius: var(--radius-sm); display: none; margin: 12px auto 0; object-fit: cover;}
-        .remove-ref-btn { position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; background: rgba(224, 108, 117, 0.9); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; z-index: 2; padding: 0; }
-        .remove-ref-btn:hover { background: #E06C75; transform: scale(1.1); }
-        
-        .level-box { background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 24px; }
-        button { background-color: var(--primary); color: white; border: none; padding: 16px 24px; border-radius: var(--radius-md); font-size: 1rem; cursor: pointer; font-weight: 600; letter-spacing: 0.5px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; justify-content: center; gap: 8px; }
-        button:hover { background-color: var(--primary-hover); transform: scale(0.98); }
-        button:disabled { background-color: #D1CDCA; cursor: not-allowed; transform: none; }
-        button.ghost { background-color: transparent; color: var(--text-muted); border: 1px solid #D1CDCA; padding: 6px 14px; font-size: 0.8rem; border-radius: 30px; }
-        button.ghost:hover { background-color: #F4F2F0; color: var(--text-main); border-color: var(--text-main); }
-        .main-btn { width: 100%; margin-top: 12px; font-size: 1.1rem; box-shadow: 0 8px 24px rgba(212, 154, 137, 0.3); }
-        
-        .snapshot-panel { width: 168px; flex-shrink: 0; display: flex; flex-direction: column; background: #FFFFFF; border-radius: var(--radius-md); border: 1px solid var(--border); padding: 14px; gap: 10px; }
-        .snapshot-header { display: flex; justify-content: space-between; align-items: center; }
-        .snapshot-header span { font-size: 0.8rem; font-weight: 600; color: #2C2A29; }
-        .snapshot-clear { background: none; border: none; color: var(--text-muted); font-size: 0.7rem; cursor: pointer; padding: 2px 6px; border-radius: 6px; }
-        .snapshot-clear:hover { background: var(--bg-input); color: var(--text-main); }
-        .snapshot-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 2px; }
-        .snapshot-item { position: relative; border-radius: 10px; overflow: hidden; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; aspect-ratio: 1; }
-        .snapshot-item:hover { border-color: var(--primary); }
-        .snapshot-item.active { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(212,154,137,0.2); }
-        .snapshot-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .snapshot-item .snap-del { position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; font-size: 12px; cursor: pointer; display: none; align-items: center; justify-content: center; line-height: 1; }
-        .snapshot-item:hover .snap-del { display: flex; }
-        .snapshot-empty { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.75rem; text-align: center; line-height: 1.5; }
-        .snapshot-actions { display: flex; flex-direction: column; gap: 6px; }
-        .snap-btn { padding: 9px 12px; font-size: 0.8rem; border-radius: 10px; cursor: pointer; border: none; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.2s; }
-        .snap-btn.primary { background: var(--primary); color: white; }
-        .snap-btn.primary:hover { background: var(--primary-hover); }
-        .snap-btn.primary:disabled { background: #D1CDCA; cursor: not-allowed; }
-        .snap-btn.secondary { background: var(--bg-input); color: var(--text-main); }
-        .snap-btn.secondary:hover { background: #E8E5E2; }
-        .snap-btn.secondary:disabled { opacity: 0.5; cursor: not-allowed; }
-        
-        .loading { display: none; flex-direction: column; align-items: center; justify-content: center; color: var(--primary); font-weight: 500; }
-        .spinner { width: 48px; height: 48px; border: 3px solid rgba(212, 154, 137, 0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        .placeholder { color: #AFAAA7; font-size: 1.1rem; font-weight: 300; letter-spacing: 1px;}
-        .error { color: #E06C75; font-size: 0.9rem; margin-top: 12px; padding: 12px 16px; background: rgba(224, 108, 117, 0.1); border-radius: var(--radius-sm); display: none;}
-        .theme-toggle { width: 40px; height: 40px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border); box-shadow: var(--shadow-float); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; padding: 0; transition: all 0.3s; }
-        .theme-toggle:hover { transform: scale(1.08); border-color: var(--primary); }
-        .theme-toggle .theme-icon-dark { display: none; }
-        
-        .matting-textarea {
-            width: 100%;
-            min-height: 48px;
-            padding: 6px 8px;
-            font-size: 0.75rem;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            margin-top: 8px;
-            resize: none;
-            background: var(--bg-input);
-            color: var(--text-main);
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-        }
-
-        .weight-slider-group {
-            background: #FFFFFF;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            padding: 16px;
-            margin-top: 20px;
-        }
-        .weight-slider-item {
-            margin-bottom: 14px;
-        }
-        .weight-slider-item:last-child {
-            margin-bottom: 0;
-        }
-        .weight-slider-header {
-            display: flex;
-            justify-content: space-between;
+        /* ====== 全局配置弹窗与灯箱 ====== */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(20, 18, 16, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
             align-items: center;
-            font-size: 0.8rem;
-            font-weight: 500;
-            margin-bottom: 4px;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.2s ease;
         }
-        .weight-slider-header .val {
+        .modal-window {
+            width: 100%;
+            max-width: 660px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-float);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .modal-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .modal-header h2 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .modal-body {
+            padding: 20px 24px;
+            max-height: 75vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .input-group label {
+            font-size: 0.76rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        input[type="text"], input[type="password"], select, textarea {
+            width: 100%;
+            padding: 9px 12px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-input);
+            font-family: inherit;
+            font-size: 0.84rem;
+            color: var(--text-main);
+            transition: var(--transition);
+            outline: none;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            background: var(--bg-input-focus);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .api-key-row {
+            display: flex;
+            gap: 8px;
+        }
+        .toggle-key-pill {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 0 12px;
+            font-size: 0.74rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+        .toggle-key-pill:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .api-link-hint {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+            font-size: 0.76rem;
+            color: var(--accent-sage);
+        }
+        .api-link-hint a {
+            color: var(--accent-sage);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .api-link-hint a:hover {
+            color: var(--primary);
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: var(--radius-pill);
+        }
+        .status-pill.idle { background: var(--border-subtle); color: var(--text-secondary); }
+        .status-pill.queued { background: var(--primary-light); color: var(--primary); }
+        .status-pill.running { background: var(--primary-light); color: var(--primary); }
+        .status-pill.succeeded { background: var(--accent-sage-light); color: var(--accent-sage); }
+        .status-pill.failed { background: rgba(224, 108, 117, 0.15); color: #E06C75; }
+
+        .loading-wrap {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             color: var(--primary);
             font-weight: 600;
+            font-size: 0.82rem;
         }
+        .spinner-ring {
+            width: 38px;
+            height: 38px;
+            border: 3px solid var(--primary-light);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; margin: 6px 0 2px 0; }
-        input[type=range]:focus { outline: none; box-shadow: none; background: transparent; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--primary); cursor: pointer; margin-top: -6px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); transition: transform 0.1s; }
-        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #D1CDCA; border-radius: 2px; }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(160, 150, 140, 0.3); border-radius: var(--radius-pill); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-        body.dark { --primary: #C48878; --primary-hover: #D49A89; --bg-app: #161413; --bg-card: rgba(38, 36, 34, 0.95); --bg-input: #252321; --text-main: #E4E0DB; --text-muted: #8E8A85; --border: rgba(255, 255, 255, 0.06); --accent: #8FA085; --shadow-float: 0 24px 48px rgba(0, 0, 0, 0.4); --shadow-inner: inset 0 2px 4px rgba(0,0,0,0.3); background-image: radial-gradient(at 100% 0%, rgba(60, 55, 50, 0.4) 0%, transparent 50%), radial-gradient(at 0% 100%, rgba(60, 55, 50, 0.3) 0%, transparent 50%); }
-        body.dark .panel { border-color: rgba(255, 255, 255, 0.08); }
-        body.dark h1 { color: var(--text-main); }
-        body.dark ::-webkit-scrollbar-thumb { background: #4A4744; }
-        body.dark select:focus, body.dark input:focus, body.dark textarea:focus { background: #2E2C2A; }
-        body.dark .api-config-box { background: rgba(45, 43, 41, 0.8); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-        body.dark .upload-area { border-color: #4A4744; }
-        body.dark .upload-area:hover { background: #2A2826; }
-        body.dark .level-box { background: rgba(45, 43, 41, 0.8); }
-        body.dark .weight-slider-group { background: rgba(45, 43, 41, 0.8); border-color: rgba(255, 255, 255, 0.06); }
-        body.dark button:disabled { background-color: #4A4744; }
-        body.dark button.ghost { border-color: #4A4744; }
-        body.dark button.ghost:hover { background-color: #2E2C2A; }
-        body.dark .toggle-key-btn:hover { background: #2E2C2A; }
-        body.dark .snapshot-panel { background: rgba(45, 43, 41, 0.9); }
-        body.dark .snapshot-header span { color: var(--text-main); }
-        body.dark .snap-btn.primary:disabled { background: #4A4744; }
-        body.dark .snap-btn.secondary:hover { background: #2E2C2A; }
-        body.dark .prompt-board { background: rgba(45, 43, 41, 0.9); }
-        body.dark .prompt-board h3 { color: var(--text-main); }
-        body.dark .placeholder { color: #6A6764; }
-        body.dark select { background: #252321 !important; }
-        body.dark #uploadText svg { color: #6A6764 !important; }
-        body.dark #extractBtn { background: #4A4744 !important; }
-        body.dark .theme-toggle .theme-icon-light { display: none; }
-        body.dark .theme-toggle .theme-icon-dark { display: inline; }
-        body.dark .matting-textarea { background: #2E2C2A; border-color: #4A4744; }
-        body.dark input[type=range]::-webkit-slider-runnable-track { background: #4A4744; }
-        body.dark .model3d-header h2 { color: var(--text-main); }
-        body.dark .model3d-result { background: rgba(45,43,41,0.6); }
-        body.dark .model3d-upload-box { border-color: #4A4744; }
-        body.dark .model3d-upload-box:hover { background: #2A2826; }
-        body.dark .bottom-header-row h2 { color: var(--text-main); }
-        body.dark .bottom-upload-box { border-color: #4A4744; }
-        body.dark .bottom-upload-box:hover { background: #2A2826; }
-        body.dark .bottom-tools-bar { background: rgba(45, 43, 41, 0.9); border-color: rgba(255, 255, 255, 0.06); }
-        
-        /* 对话框暗黑模式 */
-        body.dark .bottom-right-panel { background: rgba(38, 36, 34, 0.9); border-color: rgba(255, 255, 255, 0.06); }
-        body.dark .chat-welcome { background: #252321; border-color: rgba(255, 255, 255, 0.06); }
-        body.dark .chat-bubble.ai { background: #252321; border-color: rgba(255, 255, 255, 0.06); color: var(--text-main); }
-        body.dark .chat-tag { background: #252321; border-color: rgba(255, 255, 255, 0.06); }
-        body.dark .chat-tag:hover { background: #2E2C2A; color: var(--primary); }
-        body.dark .bottom-chat-input-area { background: #252321; border-color: rgba(255, 255, 255, 0.06); }
-        body.dark .chat-attach-toggle { background: #2E2C2A; }
+        @media (max-width: 1200px) {
+            html, body { overflow: auto; height: auto; }
+            .main-container { height: auto; overflow: visible; padding: 14px; }
+            .workspace-matrix-view { flex-direction: column; height: auto; }
+            .left-sidebar-deck { width: 100%; height: auto; }
+            .matrix-stage-deck { height: 640px; }
+            .model3d-pipeline-grid { grid-template-columns: 1fr; height: auto; }
+            .creative-copilot-view { grid-template-columns: 1fr; height: auto; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="design-cabin-workspace">
-        <aside class="panel left-panel">
-            <div class="left-scroll-area">
-                <div class="app-header">
-                    <h1>产品设计舱·4X4矩阵</h1>
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="切换亮暗模式">
-                            <span class="theme-icon-light">☀️</span>
-                            <span class="theme-icon-dark">🌙</span>
-                        </button>
-                        <button class="ghost" onclick="fillPreset()">填入行业示例</button>
-                    </div>
-                </div>
-                
-                <div class="section-tag first" style="cursor: pointer; display: inline-flex; align-items: center; gap: 4px; user-select: none;" onclick="toggleEngineConfig()" title="点击折叠/展开配置">
-                    01 AI 引擎配置 <span class="model-badge">✨ APINebula 中转集成</span>
-                    <svg id="engineConfigIcon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="transition: transform 0.3s; margin-left: 4px; transform: rotate(0deg);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </div>
-                
-                <div id="engineConfigContent">
-                    <div class="form-row">
-                        <div style="flex:1;">
-                            <label>视觉/解析模型引擎</label>
-                            <select id="visionModelSelect" onchange="updateEngineConfigUI()">
-                                <option value="gemini" selected>APINebula (Gemini)</option>
-                                <option value="doubao">豆包 Vision 大模型</option>
-                            </select>
-                        </div>
-                        <div style="flex:1;">
-                            <label>渲染生图模型引擎</label>
-                            <select id="imageModelSelect" onchange="updateEngineConfigUI()">
-                                <option value="gemini" selected>APINebula (生图)</option>
-                                <option value="doubao">豆包 Seedream 生图</option>
-                            </select>
-                        </div>
-                    </div>
+    <!-- ====== 全局顶栏导航 ====== -->
+    <header class="app-navbar">
+        <div class="brand-group">
+            <div class="brand-logo">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+            </div>
+            <div class="brand-title">
+                <h1>
+                    AURA DESIGN 4X4
+                    <span class="brand-badge">Ergonomics AI 2.0</span>
+                </h1>
+                <span class="brand-subtitle">自然健康 · 人体工学产品 AI 工业设计工作舱</span>
+            </div>
+        </div>
+
+        <!-- 核心工作流视图切换器 -->
+        <nav class="workspace-tabs" id="workspaceTabs">
+            <button class="tab-btn active" onclick="switchView('matrix')">
+                <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                4X4 矩阵设计舱
+            </button>
+            <button class="tab-btn" onclick="switchView('3d')">
+                <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                3D 空间建模室
+            </button>
+            <button class="tab-btn" onclick="switchView('copilot')">
+                <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                自由探索与视觉智囊
+            </button>
+            <button class="tab-btn" onclick="switchView('all')">
+                <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>
+                全景流
+            </button>
+        </nav>
+
+        <div class="nav-actions">
+            <!-- 品类快速切换 -->
+            <select id="productCategory" class="category-select-nav" onchange="changeCategory(); safeSave(STORAGE_CATEGORY, this.value);" title="切换产品品类与人体工学场景">
+                <option value="lumbar_support" selected>🌱 居家/车载腰靠 (记忆棉)</option>
+                <option value="car_headrest">🚗 汽车头枕 (记忆棉)</option>
+                <option value="u_pillow">✈️ U型枕 (记忆棉)</option>
+                <option value="desk_nap_pillow">☕ 趴睡枕 (记忆棉)</option>
+                <option value="bedside_cushion">🛏️ 床头靠垫 (记忆棉)</option>
+                <option value="hemorrhoid_cushion">🩺 痔疮减压垫 (记忆棉)</option>
+            </select>
+
+            <button class="icon-btn" onclick="fillPreset()" title="填入行业大师级预设案例">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+            </button>
+
+            <!-- 引擎与密钥配置抽屉触发器 -->
+            <button class="icon-btn" onclick="openEngineSettingsModal()" title="AI 引擎与密钥设置">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+                <div class="status-dot-pulse"></div>
+            </button>
+
+            <!-- 亮暗模式切换 -->
+            <button class="icon-btn" id="themeToggle" onclick="toggleTheme()" title="切换自然暖白/曜石黑模式">
+                <span id="themeIcon">☀️</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ====== 主工作区全屏容器 ====== -->
+    <main class="main-container">
+
+        <!-- ========================================== -->
+        <!-- 视图 1: 4X4 矩阵设计舱 (Matrix Studio View) -->
+        <!-- ========================================== -->
+        <section id="viewMatrix" class="workspace-matrix-view">
+            
+            <!-- 左侧控制台：参数、贴合度、4X4矩阵输入 -->
+            <aside class="left-sidebar-deck">
+                <div class="sidebar-scroll-content">
                     
-                    <div class="api-config-box">
-                        <div id="geminiCommonConfigArea" style="margin-bottom: 14px;">
-                            <label>APINebula 接口地址 (Base URL)</label>
-                            <input type="text" id="apiNebulaBaseUrl" placeholder="https://apinebula.com/v1" value="https://apinebula.com/v1" style="margin-bottom: 12px;">
-
-                            <div id="geminiVisionConfigArea" style="margin-bottom: 14px;">
-                                <label>视觉解析 · APINebula API Key</label>
-                                <div class="api-key-row" style="margin-bottom: 8px;">
-                                    <input type="password" id="geminiVisionApiKey" placeholder="输入 sk- 开头的 APINebula 密钥">
-                                    <button class="toggle-key-btn" onclick="toggleKeyVisibility('geminiVisionApiKey', this)">显示</button>
-                                </div>
-                                <label style="font-size:0.8rem;color:var(--text-muted);">视觉解析模型标识</label>
-                                <input type="text" id="geminiVisionModelName" placeholder="如 gemini-3.6-flash" value="gemini-3.6-flash">
-                            </div>
-
-                            <div id="geminiImageConfigArea" style="margin-bottom: 14px;">
-                                <label>渲染生图 · APINebula API Key</label>
-                                <div class="api-key-row" style="margin-bottom: 8px;">
-                                    <input type="password" id="geminiImageApiKey" placeholder="输入用于生图的 Key（留空则复用上方 Key）">
-                                    <button class="toggle-key-btn" onclick="toggleKeyVisibility('geminiImageApiKey', this)">显示</button>
-                                </div>
-                                <label style="font-size:0.8rem;color:var(--text-muted);">生图模型标识</label>
-                                <input type="text" id="geminiImageModelName" placeholder="如 gemini-3.1-flash-image" value="gemini-3.1-flash-image">
-                            </div>
-
-                            <div class="free-hint">
-                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                <a href="https://apinebula.ai/01QH2F" target="_blank" rel="noopener">前往 APINebula 控制台获取 API Key →</a>
-                            </div>
-                        </div>
-
-                        <div id="doubaoVisionConfigArea" style="display: none; margin-bottom: 14px;">
-                            <label>视觉解析 · 豆包推理接入点 ID (ep-xxx)</label>
-                            <input type="text" id="doubaoVisionModel" placeholder="填写豆包 Vision 推理接入点 ID">
+                    <!-- 步骤 01: 参考图与贴合度控制 -->
+                    <div>
+                        <div class="section-header-pill">
+                            <span>01 · 参考图导入与多维贴合</span>
+                            <span style="font-size: 0.68rem; opacity: 0.85;">CMF / 轮廓映射</span>
                         </div>
                         
-                        <div id="doubaoImageConfigArea" style="display: none; margin-bottom: 14px;">
-                            <label>生图渲染 · 豆包推理接入点 ID (ep-xxx)</label>
-                            <input type="text" id="doubaoImageModel" placeholder="填写豆包生图推理接入点 ID">
+                        <div class="modern-upload-card" id="uploadArea" style="margin-top: 8px;">
+                            <input type="file" id="imageInput" accept="image/*" onchange="handleImageUpload(event)">
+                            <div id="uploadText">
+                                <div class="upload-icon-wrap" style="margin: 0 auto 6px;">
+                                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                </div>
+                                <div class="upload-hint-title">点击或拖拽参考设计图</div>
+                                <div class="upload-hint-sub">支持记忆棉制品、坐具、缝线细节实拍图</div>
+                            </div>
+
+                            <div id="refPreviewContainer" class="ref-preview-frame">
+                                <img id="refImagePreview" alt="参考图预览">
+                                <button type="button" id="removeRefBtn" class="ref-del-pill" onclick="removeReferenceImage()" title="移除参考图">✕</button>
+                            </div>
                         </div>
 
-                        <div style="margin-top: 16px; border-top: 1px dashed var(--border); padding-top: 14px;">
-                            <label>火山引擎 API Key（豆包通用 / 用于 3D 生成）</label>
-                            <div class="api-key-row" style="margin-bottom: 8px;">
-                                <input type="password" id="doubaoApiKey" placeholder="输入火山方舟 API Key">
-                                <button class="toggle-key-btn" onclick="toggleKeyVisibility('doubaoApiKey', this)">显示</button>
+                        <!-- 智能识别特征按钮 -->
+                        <button id="extractBtn" class="cta-btn-primary" style="margin-top: 8px; display: none; background: #554D48; font-size: 0.84rem; padding: 10px 16px;" onclick="extractFeatures()">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            ✨ 智能解析参考图 · 提取 4X4 矩阵
+                        </button>
+                        <div id="extractError" style="display:none; color: #E06C75; font-size: 0.78rem; margin-top: 6px;"></div>
+
+                        <!-- 贴合度滑块组 -->
+                        <div id="refineControl" class="adherence-box" style="display: none; margin-top: 10px;">
+                            <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-main); display:flex; justify-content:space-between;">
+                                <span>贴合度定向控制</span>
+                                <span style="font-size: 0.68rem; color: var(--text-muted);">0% 全新重构 · 100% 严格复刻</span>
                             </div>
-                            <label>3D 生成 · 推理接入点 ID / 模型 ID</label>
-                            <input type="text" id="doubao3DModel" placeholder="ep-xxxxxxxxxx 或 doubao-seed3d-2-0-260328" value="doubao-seed3d-2-0-260328">
-                            <div class="free-hint">
-                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                <a href="https://console.volcengine.com/ark/region:ark+cn-beijing/apiKey" target="_blank" rel="noopener">获取火山引擎 API Key →</a>
+
+                            <div class="slider-row">
+                                <div class="slider-info-bar">
+                                    <span>① 造型轮廓贴合 (Form)</span>
+                                    <span id="weightShapeVal" class="slider-val-badge">50%</span>
+                                </div>
+                                <input type="range" id="weightShape" min="0" max="100" value="50">
+                            </div>
+
+                            <div class="slider-row">
+                                <div class="slider-info-bar">
+                                    <span>② 制版走线贴合 (Structure)</span>
+                                    <span id="weightPatternVal" class="slider-val-badge">50%</span>
+                                </div>
+                                <input type="range" id="weightPattern" min="0" max="100" value="50">
+                            </div>
+
+                            <div class="slider-row">
+                                <div class="slider-info-bar">
+                                    <span>③ 配色材质贴合 (CMF)</span>
+                                    <span id="weightColorVal" class="slider-val-badge">50%</span>
+                                </div>
+                                <input type="range" id="weightColor" min="0" max="100" value="50">
                             </div>
                         </div>
                     </div>
+
+                    <!-- 步骤 02: 4X4 矩阵输入字段 (完整还原文件一四层级描述)[cite: 1] -->
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div class="section-header-pill">
+                            <span>02 · 4X4 人体工学矩阵定义</span>
+                            <span style="font-size: 0.68rem; opacity: 0.85;">可迭代微调</span>
+                        </div>
+
+                        <div class="matrix-field-card">
+                            <div class="matrix-label-row">
+                                <label class="matrix-label" for="dim1">
+                                    <span style="color:var(--primary);">①</span> 造型维度 (Form)
+                                </label>
+                            </div>
+                            <span class="matrix-subhint">包含：1. 整体外形弧度尺寸比例 | 2. 线条与曲面特征 | 3. 部件与分件形态 | 4. 细节特征</span>
+                            <textarea id="dim1" class="matrix-textarea" placeholder="请描述造型..."></textarea>
+                        </div>
+
+                        <div class="matrix-field-card">
+                            <div class="matrix-label-row">
+                                <label class="matrix-label" for="dim2">
+                                    <span style="color:var(--primary);">②</span> 功能维度 (Function)
+                                </label>
+                            </div>
+                            <span class="matrix-subhint">包含：1. 核心支撑与减压 | 2. 舒适与适配调节 | 3. 辅助与附加功能 | 4. 维护与耐用功能</span>
+                            <textarea id="dim2" class="matrix-textarea" placeholder="请描述功能..."></textarea>
+                        </div>
+
+                        <div class="matrix-field-card">
+                            <div class="matrix-label-row">
+                                <label class="matrix-label" for="dim3">
+                                    <span style="color:var(--primary);">③</span> 颜值维度 (Aesthetics)
+                                </label>
+                            </div>
+                            <span class="matrix-subhint">包含：1. 主色彩与配色 | 2. 主要材质观感 | 3. 表面工艺与纹理 | 4. 装饰元素与细节点缀</span>
+                            <textarea id="dim3" class="matrix-textarea" placeholder="请描述颜值..."></textarea>
+                        </div>
+
+                        <div class="matrix-field-card">
+                            <div class="matrix-label-row">
+                                <label class="matrix-label" for="dim4">
+                                    <span style="color:var(--primary);">④</span> 价值感维度 (Value)
+                                </label>
+                            </div>
+                            <span class="matrix-subhint">包含：1. 品牌认知与健康信任 | 2. 品质质感与耐用承诺 | 3. 创新与技术领先感 | 4. 情感与生态附加值</span>
+                            <textarea id="dim4" class="matrix-textarea" placeholder="请描述价值..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 步骤 03: 创新等级与画幅规格 -->
+                    <div style="display: flex; gap: 10px;">
+                        <div class="input-group" style="flex: 1.2;">
+                            <label for="designLevel">设计创新跨度等级</label>
+                            <select id="designLevel" onchange="updateLevelDesc()">
+                                <option value="1">等级1：已有产品模仿</option>
+                                <option value="2">等级2：类似产品瓜分市场</option>
+                                <option value="3" selected>等级3：产品微升级</option>
+                                <option value="4">等级4：产品级升级</option>
+                                <option value="5">等级5：品类级创新</option>
+                            </select>
+                        </div>
+                        <div class="input-group" style="flex: 0.8;">
+                            <label for="imageAspectRatio">生图画幅比例</label>
+                            <select id="imageAspectRatio">
+                                <option value="1:1" selected>1:1 (正方形 - 推荐展示)</option>
+                                <option value="3:4">3:4 (竖版 - 社交/海报)</option>
+                                <option value="4:3">4:3 (横版 - 网页/电脑)</option>
+                                <option value="16:9">16:9 (宽屏 - 场景展示)</option>
+                                <option value="9:16">9:16 (全面屏 - 手机满屏)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="levelDesc" style="font-size: 0.72rem; color: var(--primary); font-weight: 500; line-height: 1.4; padding: 0 4px;">
+                        标准：在造型、功能上存在一定升级超越竞品。
+                    </div>
+
+                    <!-- 生成触发按键 -->
+                    <button id="generateBtn" class="cta-btn-primary" onclick="startGeneration()">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        🚀 渲染生成高保真设计图
+                    </button>
+                    <div id="errorMsg" style="display:none; color: #E06C75; font-size: 0.8rem; padding: 6px 10px; background: rgba(224,108,117,0.1); border-radius: var(--radius-sm);"></div>
                 </div>
-                
-                <div class="section-tag">02 竞品/参考图导入 (多品类场景适配)</div>
-                
-                <div style="margin-bottom: 16px;">
-                    <label>选择设计产品品类 (决定矩阵内容与生图场景逻辑)</label>
-                    <select id="productCategory" onchange="changeCategory(); safeSave(STORAGE_CATEGORY, this.value);" style="background: #FFFFFF; font-weight: 600; color: var(--primary);">
-                        <option value="lumbar_support" selected>居家/车载腰靠 (记忆棉)</option>
-                        <option value="car_headrest">汽车头枕 (记忆棉)</option>
-                        <option value="u_pillow">U型枕 (记忆棉)</option>
-                        <option value="desk_nap_pillow">趴睡枕 (记忆棉)</option>
-                        <option value="bedside_cushion">床头靠垫 (记忆棉)</option>
-                        <option value="hemorrhoid_cushion">痔疮垫 (记忆棉)</option>
-                    </select>
+            </aside>
+
+            <!-- 中部比对台与快照胶卷 -->
+            <div class="matrix-stage-deck">
+                <div class="dual-canvas-wrapper">
+                    
+                    <!-- 当前渲染卡片 -->
+                    <div class="canvas-card-col">
+                        <div class="canvas-viewport" id="imageContainer">
+                            <div class="canvas-floating-badge">
+                                <span style="width:6px; height:6px; border-radius:50%; background:var(--primary);"></span>
+                                当前渲染画幅
+                            </div>
+                            
+                            <div class="canvas-action-overlay">
+                                <button class="canvas-tool-btn" onclick="pushTo3DLabFromRender()" title="将此图推入 3D 建模工坊">
+                                    🧊 推入 3D
+                                </button>
+                                <button class="canvas-tool-btn" onclick="diagnoseInCopilot()" title="在 AI 视觉助手中诊断人体工学与CMF">
+                                    💬 诊断
+                                </button>
+                            </div>
+
+                            <div id="loadingStatus" class="loading-wrap">
+                                <div class="spinner-ring"></div>
+                                <div id="loadingText">AI 协同渲染中...</div>
+                            </div>
+
+                            <div id="placeholderText" style="color: var(--text-muted); font-size: 0.86rem; font-weight: 500;">
+                                渲染结果将在此呈现
+                            </div>
+                            <img id="resultImage" alt="Generated Design" onclick="openLightbox(this.src)">
+                        </div>
+
+                        <div class="prompt-inspector-card">
+                            <span class="prompt-inspector-title">
+                                <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                当前生图提示词：
+                            </span>
+                            <div id="promptOutput" class="prompt-inspector-body">等待解析...</div>
+                        </div>
+                    </div>
+
+                    <!-- 快照比对卡片 -->
+                    <div class="canvas-card-col">
+                        <div class="canvas-viewport" id="previewContainer">
+                            <div class="canvas-floating-badge">
+                                <span style="width:6px; height:6px; border-radius:50%; background:var(--accent-sage);"></span>
+                                快照方案比对视窗
+                            </div>
+
+                            <div id="previewPlaceholder" style="color: var(--text-muted); font-size: 0.86rem; font-weight: 500;">
+                                点击快照在此预览
+                            </div>
+                            <img id="previewImage" alt="Snapshot Preview" onclick="openLightbox(this.src)">
+                        </div>
+
+                        <div class="prompt-inspector-card">
+                            <span class="prompt-inspector-title">
+                                <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                快照提示词：
+                            </span>
+                            <div id="previewPromptOutput" class="prompt-inspector-body">暂无快照数据...</div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="upload-area" id="uploadArea">
-                    <input type="file" id="imageInput" accept="image/*" onchange="handleImageUpload(event)">
-                    <div id="uploadText">
-                        <svg style="width:36px;height:36px;color:#AFAAA7;margin-bottom:12px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path></svg>
-                        <div style="font-weight: 500;">点击或拖拽上传参考图</div>
+                <!-- 快照胶卷 -->
+                <aside class="snapshot-film-deck">
+                    <div class="snapshot-deck-header">
+                        <h3>生图快照</h3>
+                        <button onclick="clearSnapshots()" style="background:none; border:none; color:var(--text-muted); font-size:0.7rem; cursor:pointer;">清空</button>
                     </div>
-                    <img id="refImagePreview" class="preview-img" alt="预览">
-                    <button type="button" id="removeRefBtn" class="remove-ref-btn" onclick="removeReferenceImage()" style="display:none;" title="删除参考图">
-                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+
+                    <div class="snapshot-scroll-list" id="snapshotList">
+                        <div id="snapshotEmpty" style="color:var(--text-muted); font-size:0.72rem; text-align:center; margin-top:20px; line-height:1.5;">
+                            暂无快照<br>生成后点击保存
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 6px; margin-top: auto;">
+                        <button id="saveSnapBtn" class="cta-btn-primary" style="padding: 8px; font-size: 0.78rem; border-radius: var(--radius-md);" onclick="saveSnapshot()" disabled>
+                            💾 保存快照
+                        </button>
+                        <button id="downloadBtn" class="toggle-key-pill" style="padding: 8px; font-size: 0.76rem; text-align: center;" onclick="downloadCurrentImage()" disabled>
+                            ⬇️ 下载当前预览图
+                        </button>
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 视图 2: 3D 空间建模室 (3D Spatial Studio) -->
+        <!-- ========================================== -->
+        <section id="view3D" class="model3d-studio-view" style="display: none;">
+            <div class="model3d-pipeline-grid">
+                
+                <!-- 阶段 1: AI 智能白底抠图 -->
+                <div class="pipeline-card">
+                    <div class="pipeline-card-title">
+                        <span style="color:var(--primary);">1.</span> AI 抠图 (白底)
+                    </div>
+                    <span style="font-size:0.74rem; color:var(--text-muted);">
+                        将设计图转为纯白底摄影图，消除背景杂讯，大幅提升 3D 网格重建质量。
+                    </span>
+
+                    <label class="modern-upload-card" id="mattingUploadBox" style="flex:1;">
+                        <input type="file" accept="image/*" style="display:none;" onchange="handleMattingManualUpload(event)">
+                        <div class="upload-icon-wrap">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                        </div>
+                        <span class="upload-hint-title">点击手动导入待抠图</span>
+                        <span class="upload-hint-sub">或点选快照推流</span>
+                    </label>
+
+                    <div id="mattingWorkingArea" style="display:none; flex:1; flex-direction:column; gap:6px;">
+                        <div class="ref-preview-frame" id="mattingImgContainer" style="display:flex; flex:1; height:auto;">
+                            <img id="mattingImage" alt="待抠图">
+                            <button class="ref-del-pill" onclick="clearMatting()" title="清除">✕</button>
+                        </div>
+                        <textarea id="mattingPrompt" style="min-height: 44px; font-size: 0.76rem; resize: none;" placeholder="附加要求(选填)，如：纯白底色、保留阴影..."></textarea>
+                    </div>
+
+                    <button id="mattingBtn" class="cta-btn-primary" style="display:none; padding:9px; font-size:0.82rem;" onclick="startMatting()">
+                        ✨ 一键抠图
+                    </button>
+                    <button id="downloadMattingBtn" class="toggle-key-pill" style="display:none; padding:7px; text-align:center;" onclick="downloadMatting()">
+                        ⬇️ 下载白底图
                     </button>
                 </div>
-                <button id="extractBtn" style="width: 100%; margin-top: 12px; display: none; background: #68605B;" onclick="extractFeatures()">
-                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    ✨ 智能识别参考图，提取 4X4 参数
-                </button>
-                <div id="extractError" class="error"></div>
-                
-                <div id="refineControl" class="weight-slider-group" style="display: none;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
-                        <label style="margin: 0; font-size: 0.85rem; font-weight: 600;">参考图贴合度控制 (Reference Adherence)</label>
-                        <span style="font-size: 0.72rem; color: var(--text-muted);">0% 强制覆盖 · 100% 严格复刻</span>
+
+                <!-- 阶段 2: 3D 参数与生成控制 -->
+                <div class="pipeline-card">
+                    <div class="pipeline-card-title">
+                        <span style="color:var(--primary);">2.</span> 3D 参考图与参数装配
                     </div>
-
-                    <div class="weight-slider-item">
-                        <div class="weight-slider-header">
-                            <span>① 造型轮廓贴合度 (Shape & Contour)</span>
-                            <span id="weightShapeVal" class="val">50%</span>
-                        </div>
-                        <input type="range" id="weightShape" min="0" max="100" value="50">
-                        <span class="sub-label" style="margin-bottom:0; font-size:0.7rem;">越低越依据「①造型维度」重构全新几何与轮廓，越高越贴合原图轮廓</span>
-                    </div>
-
-                    <div class="weight-slider-item">
-                        <div class="weight-slider-header">
-                            <span>② 制版贴合度 (Pattern & Structure)</span>
-                            <span id="weightPatternVal" class="val">50%</span>
-                        </div>
-                        <input type="range" id="weightPattern" min="0" max="100" value="50">
-                        <span class="sub-label" style="margin-bottom:0; font-size:0.7rem;">越低越依据「②功能维度」重塑裁片与拼接结构，越高越贴合原图走线</span>
-                    </div>
-
-                    <div class="weight-slider-item">
-                        <div class="weight-slider-header">
-                            <span>③ 配色贴合度 (Color & CMF)</span>
-                            <span id="weightColorVal" class="val">50%</span>
-                        </div>
-                        <input type="range" id="weightColor" min="0" max="100" value="50">
-                        <span class="sub-label" style="margin-bottom:0; font-size:0.7rem;">越低越依据「③颜值维度」强制覆盖色彩与材质，越高越贴合原图主色</span>
-                    </div>
-                </div>
-
-                <div class="section-tag">03 产品设计 4X4 矩阵定义 (可迭代微调)</div>
-                
-                <div class="form-group">
-                    <label for="dim1">① 造型维度 (Form)</label>
-                    <span class="sub-label">包含：1. 整体外形弧度尺寸比例 | 2. 线条与曲面特征 | 3. 部件与分件形态 | 4. 细节特征</span>
-                    <textarea id="dim1" placeholder="请描述造型..."></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="dim2">② 功能维度 (Function)</label>
-                    <span class="sub-label">包含：1. 核心支撑与减压 | 2. 舒适与适配调节 | 3. 辅助与附加功能 | 4. 维护与耐用功能</span>
-                    <textarea id="dim2" placeholder="请描述功能..."></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="dim3">③ 颜值维度 (Aesthetics)</label>
-                    <span class="sub-label">包含：1. 主色彩与配色 | 2. 主要材质观感 | 3. 表面工艺与纹理 | 4. 装饰元素与细节点缀</span>
-                    <textarea id="dim3" placeholder="请描述颜值..."></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="dim4">④ 价值感维度 (Value)</label>
-                    <span class="sub-label">包含：1. 品牌认知与健康信任 | 2. 品质质感与耐用承诺 | 3. 创新与技术领先感 | 4. 情感与生态附加值</span>
-                    <textarea id="dim4" placeholder="请描述价值..."></textarea>
-                </div>
-
-                <div class="section-tag">04 产品设计等级</div>
-                <div class="level-box" style="margin-bottom: 16px;">
-                    <label for="designLevel">决定 AI 产品的创新跨度</label>
-                    <select id="designLevel" onchange="updateLevelDesc()" style="margin-bottom: 12px; font-weight: 500; background: #FFFFFF;">
-                        <option value="1">等级1：已有产品模仿</option>
-                        <option value="2">等级2：类似产品瓜分市场</option>
-                        <option value="3" selected>等级3：产品微升级</option>
-                        <option value="4">等级4：产品级升级</option>
-                        <option value="5">等级5：品类级创新</option>
-                    </select>
-                    <span class="sub-label" id="levelDesc" style="margin-bottom: 0; color: #D49A89; font-weight: 500;">
-                        标准：在造型、功能上存在一定升级超越竞品。
-                    </span>
-                </div>
-
-                <div class="form-group" style="margin-bottom: 24px;">
-                    <label for="imageAspectRatio">生图尺寸比例 (Aspect Ratio)</label>
-                    <select id="imageAspectRatio" style="background: #FFFFFF;">
-                        <option value="1:1" selected>1:1 (正方形 - 推荐用于独立产品展示)</option>
-                        <option value="3:4">3:4 (竖版 - 适合社交媒体/海报)</option>
-                        <option value="4:3">4:3 (横版 - 适合网页/电脑端查看)</option>
-                        <option value="16:9">16:9 (宽屏 - 适合横向场景/展示)</option>
-                        <option value="9:16">9:16 (全面屏 - 适合手机满屏)</option>
-                    </select>
-                </div>
-
-                <button id="generateBtn" class="main-btn" onclick="startGeneration()">
-                    🚀 渲染生成设计图
-                </button>
-                <div id="errorMsg" class="error"></div>
-            </div>
-        </aside>
-
-        <div class="right-layout">
-            <main class="panel right-panel">
-                <div class="gallery-wrapper">
-                    <div class="main-display">
-                        <div class="render-col">
-                            <div class="canvas-area" id="imageContainer">
-                                <div id="loadingStatus" class="loading">
-                                    <div class="spinner"></div>
-                                    <div id="loadingText">正在处理...</div>
-                                </div>
-                                <div id="placeholderText" class="placeholder">
-                                    渲染结果将在此呈现
-                                </div>
-                                <img id="resultImage" alt="Generated Design">
+                    
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 12px;">
+                        <div class="input-group">
+                            <label>3D 参考图</label>
+                            <div class="modern-upload-card" id="model3dUploadBox" style="min-height:85px; padding:12px;">
+                                <input type="file" accept="image/*" style="display:none;" onchange="handle3DManualUpload(event)">
+                                <span style="font-size:0.78rem; color:var(--text-muted);">点击手动导入或等待抠图推流</span>
                             </div>
-                            <div class="prompt-board">
-                                <h3>
-                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M4 18h16a2 2 0 002-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                                    当前生图提示词：
-                                </h3>
-                                <div id="promptOutput" class="prompt-text">等待解析...</div>
+                            <div class="ref-preview-frame" id="model3dRefImg" style="height:100px;">
+                                <img id="model3dRefImage" alt="3D参考图">
+                                <span class="brand-badge" id="model3dRefTag" style="position:absolute; top:6px; left:6px;">已导入</span>
+                                <button class="ref-del-pill" onclick="clear3DReference()">✕</button>
                             </div>
                         </div>
 
-                        <div class="preview-col">
-                            <div class="canvas-area" id="previewContainer">
-                                <div id="previewPlaceholder" class="placeholder">点击快照在此预览</div>
-                                <img id="previewImage" alt="Snapshot Preview">
-                            </div>
-                            <div class="prompt-board">
-                                <h3>
-                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                    快照提示词：
-                                </h3>
-                                <div id="previewPromptOutput" class="prompt-text">暂无快照数据...</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="snapshot-panel">
-                        <div class="snapshot-header">
-                            <span>生图快照</span>
-                            <button class="snapshot-clear" onclick="clearSnapshots()" title="清空全部快照">清空</button>
-                        </div>
-                        <div class="snapshot-list" id="snapshotList">
-                            <div class="snapshot-empty" id="snapshotEmpty">暂无快照<br>生成后点击保存</div>
-                        </div>
-                        <div class="snapshot-actions">
-                            <button class="snap-btn primary" id="saveSnapBtn" onclick="saveSnapshot()" disabled>
-                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
-                                保存快照
-                            </button>
-                            <button class="snap-btn secondary" id="downloadBtn" onclick="downloadCurrentImage()" disabled>
-                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                下载当前预览图
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </main>
-
-            <section class="panel model3d-panel">
-                <div class="model3d-header">
-                    <h2>
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"></path></svg>
-                        3D 模型生成
-                        <span class="model-badge">Seed3D-2.0</span>
-                    </h2>
-                    <div class="model3d-header-right">
-                        <span class="model3d-status idle" id="model3dStatus">待机</span>
-                        <button class="model3d-gen-btn" id="model3dGenBtn" onclick="start3DGeneration()" disabled>
-                            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                            生成 3D 模型
-                        </button>
-                    </div>
-                </div>
-                <div class="model3d-body">
-                    <div class="model3d-ref" style="width: 150px; display: flex; flex-direction: column;">
-                        <span class="model3d-ref-label">1. AI 抠图 (白底)</span>
-                        <label class="model3d-upload-box" id="mattingUploadBox" style="flex: 1;">
-                            <input type="file" accept="image/*" style="display:none;" onchange="handleMattingManualUpload(event)">
-                            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path></svg>
-                            <span>点击导入<br>或点选快照</span>
-                        </label>
-                        <div id="mattingWorkingArea" style="display:none; flex: 1; flex-direction: column;">
-                            <div class="model3d-ref-img" id="mattingImgContainer" style="background: transparent; flex: 1;">
-                                <img id="mattingImage" alt="待抠图">
-                                <button class="model3d-ref-del" onclick="clearMatting()" title="删除图片">×</button>
-                            </div>
-                            <textarea id="mattingPrompt" class="matting-textarea" placeholder="附加要求(选填)，如：纯白底色、保留阴影..."></textarea>
-                        </div>
-                        
-                        <button id="mattingBtn" class="snap-btn primary" style="display:none; margin-top: 6px; padding: 6px 10px;" onclick="startMatting()">✨ 一键抠图</button>
-                        <button id="downloadMattingBtn" class="snap-btn secondary" style="display:none; margin-top: 4px; padding: 6px 10px;" onclick="downloadMatting()">⬇️ 下载白底图</button>
-                    </div>
-
-                    <div class="model3d-ref" style="width: 150px;">
-                        <span class="model3d-ref-label">2. 3D 参考图</span>
-                        <label class="model3d-upload-box" id="model3dUploadBox">
-                            <input type="file" accept="image/*" style="display:none;" onchange="handle3DManualUpload(event)">
-                            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path></svg>
-                            <span>点击手动导入<br>或等待抠图推流</span>
-                        </label>
-                        <div class="model3d-ref-img" id="model3dRefImg" style="display:none;">
-                            <img id="model3dRefImage" alt="3D参考图">
-                            <span class="model3d-ref-tag" id="model3dRefTag">已导入</span>
-                            <button class="model3d-ref-del" onclick="clear3DReference()" title="删除参考图">×</button>
-                        </div>
-                    </div>
-                
-                    <div class="model3d-params" style="width: 210px;">
-                        <div class="model3d-param-list">
-                        <div class="model3d-param-row">
-                            <label>模型文件格式</label>
+                        <div class="input-group">
+                            <label for="model3dFormat">模型文件格式</label>
                             <select id="model3dFormat">
-                                <option value="glb" selected>GLB</option>
-                                <option value="obj">OBJ</option>
-                                <option value="usd">USD</option>
-                                <option value="usdz">USDZ</option>
+                                <option value="glb" selected>GLB (原生完整PBR材质 · 推荐)</option>
+                                <option value="obj">OBJ (通用网格几何体 · 自动转码)</option>
+                                <option value="usdz">USDZ (苹果AR格式 · 自动转码)</option>
                             </select>
                         </div>
-                        <div class="model3d-param-row">
-                            <label>模型面数</label>
+
+                        <div class="input-group">
+                            <label for="model3dFace">模型面数</label>
                             <select id="model3dFace">
                                 <option value="low">10万（轻量）</option>
                                 <option value="medium" selected>50万（均衡）</option>
                                 <option value="high">100万（精细）</option>
                             </select>
                         </div>
-                        <div class="model3d-param-row">
-                            <label>文本提示词（可选）</label>
-                            <textarea id="model3dPrompt" placeholder="描述期望细节，留空则纯图生3D" style="min-height:50px;padding:6px 10px;font-size:0.8rem;"></textarea>
-                        </div>
+
+                        <div class="input-group">
+                            <label for="model3dPrompt">文本提示词（可选）</label>
+                            <textarea id="model3dPrompt" style="min-height:46px; font-size:0.76rem; resize:none;" placeholder="描述期望细节，留空则纯图生3D"></textarea>
                         </div>
                     </div>
-                
-                    <div class="model3d-result">
-                        <div class="model3d-result-header">
-                            <span class="model3d-result-title">任务信息</span>
+
+                    <button id="model3dGenBtn" class="cta-btn-primary" style="padding:11px; font-size:0.86rem;" onclick="start3DGeneration()" disabled>
+                        🚀 生成 3D 模型
+                    </button>
+                </div>
+
+                <!-- 阶段 3: 任务信息与格式交付 -->
+                <div class="pipeline-card" style="background: var(--bg-card-subtle);">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div class="pipeline-card-title">
+                            <span style="color:var(--primary);">3.</span> 任务信息与模型交付
                         </div>
-                        <div class="model3d-result-content" id="model3dResultContent">
-                            <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);font-size:0.8rem;text-align:center;">
-                                导入参考图后点击「生成 3D 模型」，将依据参考图生成带 PBR 材质的模型。<br>模型生成后，点击右侧提供的专属链接进行下载。
-                            </div>
+                        <span class="status-pill idle" id="model3dStatus">待机</span>
+                    </div>
+
+                    <div style="flex:1; overflow-y:auto; min-height:0;" id="model3dResultContent">
+                        <div style="height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--text-muted); font-size:0.8rem; text-align:center; line-height:1.6; gap:8px;">
+                            <svg width="34" height="34" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                            导入参考图后点击「生成 3D 模型」，将依据参考图生成高质量 3D 模型。<br>
+                            系统支持直接下载原生 GLB 或自动转换为 OBJ / USDZ 格式。
                         </div>
                     </div>
                 </div>
-            </section>
-        </div>
-    </div>
 
-    <!-- ====== 最底端：左侧(自由图文生图) + 右侧(AI 视觉解析对话框) ====== -->
-    <section class="panel bottom-gen-panel">
-        <div class="bottom-split-container">
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 视图 3: 自由探索与视觉智囊 (Creative Lab & Copilot) -->
+        <!-- ========================================== -->
+        <section id="viewCopilot" class="creative-copilot-view" style="display: none;">
             
-            <!-- 左侧：图文生图模块 -->
-            <div class="bottom-left-panel">
-                <div class="bottom-header-row">
-                    <h2>
-                        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            <!-- 左侧：图文生图工坊 -->
+            <div class="studio-card" style="padding: 18px 20px; gap: 14px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h2 style="font-size: 1rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                         快捷自由图文生图
-                        <span class="model-badge" id="bottomGenEngineBadge">当前引擎: APINebula</span>
                     </h2>
+                    <span class="brand-badge" id="bottomGenEngineBadge">当前引擎: APINebula</span>
                 </div>
 
-                <div class="bottom-gen-body">
-                    <div class="bottom-gen-left">
-                        <div>
-                            <label style="font-size:0.85rem; margin-bottom: 4px;">导入参考图 (可选，支持垫图/图生图)</label>
-                            <div class="bottom-upload-box" id="bottomUploadBox">
+                <div style="display: flex; gap: 14px; flex: 1; min-height: 0;">
+                    <!-- 提示词与控制 -->
+                    <div style="width: 260px; display: flex; flex-direction: column; gap: 10px; flex-shrink: 0;">
+                        <div class="input-group">
+                            <label>导入参考图 (可选，支持垫图/图生图)</label>
+                            <div class="modern-upload-card" id="bottomUploadBox" style="min-height: 75px; padding: 8px;">
                                 <input type="file" id="bottomImageInput" accept="image/*" onchange="handleBottomImageUpload(event)">
-                                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path></svg>
-                                <span>点击或拖拽上传参考图片</span>
+                                <span style="font-size:0.74rem; color:var(--text-muted);">点击或拖拽上传参考图片</span>
                             </div>
-                            <div class="bottom-ref-preview" id="bottomRefPreview">
-                                <img id="bottomRefImage" alt="参考图预览">
-                                <button type="button" class="bottom-ref-del" onclick="removeBottomRefImage()" title="删除参考图">×</button>
+                            <div class="ref-preview-frame" id="bottomRefPreview" style="height: 75px;">
+                                <img id="bottomRefImage" alt="底图预览">
+                                <button type="button" class="ref-del-pill" onclick="removeBottomRefImage()">✕</button>
                             </div>
                         </div>
 
-                        <div style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
-                            <label for="bottomPromptInput" style="font-size:0.85rem; margin-bottom: 4px;">画面构想与文字描述 (Prompt)</label>
-                            <textarea id="bottomPromptInput" style="flex: 1; min-height: 120px; font-size:0.85rem; padding: 10px 12px;" placeholder="请详细描述期望生成的画面内容、主体材质、造型、色彩风格、视角构图及环境光影..."></textarea>
+                        <div class="input-group" style="flex:1;">
+                            <label for="bottomPromptInput">画面构想与文字描述 (Prompt)</label>
+                            <textarea id="bottomPromptInput" style="flex:1; min-height: 100px; font-size: 0.8rem; resize: none;" placeholder="请详细描述期望生成的画面内容、主体材质、造型、色彩风格、视角构图及环境光影..."></textarea>
                         </div>
 
-                        <div style="display: flex; gap: 10px; align-items: flex-end; flex-shrink: 0;">
-                            <div style="width: 110px;">
-                                <label for="bottomAspectRatio" style="font-size:0.75rem; margin-bottom: 4px;">尺寸比例</label>
-                                <select id="bottomAspectRatio" style="padding: 10px; font-size: 0.8rem; background: #FFFFFF;">
+                        <div style="display: flex; gap: 8px; align-items: flex-end;">
+                            <div class="input-group" style="width: 95px;">
+                                <label for="bottomAspectRatio">尺寸比例</label>
+                                <select id="bottomAspectRatio">
                                     <option value="1:1" selected>1:1 (方图)</option>
                                     <option value="3:4">3:4 (竖图)</option>
                                     <option value="4:3">4:3 (横图)</option>
@@ -1138,88 +1577,204 @@
                                     <option value="9:16">9:16 (全面屏)</option>
                                 </select>
                             </div>
-                            <button id="bottomGenBtn" class="main-btn" style="flex:1; margin-top:0; padding:10px 14px; font-size:0.9rem;" onclick="startBottomGeneration()">
-                                🚀 立即生成图片
+                            <button id="bottomGenBtn" class="cta-btn-primary" style="flex:1; padding:9px; font-size:0.84rem;" onclick="startBottomGeneration()">
+                                🚀 渲染
                             </button>
                         </div>
-
-                        <div id="bottomErrorMsg" class="error" style="margin-top:2px; padding: 8px 12px; font-size:0.8rem;"></div>
+                        <div id="bottomErrorMsg" style="display:none; color:#E06C75; font-size:0.76rem;"></div>
                     </div>
 
-                    <div class="bottom-gen-right">
-                        <div class="bottom-canvas-area" id="bottomCanvasArea">
-                            <div id="bottomLoadingStatus" class="loading">
-                                <div class="spinner"></div>
+                    <!-- 生图结果画布 -->
+                    <div style="flex:1; display:flex; flex-direction:column; gap:8px; min-width:0;">
+                        <div class="canvas-viewport" id="bottomCanvasArea" style="flex:1; min-height:0;">
+                            <div id="bottomLoadingStatus" class="loading-wrap">
+                                <div class="spinner-ring"></div>
                                 <div id="bottomLoadingText">正在调用所选生图大模型渲染中...</div>
                             </div>
-                            <div id="bottomPlaceholder" class="placeholder">
-                                生成图像将在此呈现
-                            </div>
-                            <img id="bottomResultImage" alt="Generated Result">
+                            <div id="bottomPlaceholder" style="color:var(--text-muted); font-size:0.82rem;">生成图像将在此呈现</div>
+                            <img id="bottomResultImage" alt="Generated Result" onclick="openLightbox(this.src)">
                         </div>
 
-                        <div class="bottom-tools-bar">
-                            <div style="font-size:0.78rem; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1;" id="bottomPromptInfo">
-                                等待发起生成任务...
-                            </div>
-                            <button id="bottomDownloadBtn" class="snap-btn secondary" style="display:none; white-space:nowrap; padding:6px 14px; font-size:0.8rem;" onclick="downloadBottomImage()">
-                                ⬇️ 下载生成图
-                            </button>
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.74rem; color:var(--text-muted);">
+                            <span id="bottomPromptInfo" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:80%;">等待发起生成任务...</span>
+                            <button id="bottomDownloadBtn" class="toggle-key-pill" style="display:none;" onclick="downloadBottomImage()">⬇️ 下载生成图</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 分割线 -->
-            <div class="bottom-split-divider"></div>
+            <!-- 右侧：AI 工业设计与 CMF 视觉智囊 (彻底解决挤压与遮挡)[cite: 2] -->
+            <div class="chat-studio-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <h2 style="font-size: 1rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                            AI 视觉对话助手
+                        </h2>
+                        <span class="brand-badge" id="bottomChatEngineBadge">当前视觉模型: APINebula</span>
+                    </div>
 
-            <!-- 右侧：AI 文本对话框功能 (直接调用视觉解析大模型) -->
-            <div class="bottom-right-panel">
-                <div class="bottom-header-row">
-                    <h2>
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
-                        AI 视觉对话助手
-                        <span class="model-badge" id="bottomChatEngineBadge">当前视觉模型: APINebula</span>
-                    </h2>
-                    <div class="chat-header-actions">
-                        <label class="chat-attach-toggle" title="勾选后，对话将自动附带当前左侧生成的渲染图或参考图进行多模态视觉分析">
-                            <input type="checkbox" id="chatAttachImageCheck" checked>
-                            <span>关联当前图片</span>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <label style="display:flex; align-items:center; gap:5px; font-size:0.74rem; color:var(--text-secondary); cursor:pointer;" title="勾选后，对话将自动附带当前左侧生成的渲染图或参考图进行多模态视觉分析">
+                            <input type="checkbox" id="chatAttachImageCheck" checked style="accent-color:var(--primary); cursor:pointer;">
+                            关联当前图片
                         </label>
-                        <button class="ghost" onclick="clearBottomChat()" style="padding: 4px 10px; font-size: 0.72rem;">清空对话</button>
+                        <button class="toggle-key-pill" onclick="clearBottomChat()" style="padding:3px 8px; font-size:0.7rem;">清空对话</button>
                     </div>
                 </div>
 
-                <div class="bottom-chat-messages" id="bottomChatMessages">
-                    <div class="chat-welcome">
-                        <div class="chat-avatar-ai">🤖</div>
-                        <div>
+                <div class="chat-messages-scroll" id="bottomChatMessages">
+                    <div class="chat-bubble-row ai">
+                        <div class="chat-bubble-box ai">
                             <strong style="color:var(--text-main);">你好！我是你的工业设计与视觉解析助手。</strong><br>
                             我已直接挂载当前配置的<strong>视觉解析大模型</strong>。当你勾选「关联当前图片」时，我可以自动调取左侧生成的渲染图或导入的参考图，针对<strong>人体工学结构、造型轮廓、CMF面料、打样制造工艺</strong>进行多维度视觉诊断，或帮你润色扩写高品质 Prompt！
                         </div>
                     </div>
                 </div>
 
-                <div class="chat-quick-tags">
-                    <span class="chat-tag" onclick="useQuickPrompt('请结合人体工学，详细解析左侧设计图的造型弧度、支撑贴合度与设计亮点')">📐 人体工学解析</span>
-                    <span class="chat-tag" onclick="useQuickPrompt('请从CMF角度剖析这款产品的材质质感、配色方案及表面工艺细节')">🎨 CMF/质感剖析</span>
-                    <span class="chat-tag" onclick="useQuickPrompt('请指出这款设计的3个潜在改进空间与可落地的优化建议')">💡 改进诊断</span>
-                    <span class="chat-tag" onclick="useQuickPrompt('请帮我优化一段针对该产品的高阶渲染英文Prompt生图提示词')">✨ 提示词扩写</span>
+                <!-- 快捷指令标签 -->
+                <div class="quick-prompts-flex">
+                    <span class="quick-prompt-tag" onclick="useQuickPrompt('请结合人体工学，详细解析左侧设计图的造型弧度、支撑贴合度与设计亮点')">📐 人体工学解析</span>
+                    <span class="quick-prompt-tag" onclick="useQuickPrompt('请从CMF角度剖析这款产品的材质质感、配色方案及表面工艺细节')">🎨 CMF/质感剖析</span>
+                    <span class="quick-prompt-tag" onclick="useQuickPrompt('请指出这款设计的3个潜在改进空间与可落地的优化建议')">💡 改进诊断</span>
+                    <span class="quick-prompt-tag" onclick="useQuickPrompt('请帮我优化一段针对该产品的高阶渲染英文Prompt生图提示词')">✨ 提示词扩写</span>
                 </div>
 
-                <div class="bottom-chat-input-area">
-                    <textarea id="bottomChatInput" placeholder="输入设计问题、修改意见或视觉诊断需求... (Enter 发送，Shift+Enter 换行)" onkeydown="handleChatInputKeyDown(event)"></textarea>
+                <!-- 聊天输入栏 -->
+                <div class="chat-input-bar">
+                    <textarea id="bottomChatInput" class="chat-textarea" placeholder="输入设计问题、修改意见或视觉诊断需求... (Enter 发送，Shift+Enter 换行)" onkeydown="handleChatInputKeyDown(event)"></textarea>
                     <button id="bottomChatSendBtn" class="chat-send-btn" onclick="sendBottomChatMessage()">
-                        <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
                         发送
                     </button>
                 </div>
             </div>
 
+        </section>
+
+    </main>
+
+    <!-- ====== 全局 AI 引擎与密钥配置抽屉/视窗 ====== -->
+    <div id="engineSettingsModal" class="modal-backdrop" onclick="closeEngineSettingsModal(event)">
+        <div class="modal-window" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2>
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+                    01 AI 引擎配置 (APINebula 中转集成)
+                </h2>
+                <button class="icon-btn" onclick="closeEngineSettingsModal()" style="width:30px; height:30px;">✕</button>
+            </div>
+
+            <div class="modal-body" id="engineConfigContent">
+                <div style="display: flex; gap: 12px;">
+                    <div class="input-group" style="flex: 1;">
+                        <label>视觉/解析模型引擎</label>
+                        <select id="visionModelSelect" onchange="updateEngineConfigUI()">
+                            <option value="gemini" selected>APINebula (Gemini)</option>
+                            <option value="doubao">豆包 Vision 大模型</option>
+                        </select>
+                    </div>
+                    <div class="input-group" style="flex: 1;">
+                        <label>渲染生图模型引擎</label>
+                        <select id="imageModelSelect" onchange="updateEngineConfigUI()">
+                            <option value="gemini" selected>APINebula (生图)</option>
+                            <option value="doubao">豆包 Seedream 生图</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- APINebula (Gemini) 配置专区 -->
+                <div id="geminiCommonConfigArea" style="background: var(--bg-card-subtle); padding: 14px; border-radius: var(--radius-lg); border: 1px solid var(--border-subtle);">
+                    <div class="input-group" style="margin-bottom: 10px;">
+                        <label>APINebula 接口地址 (Base URL)</label>
+                        <input type="text" id="apiNebulaBaseUrl" placeholder="https://apinebula.com/v1" value="https://apinebula.com/v1">
+                    </div>
+
+                    <div id="geminiVisionConfigArea" style="margin-bottom: 10px;">
+                        <div class="input-group">
+                            <label>视觉解析 · APINebula API Key</label>
+                            <div class="api-key-row">
+                                <input type="password" id="geminiVisionApiKey" placeholder="输入 sk- 开头的 APINebula 密钥">
+                                <button class="toggle-key-pill" onclick="toggleKeyVisibility('geminiVisionApiKey', this)">显示</button>
+                            </div>
+                        </div>
+                        <div class="input-group" style="margin-top: 6px;">
+                            <label style="font-size:0.74rem; color:var(--text-muted);">视觉解析模型标识</label>
+                            <input type="text" id="geminiVisionModelName" placeholder="如 gemini-3.6-flash" value="gemini-3.6-flash">
+                        </div>
+                    </div>
+
+                    <div id="geminiImageConfigArea">
+                        <div class="input-group">
+                            <label>渲染生图 · APINebula API Key</label>
+                            <div class="api-key-row">
+                                <input type="password" id="geminiImageApiKey" placeholder="输入用于生图的 Key（留空则复用上方 Key）">
+                                <button class="toggle-key-pill" onclick="toggleKeyVisibility('geminiImageApiKey', this)">显示</button>
+                            </div>
+                        </div>
+                        <div class="input-group" style="margin-top: 6px;">
+                            <label style="font-size:0.74rem; color:var(--text-muted);">生图模型标识</label>
+                            <input type="text" id="geminiImageModelName" placeholder="如 gemini-3.1-flash-image" value="gemini-3.1-flash-image">
+                        </div>
+                    </div>
+
+                    <!-- 文件一 APINebula API Key 获取方式超链接[cite: 1] -->
+                    <div class="api-link-hint">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <a href="https://apinebula.ai/01QH2F" target="_blank" rel="noopener">前往 APINebula 控制台获取 API Key →</a>
+                    </div>
+                </div>
+
+                <!-- 火山方舟 (豆包) 配置专区 -->
+                <div style="background: var(--bg-card-subtle); padding: 14px; border-radius: var(--radius-lg); border: 1px solid var(--border-subtle);">
+                    <div class="input-group">
+                        <label>火山引擎 API Key（豆包通用 / 用于 3D 生成）</label>
+                        <div class="api-key-row">
+                            <input type="password" id="doubaoApiKey" placeholder="输入火山方舟 API Key">
+                            <button class="toggle-key-pill" onclick="toggleKeyVisibility('doubaoApiKey', this)">显示</button>
+                        </div>
+                    </div>
+
+                    <div id="doubaoVisionConfigArea" class="input-group" style="margin-top: 8px; display: none;">
+                        <label>视觉解析 · 豆包推理接入点 ID (ep-xxx)</label>
+                        <input type="text" id="doubaoVisionModel" placeholder="填写豆包 Vision 推理接入点 ID">
+                    </div>
+
+                    <div id="doubaoImageConfigArea" class="input-group" style="margin-top: 8px; display: none;">
+                        <label>生图渲染 · 豆包推理接入点 ID (ep-xxx)</label>
+                        <input type="text" id="doubaoImageModel" placeholder="填写豆包生图推理接入点 ID">
+                    </div>
+
+                    <div class="input-group" style="margin-top: 8px;">
+                        <label>3D 生成 · 推理接入点 ID / 模型 ID</label>
+                        <input type="text" id="doubao3DModel" placeholder="ep-xxxxxxxxxx 或 doubao-seed3d-2-0-260328" value="doubao-seed3d-2-0-260328">
+                    </div>
+
+                    <!-- 文件一 火山引擎 API Key 获取方式超链接[cite: 1] -->
+                    <div class="api-link-hint">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <a href="https://console.volcengine.com/ark/region:ark+cn-beijing/apiKey" target="_blank" rel="noopener">获取火山引擎 API Key →</a>
+                    </div>
+                </div>
+
+                <button class="cta-btn-primary" onclick="closeEngineSettingsModal()">
+                    保存并生效配置
+                </button>
+            </div>
         </div>
-    </section>
-    
+    </div>
+
+    <!-- 全局图片灯箱 (Lightbox) -->
+    <div id="lightboxOverlay" class="modal-backdrop" onclick="closeLightbox()">
+        <img id="lightboxImg" style="max-width:92vw; max-height:92vh; object-fit:contain; border-radius:var(--radius-lg); box-shadow:var(--shadow-float);" src="" alt="放大图">
+    </div>
+
+    <div id="engineConfigIcon" style="display:none;"></div>
+
 <script>
+    /* =========================================================
+       AURA Studio 核心状态管理与全屏交互逻辑
+       ========================================================= */
     let uploadedImageBase64 = null;
     let uploadedImageMimeType = null;
 
@@ -1252,9 +1807,96 @@
     const STORAGE_REF_MIME = 'ref_image_mime';
 
     function safeSave(key, value) {
-        try { localStorage.setItem(key, value); } catch (e) { console.warn('localStorage 保存失败'); }
+        try { localStorage.setItem(key, value); } catch (e) { console.warn('localStorage 保存受限'); }
     }
 
+    // 全屏模式视图切换控制
+    function switchView(viewName) {
+        const tabs = document.querySelectorAll('.workspace-tabs .tab-btn');
+        tabs.forEach(t => t.classList.remove('active'));
+
+        const viewMatrix = document.getElementById('viewMatrix');
+        const view3D = document.getElementById('view3D');
+        const viewCopilot = document.getElementById('viewCopilot');
+        const mainContainer = document.querySelector('.main-container');
+
+        if (viewName === 'matrix') {
+            tabs[0].classList.add('active');
+            viewMatrix.style.display = 'flex';
+            view3D.style.display = 'none';
+            viewCopilot.style.display = 'none';
+            mainContainer.style.overflow = 'hidden';
+            mainContainer.style.height = 'calc(100vh - 64px)';
+        } else if (viewName === '3d') {
+            tabs[1].classList.add('active');
+            viewMatrix.style.display = 'none';
+            view3D.style.display = 'flex';
+            viewCopilot.style.display = 'none';
+            mainContainer.style.overflow = 'hidden';
+            mainContainer.style.height = 'calc(100vh - 64px)';
+        } else if (viewName === 'copilot') {
+            tabs[2].classList.add('active');
+            viewMatrix.style.display = 'none';
+            view3D.style.display = 'none';
+            viewCopilot.style.display = 'grid';
+            mainContainer.style.overflow = 'hidden';
+            mainContainer.style.height = 'calc(100vh - 64px)';
+        } else if (viewName === 'all') {
+            tabs[3].classList.add('active');
+            viewMatrix.style.display = 'flex';
+            view3D.style.display = 'flex';
+            viewCopilot.style.display = 'grid';
+            mainContainer.style.overflowY = 'auto';
+            mainContainer.style.height = 'calc(100vh - 64px)';
+            viewMatrix.style.minHeight = 'calc(100vh - 90px)';
+            view3D.style.minHeight = 'calc(100vh - 90px)';
+            viewCopilot.style.minHeight = 'calc(100vh - 90px)';
+        }
+    }
+
+    function pushTo3DLabFromRender() {
+        const img = document.getElementById('resultImage');
+        if (!img.src || img.style.display === 'none') {
+            alert('请先渲染或加载一张有效的设计图！');
+            return;
+        }
+        syncMattingImage(img.src);
+        switchView('3d');
+    }
+
+    function diagnoseInCopilot() {
+        const img = document.getElementById('resultImage');
+        if (!img.src || img.style.display === 'none') {
+            alert('请先渲染一张设计图以供 AI 智囊诊断！');
+            return;
+        }
+        switchView('copilot');
+        useQuickPrompt('请结合人体工学受力、曲面支撑贴合与CMF面料质感，深度解析此设计图的优势与优化建议。');
+    }
+
+    function openLightbox(src) {
+        if (!src) return;
+        const box = document.getElementById('lightboxOverlay');
+        const img = document.getElementById('lightboxImg');
+        img.src = src;
+        box.style.display = 'flex';
+    }
+    function closeLightbox() {
+        document.getElementById('lightboxOverlay').style.display = 'none';
+    }
+
+    function openEngineSettingsModal() {
+        document.getElementById('engineSettingsModal').style.display = 'flex';
+    }
+    function closeEngineSettingsModal(event) {
+        if (event && event.target !== event.currentTarget) return;
+        document.getElementById('engineSettingsModal').style.display = 'none';
+    }
+    function toggleEngineConfig() {
+        openEngineSettingsModal();
+    }
+
+    /* 还原文件一：4X4矩阵通用结构定义与品类库[cite: 1] */
     const genericMemoryFoam = function(name, enName, scene) {
         return {
             name: name,
@@ -1311,24 +1953,10 @@
         document.getElementById('dim3').placeholder = cfg.placeholders.dim3;
         document.getElementById('dim4').placeholder = cfg.placeholders.dim4;
         
-        document.getElementById('generateBtn').innerHTML = `🚀 渲染生成${cfg.name}设计图`;
-        
-        const uploadTextDiv = document.querySelector('#uploadText div');
-        if (uploadTextDiv) {
-            uploadTextDiv.innerText = `点击或拖拽上传${cfg.name}参考图`;
-        }
-    }
-
-    function toggleEngineConfig() {
-        const content = document.getElementById('engineConfigContent');
-        const icon = document.getElementById('engineConfigIcon');
-        if (content.style.display === 'none') {
-            content.style.display = 'block';
-            icon.style.transform = 'rotate(0deg)';
-        } else {
-            content.style.display = 'none';
-            icon.style.transform = 'rotate(-90deg)';
-        }
+        document.getElementById('generateBtn').innerHTML = `
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            🚀 渲染生成${cfg.name}设计图
+        `;
     }
 
     function updateBottomGenBadge() {
@@ -1364,12 +1992,11 @@
         
         const hasGemini = (vision === 'gemini' || image === 'gemini');
         document.getElementById('geminiCommonConfigArea').style.display = hasGemini ? 'block' : 'none';
-
         document.getElementById('geminiVisionConfigArea').style.display = vision === 'gemini' ? 'block' : 'none';
-        document.getElementById('doubaoVisionConfigArea').style.display = vision === 'doubao' ? 'block' : 'none';
+        document.getElementById('doubaoVisionConfigArea').style.display = vision === 'doubao' ? 'flex' : 'none';
         
         document.getElementById('geminiImageConfigArea').style.display = image === 'gemini' ? 'block' : 'none';
-        document.getElementById('doubaoImageConfigArea').style.display = image === 'doubao' ? 'block' : 'none';
+        document.getElementById('doubaoImageConfigArea').style.display = image === 'doubao' ? 'flex' : 'none';
 
         updateBottomGenBadge();
     }
@@ -1459,11 +2086,10 @@
             uploadedImageMimeType = refMime;
             const dataUrl = `data:${refMime};base64,${refImg}`;
             document.getElementById('refImagePreview').src = dataUrl;
-            document.getElementById('refImagePreview').style.display = 'block';
+            document.getElementById('refPreviewContainer').style.display = 'flex';
             document.getElementById('uploadText').style.display = 'none';
             document.getElementById('extractBtn').style.display = 'flex';
-            document.getElementById('refineControl').style.display = 'block';
-            document.getElementById('removeRefBtn').style.display = 'flex';
+            document.getElementById('refineControl').style.display = 'flex';
         }
 
         document.getElementById('visionModelSelect').addEventListener('change', function() { safeSave(STORAGE_VISION_SELECT, this.value); updateEngineConfigUI(); });
@@ -1479,6 +2105,7 @@
         document.getElementById('doubaoVisionModel').addEventListener('input', function() { safeSave(STORAGE_DOUBAO_VISION, this.value.trim()); updateBottomGenBadge(); });
         document.getElementById('doubaoImageModel').addEventListener('input', function() { safeSave(STORAGE_DOUBAO_IMAGE, this.value.trim()); updateBottomGenBadge(); });
         document.getElementById('doubao3DModel').addEventListener('input', function() { safeSave(STORAGE_3D_MODEL, this.value.trim()); });
+        
         ['dim1','dim2','dim3','dim4'].forEach(id => document.getElementById(id).addEventListener('input', function() { safeSave('design_' + id, this.value); }));
         document.getElementById('designLevel').addEventListener('change', function() { safeSave(STORAGE_DESIGN_LEVEL, this.value); });
         document.getElementById('imageAspectRatio').addEventListener('change', function() { safeSave(STORAGE_ASPECT_RATIO, this.value); });
@@ -1496,8 +2123,15 @@
     function toggleTheme() {
         const isDark = document.body.classList.toggle('dark');
         localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+        document.getElementById('themeIcon').textContent = isDark ? '🌙' : '☀️';
     }
-    (function() { if (localStorage.getItem(THEME_KEY) === 'dark') document.body.classList.add('dark'); })();
+    (function() { 
+        if (localStorage.getItem(THEME_KEY) === 'dark') {
+            document.body.classList.add('dark');
+            const icon = document.getElementById('themeIcon');
+            if (icon) icon.textContent = '🌙';
+        }
+    })();
 
     const levelDescriptions = {
         "1": "标准：针对给出的参考图进行直接模仿出图，微调部分造型细节用于规避产品专利。",
@@ -1531,11 +2165,10 @@
             uploadedImageMimeType = file.type;
             
             document.getElementById('refImagePreview').src = dataUrl;
-            document.getElementById('refImagePreview').style.display = 'block';
+            document.getElementById('refPreviewContainer').style.display = 'flex';
             document.getElementById('uploadText').style.display = 'none';
             document.getElementById('extractBtn').style.display = 'flex';
-            document.getElementById('refineControl').style.display = 'block';
-            document.getElementById('removeRefBtn').style.display = 'flex';
+            document.getElementById('refineControl').style.display = 'flex';
             safeSave(STORAGE_REF_IMAGE, uploadedImageBase64);
             safeSave(STORAGE_REF_MIME, uploadedImageMimeType);
         };
@@ -1547,11 +2180,10 @@
         uploadedImageMimeType = null;
         document.getElementById('imageInput').value = '';
         document.getElementById('refImagePreview').src = '';
-        document.getElementById('refImagePreview').style.display = 'none';
+        document.getElementById('refPreviewContainer').style.display = 'none';
         document.getElementById('uploadText').style.display = 'block';
         document.getElementById('extractBtn').style.display = 'none';
         document.getElementById('refineControl').style.display = 'none';
-        document.getElementById('removeRefBtn').style.display = 'none';
         localStorage.removeItem(STORAGE_REF_IMAGE);
         localStorage.removeItem(STORAGE_REF_MIME);
         const err = document.getElementById('extractError');
@@ -1581,16 +2213,11 @@
         const cfg = getConfig();
         const url = `${cfg.baseUrl}/chat/completions`;
         
-        const contentParts = [
-            { type: "text", text: userText }
-        ];
-
+        const contentParts = [{ type: "text", text: userText }];
         if (base64Data && mimeType) {
             contentParts.push({
                 type: "image_url",
-                image_url: {
-                    url: `data:${mimeType};base64,${base64Data}`
-                }
+                image_url: { url: `data:${mimeType};base64,${base64Data}` }
             });
         }
 
@@ -1602,9 +2229,7 @@
             ]
         };
 
-        if (isJson) {
-            body.response_format = { type: "json_object" };
-        }
+        if (isJson) body.response_format = { type: "json_object" };
 
         const res = await fetch(url, {
             method: 'POST',
@@ -1709,19 +2334,14 @@
         if (message.images?.[0]?.b64_json) return `data:image/png;base64,${message.images[0].b64_json}`;
 
         const content = (message.content || "").trim();
-
         const mdMatch = content.match(/!\[.*?\]\((https?:\/\/[^\s\)]+)\)/);
         if (mdMatch) return mdMatch[1];
-
         const htmlMatch = content.match(/<img[^>]+src=["'](https?:\/\/[^"']+)["']/i);
         if (htmlMatch) return htmlMatch[1];
-
         const b64Match = content.match(/data:image\/[a-zA-Z]+;base64,[A-Za-z0-9+/=]+/);
         if (b64Match) return b64Match[0];
-
         const urlMatch = content.match(/(https?:\/\/[^\s<>"']+?\.(?:png|jpg|jpeg|webp)(?:\?[^\s<>"']*)?)/i);
         if (urlMatch) return urlMatch[1];
-
         const anyUrlMatch = content.match(/https?:\/\/[^\s<>"'\)\]]+/i);
         if (anyUrlMatch) return anyUrlMatch[0];
 
@@ -1749,7 +2369,6 @@
 
     async function callDoubaoImage(apiKey, model, prompt, refImageDataUrl, aspectRatio = "1:1") {
         const url = `${ARK_BASE}/images/generations`;
-        
         const sizeMap = {
             "1:1": "2048x2048",
             "3:4": "1536x2048",
@@ -1760,7 +2379,7 @@
         const targetSize = sizeMap[aspectRatio] || "2048x2048";
 
         const payload = { model: model, prompt: prompt, response_format: "b64_json", size: targetSize };
-        if (refImageDataUrl) { payload.image = refImageDataUrl; }
+        if (refImageDataUrl) payload.image = refImageDataUrl;
         const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` }, body: JSON.stringify(payload) });
         if (!res.ok) { const errData = await res.json().catch(() => ({})); throw new Error(errData.error?.message || `豆包生图失败 (HTTP ${res.status})`); }
         const data = await res.json();
@@ -1774,10 +2393,10 @@
         const btn = document.getElementById('extractBtn');
         const err = document.getElementById('extractError');
         
-        if (visionEngine === 'gemini' && !cfg.geminiVisionApiKey) { err.style.display='block'; err.textContent = "请先填写视觉解析模型的 APINebula API Key"; return; }
+        if (visionEngine === 'gemini' && !cfg.geminiVisionApiKey) { err.style.display='block'; err.textContent = "请先填写视觉解析模型的 APINebula API Key"; openEngineSettingsModal(); return; }
         if (visionEngine === 'doubao') {
-            if (!cfg.doubaoApiKey) { err.style.display='block'; err.textContent = "请填写火山引擎 API Key"; return; }
-            if (!cfg.doubaoVisionModel) { err.style.display='block'; err.textContent = "请填写豆包视觉解析推理接入点 ID"; return; }
+            if (!cfg.doubaoApiKey) { err.style.display='block'; err.textContent = "请填写火山引擎 API Key"; openEngineSettingsModal(); return; }
+            if (!cfg.doubaoVisionModel) { err.style.display='block'; err.textContent = "请填写豆包视觉解析推理接入点 ID"; openEngineSettingsModal(); return; }
         }
 
         btn.disabled = true;
@@ -1849,10 +2468,10 @@ Example: {"dim1": "...", "dim2": "...", "dim3": "...", "dim4": "..."}`;
         const loadingStatus = document.getElementById('loadingStatus');
         const loadingText = document.getElementById('loadingText');
 
-        if (visionEngine === 'gemini' && !cfg.geminiVisionApiKey) { errorMsg.style.display='block'; errorMsg.textContent = "请填写视觉解析模型的 APINebula API Key"; return; }
-        if (visionEngine === 'doubao' && (!cfg.doubaoApiKey || !cfg.doubaoVisionModel)) { errorMsg.style.display='block'; errorMsg.textContent = "请填写火山引擎 API Key 及视觉模型接入点"; return; }
-        if (imageEngine === 'gemini' && !cfg.geminiImageApiKey) { errorMsg.style.display='block'; errorMsg.textContent = "请填写渲染生图模型的 APINebula API Key"; return; }
-        if (imageEngine === 'doubao' && (!cfg.doubaoApiKey || !cfg.doubaoImageModel)) { errorMsg.style.display='block'; errorMsg.textContent = "请填写火山引擎 API Key 及生图模型接入点"; return; }
+        if (visionEngine === 'gemini' && !cfg.geminiVisionApiKey) { errorMsg.style.display='block'; errorMsg.textContent = "请填写视觉解析模型的 APINebula API Key"; openEngineSettingsModal(); return; }
+        if (visionEngine === 'doubao' && (!cfg.doubaoApiKey || !cfg.doubaoVisionModel)) { errorMsg.style.display='block'; errorMsg.textContent = "请填写火山引擎 API Key 及视觉模型接入点"; openEngineSettingsModal(); return; }
+        if (imageEngine === 'gemini' && !cfg.geminiImageApiKey) { errorMsg.style.display='block'; errorMsg.textContent = "请填写渲染生图模型的 APINebula API Key"; openEngineSettingsModal(); return; }
+        if (imageEngine === 'doubao' && (!cfg.doubaoApiKey || !cfg.doubaoImageModel)) { errorMsg.style.display='block'; errorMsg.textContent = "请填写火山引擎 API Key 及生图模型接入点"; openEngineSettingsModal(); return; }
         if (!d1 && !d2 && !d3 && !d4) { errorMsg.style.display='block'; errorMsg.textContent = "请至少填写设计产品矩阵的部分参数！"; return; }
 
         errorMsg.style.display = 'none';
@@ -1993,7 +2612,11 @@ ${finalPrompt}`;
     function saveSnapshot() {
         const img = document.getElementById('resultImage');
         if (!img.src || img.style.display === 'none') return;
-        snapshots.push({ src: img.src, prompt: document.getElementById('promptOutput').textContent, time: new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'}) });
+        snapshots.push({ 
+            src: img.src, 
+            prompt: document.getElementById('promptOutput').textContent, 
+            time: new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'}) 
+        });
         currentSnapshotIndex = snapshots.length - 1;
         renderSnapshots();
         loadSnapshot(currentSnapshotIndex);
@@ -2033,11 +2656,14 @@ ${finalPrompt}`;
 
     function renderSnapshots() {
         const list = document.getElementById('snapshotList');
-        if (snapshots.length === 0) { list.innerHTML = '<div class="snapshot-empty" id="snapshotEmpty">暂无快照<br>生成后点击保存</div>'; return; }
+        if (snapshots.length === 0) { 
+            list.innerHTML = '<div style="color:var(--text-muted); font-size:0.72rem; text-align:center; margin-top:20px; line-height:1.5;">暂无快照<br>生成后点击保存</div>'; 
+            return; 
+        }
         list.innerHTML = snapshots.map((s, i) => `
-            <div class="snapshot-item ${i === currentSnapshotIndex ? 'active' : ''}" onclick="loadSnapshot(${i})" title="${s.time}">
+            <div class="snapshot-tile ${i === currentSnapshotIndex ? 'active' : ''}" onclick="loadSnapshot(${i})" title="${s.time}">
                 <img src="${s.src}" alt="快照 ${i + 1}">
-                <button class="snap-del" onclick="deleteSnapshot(${i}, event)" title="删除">×</button>
+                <button class="snapshot-tile-del" onclick="deleteSnapshot(${i}, event)" title="删除">✕</button>
             </div>
         `).join('');
     }
@@ -2124,12 +2750,14 @@ ${finalPrompt}`;
 
         if (imageEngine === 'gemini' && !cfg.geminiImageApiKey) { 
             alert("请先填写渲染生图模型的 APINebula API Key"); 
+            openEngineSettingsModal();
             btn.disabled = false;
             btn.textContent = "✨ 一键抠图";
             return; 
         }
         if (imageEngine === 'doubao' && (!cfg.doubaoApiKey || !cfg.doubaoImageModel)) { 
             alert("请先填写火山引擎 API Key 及生图模型接入点"); 
+            openEngineSettingsModal();
             btn.disabled = false;
             btn.textContent = "✨ 一键抠图";
             return; 
@@ -2218,11 +2846,13 @@ ${finalPrompt}`;
         }
     }
 
+    // ====== 3D 空间建模与转码核心 ======
     const SEED3D_DEFAULT_MODEL = 'doubao-seed3d-2-0-260328';
     const ARK_3D_TASK_URL = `${ARK_BASE}/contents/generations/tasks`;
     let model3dCurrentRef = null;   
     let model3dPollTimer = null;    
     let model3dTaskId = null;       
+    let currentTarget3DFormat = 'glb';
 
     function handle3DManualUpload(event) {
         const file = event.target.files[0];
@@ -2261,7 +2891,7 @@ ${finalPrompt}`;
 
     function update3DStatus(status, text) {
         const el = document.getElementById('model3dStatus');
-        el.className = 'model3d-status ' + status;
+        el.className = 'status-pill ' + status;
         const map = { idle: '待机', queued: '排队中', running: '生成中', succeeded: '已完成', failed: '失败' };
         el.textContent = text || map[status] || status;
     }
@@ -2272,7 +2902,7 @@ ${finalPrompt}`;
 
     async function start3DGeneration() {
         const cfg = getConfig();
-        if (!cfg.doubaoApiKey) { alert('请先在配置区域填写火山引擎 API Key'); return; }
+        if (!cfg.doubaoApiKey) { alert('请先在配置区域填写火山引擎 API Key'); openEngineSettingsModal(); return; }
         if (!model3dCurrentRef) { alert('请先进行抠图流转或手动导入 3D 参考图'); return; }
         const modelId = get3DModelId();
         const btn = document.getElementById('model3dGenBtn');
@@ -2280,6 +2910,7 @@ ${finalPrompt}`;
         btn.innerHTML = '⏳ 提交任务中...';
 
         const fileFormat = document.getElementById('model3dFormat').value;
+        currentTarget3DFormat = fileFormat;
         const subdivLevel = document.getElementById('model3dFace').value;
         const textPrompt = document.getElementById('model3dPrompt').value.trim();
         const faceMap = { 'low': '10万', 'medium': '50万', 'high': '100万' };
@@ -2289,18 +2920,20 @@ ${finalPrompt}`;
             model3dTaskId = taskId;
             update3DStatus('queued');
             render3DResult(`
-                <div class="model3d-info-row"><span class="model3d-info-label">任务 ID</span><span class="model3d-info-value">${taskId}</span></div>
-                <div class="model3d-info-row"><span class="model3d-info-label">模型</span><span class="model3d-info-value">${modelId}</span></div>
-                <div class="model3d-info-row"><span class="model3d-info-label">文件格式</span><span class="model3d-info-value">${fileFormat.toUpperCase()}</span></div>
-                <div class="model3d-info-row"><span class="model3d-info-label">模型面数</span><span class="model3d-info-value">${faceMap[subdivLevel]}（${subdivLevel}）</span></div>
-                ${textPrompt ? `<div class="model3d-info-row"><span class="model3d-info-label">文本提示</span><span class="model3d-info-value">${textPrompt}</span></div>` : ''}
-                <div class="model3d-wait" style="margin-top:12px;color:var(--primary);font-weight:500;">⏳ 任务已提交，正在排队生成中...</div>
+                <div style="background:var(--bg-card); padding:14px; border-radius:var(--radius-lg); border:1px solid var(--border-subtle); display:flex; flex-direction:column; gap:6px;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.76rem;"><span style="color:var(--text-muted);">任务 ID</span><span style="font-family:monospace;">${taskId}</span></div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.76rem;"><span style="color:var(--text-muted);">模型引擎</span><span>${modelId}</span></div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.76rem;"><span style="color:var(--text-muted);">目标格式</span><span style="color:var(--primary); font-weight:700;">${fileFormat.toUpperCase()}</span></div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.76rem;"><span style="color:var(--text-muted);">模型面数</span><span>${faceMap[subdivLevel]}（${subdivLevel}）</span></div>
+                    ${textPrompt ? `<div style="display:flex; justify-content:space-between; font-size:0.76rem;"><span style="color:var(--text-muted);">文本提示</span><span>${textPrompt}</span></div>` : ''}
+                    <div class="model3d-wait" style="margin-top:8px; color:var(--primary); font-weight:600; font-size:0.8rem; text-align:center;">⏳ 任务已提交，正在排队生成中...</div>
+                </div>
             `);
             btn.innerHTML = '生成中...';
             poll3DTask(cfg.doubaoApiKey, taskId);
         } catch (err) {
             update3DStatus('failed');
-            render3DResult(`<div style="color:#E06C75;">❌ 任务创建失败：${err.message}</div>`);
+            render3DResult(`<div style="color:#E06C75; padding:10px;">❌ 任务创建失败：${err.message}</div>`);
             btn.disabled = false;
             btn.innerHTML = '生成 3D 模型';
         }
@@ -2331,7 +2964,7 @@ ${finalPrompt}`;
                     update3DStatus(status);
                     const secs = Math.floor(elapsed / 1000);
                     const waitEl = document.getElementById('model3dResultContent').querySelector('.model3d-wait');
-                    if (waitEl) { waitEl.textContent = `⏳ ${status === 'queued' ? '排队中' : '模型生成中'}... 已等待 ${secs} 秒`; }
+                    if (waitEl) waitEl.textContent = `⏳ ${status === 'queued' ? '排队中' : '模型生成中'}... 已等待 ${secs} 秒`;
                 } else if (status === 'succeeded') {
                     clearInterval(model3dPollTimer);
                     handle3DSuccess(task);
@@ -2341,7 +2974,7 @@ ${finalPrompt}`;
                 } else if (status === 'cancelled') {
                     clearInterval(model3dPollTimer);
                     update3DStatus('failed', '已取消');
-                    render3DResult(`<div style="color:#E06C75;">任务已取消</div>`);
+                    render3DResult(`<div style="color:#E06C75; padding:10px;">任务已取消</div>`);
                     reset3DGenBtn();
                 }
             } catch (err) { console.error('轮询3D任务出错:', err); }
@@ -2358,13 +2991,42 @@ ${finalPrompt}`;
         update3DStatus('succeeded');
         const fileUrl = task.content?.file_url || '';
         const tokens = task.usage?.total_tokens || 0;
-        
+        const fmt = currentTarget3DFormat.toLowerCase();
+
+        let downloadActionArea = '';
+        if (fmt === 'glb') {
+            downloadActionArea = `
+                <div style="margin-top:12px;">
+                    <button class="cta-btn-primary" onclick="convertAndDownload3DModel('${fileUrl}', 'glb', '${task.id}')" style="width:100%; padding:9px; font-size:0.82rem;">
+                        ⬇️ 下载 GLB 模型文件 (含PBR材质)
+                    </button>
+                </div>
+            `;
+        } else {
+            downloadActionArea = `
+                <div style="margin-top:12px; display:flex; flex-direction:column; gap:6px;">
+                    <button id="btnDownloadConverted" class="cta-btn-primary" onclick="convertAndDownload3DModel('${fileUrl}', '${fmt}', '${task.id}')" style="width:100%; padding:9px; font-size:0.82rem;">
+                        ⬇️ 导出并下载 ${fmt.toUpperCase()} 模型
+                    </button>
+                    <button class="toggle-key-pill" onclick="downloadDirect3DFile('${fileUrl}', 'model_${task.id}.glb')" style="width:100%; padding:7px; text-align:center;">
+                        ⬇️ 备用下载：原生 GLB (含高保真贴图)
+                    </button>
+                </div>
+                <div style="margin-top:6px; font-size:0.7rem; color:var(--text-muted); text-align:center;">
+                    点击将调取本地 Three.js 引擎直接将模型转码为 .${fmt.toUpperCase()} 格式
+                </div>
+            `;
+        }
+
         render3DResult(`
-            <div class="model3d-info-row"><span class="model3d-info-label">任务 ID</span><span class="model3d-info-value" style="font-size:10px;">${task.id}</span></div>
-            <div class="model3d-info-row"><span class="model3d-info-label">状态</span><span class="model3d-info-value" style="color:#6B7A63;">✅ 成功</span></div>
-            <div class="model3d-info-row"><span class="model3d-info-label">消耗 Token</span><span class="model3d-info-value">${tokens.toLocaleString()}</span></div>
-            <div style="margin-top:24px;"><a href="${fileUrl}" target="_blank" rel="noopener" download style="display:block; background:var(--primary); color:white; text-align:center; padding:10px; border-radius:10px; text-decoration:none; font-weight:600;">⬇️ 下载模型文件</a></div>
-            <div style="margin-top:10px;font-size:0.75rem;color:var(--text-muted);text-align:center;">文件 24 小时内有效，请及时下载</div>
+            <div style="background:var(--bg-card); padding:14px; border-radius:var(--radius-lg); border:1px solid var(--border-subtle); display:flex; flex-direction:column; gap:6px;">
+                <div style="display:flex; justify-content:space-between; font-size:0.76rem;"><span style="color:var(--text-muted);">任务 ID</span><span style="font-family:monospace;">${task.id}</span></div>
+                <div style="display:flex; justify-content:space-between; font-size:0.76rem;"><span style="color:var(--text-muted);">状态</span><span style="color:var(--accent-sage); font-weight:700;">✅ 成功</span></div>
+                <div style="display:flex; justify-content:space-between; font-size:0.76rem;"><span style="color:var(--text-muted);">选定格式</span><span style="font-weight:700; color:var(--primary);">${fmt.toUpperCase()}</span></div>
+                <div style="display:flex; justify-content:space-between; font-size:0.76rem;"><span style="color:var(--text-muted);">消耗 Token</span><span>${tokens.toLocaleString()}</span></div>
+                ${downloadActionArea}
+                <div style="margin-top:8px; font-size:0.72rem; color:var(--text-muted); text-align:center;">文件链接 24 小时内有效，请及时下载保存</div>
+            </div>
         `);
         reset3DGenBtn();
     }
@@ -2374,10 +3036,12 @@ ${finalPrompt}`;
         const errMsg = task.error?.message || '未知错误';
         const errCode = task.error?.code || '';
         render3DResult(`
-            <div style="color:#E06C75;font-weight:600;margin-bottom:8px;">❌ 模型生成失败</div>
-            <div class="model3d-info-row"><span class="model3d-info-label">错误码</span><span class="model3d-info-value">${errCode || '-'}</span></div>
-            <div class="model3d-info-row"><span class="model3d-info-label">错误信息</span><span class="model3d-info-value" style="color:#E06C75;">${errMsg}</span></div>
-            <div style="margin-top:10px;font-size:0.78rem;">请检查参考图是否清晰、API Key 是否开通权限后重试。</div>
+            <div style="background:var(--bg-card); padding:14px; border-radius:var(--radius-lg); border:1px solid rgba(224,108,117,0.3);">
+                <div style="color:#E06C75; font-weight:700; margin-bottom:6px;">❌ 模型生成失败</div>
+                <div style="font-size:0.76rem; margin-bottom:4px;">错误码: ${errCode || '-'}</div>
+                <div style="font-size:0.76rem; color:#E06C75;">${errMsg}</div>
+                <div style="margin-top:6px; font-size:0.72rem; color:var(--text-muted);">请检查参考图是否清晰、API Key 是否开通权限后重试。</div>
+            </div>
         `);
         reset3DGenBtn();
     }
@@ -2388,7 +3052,95 @@ ${finalPrompt}`;
         btn.innerHTML = '生成 3D 模型';
     }
 
-    // ====== 左侧：自由图文生图模块逻辑 ======
+    async function convertAndDownload3DModel(fileUrl, targetFormat, taskId) {
+        const fmt = targetFormat.toLowerCase();
+        
+        if (fmt === 'glb') {
+            downloadDirect3DFile(fileUrl, `model_${taskId || Date.now()}.glb`);
+            return;
+        }
+
+        const btn = document.getElementById('btnDownloadConverted');
+        const originalBtnText = btn ? btn.innerHTML : '';
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = `⏳ 正在转码为 ${fmt.toUpperCase()}...`;
+        }
+
+        try {
+            const response = await fetch(fileUrl);
+            if (!response.ok) throw new Error(`源模型下载失败 (HTTP ${response.status})`);
+            const arrayBuffer = await response.arrayBuffer();
+
+            if (!window.THREE || !window.THREE.GLTFLoader) {
+                throw new Error("Three.js 引擎尚未就绪，请刷新重试");
+            }
+
+            const loader = new THREE.GLTFLoader();
+            loader.parse(arrayBuffer, '', async (gltf) => {
+                try {
+                    let outputBlob = null;
+
+                    if (fmt === 'obj') {
+                        if (!window.THREE.OBJExporter) throw new Error("缺少 OBJExporter 组件");
+                        const exporter = new THREE.OBJExporter();
+                        const result = exporter.parse(gltf.scene);
+                        outputBlob = new Blob([result], { type: 'text/plain;charset=utf-8' });
+                    } else if (fmt === 'usdz') {
+                        if (!window.THREE.USDZExporter) throw new Error("缺少 USDZExporter 组件");
+                        const exporter = new THREE.USDZExporter();
+                        const result = await exporter.parse(gltf.scene);
+                        outputBlob = new Blob([result], { type: 'model/vnd.usdz+zip' });
+                    } else {
+                        throw new Error(`暂不支持转码为 ${fmt} 格式`);
+                    }
+
+                    const blobUrl = URL.createObjectURL(outputBlob);
+                    const a = document.createElement('a');
+                    a.href = blobUrl;
+                    a.download = `model_${taskId || Date.now()}.${fmt}`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(blobUrl);
+
+                    if (btn) {
+                        btn.innerHTML = `✅ 已下载 ${fmt.toUpperCase()} 格式`;
+                        setTimeout(() => { btn.innerHTML = originalBtnText; btn.disabled = false; }, 3000);
+                    }
+                } catch (convErr) {
+                    handleTranscodeFallback(fileUrl, fmt, convErr.message, btn, originalBtnText);
+                }
+            }, (err) => {
+                handleTranscodeFallback(fileUrl, fmt, err.message || 'GLB模型解析错误', btn, originalBtnText);
+            });
+
+        } catch (err) {
+            handleTranscodeFallback(fileUrl, fmt, err.message, btn, originalBtnText);
+        }
+    }
+
+    function handleTranscodeFallback(fileUrl, format, errorMsg, btn, originalBtnText) {
+        console.warn(`转码 ${format} 失败:`, errorMsg);
+        alert(`转码提示：浏览器直接转码遇到限制 (${errorMsg})。\n\n系统将自动为你打开官方原生 GLB 满血模型下载链接，你可以使用 Blender 或 3ds Max 直接打开并导出为 .${format}。`);
+        window.open(fileUrl, '_blank');
+        if (btn) {
+            btn.innerHTML = `⬇️ 重新尝试转码为 ${format.toUpperCase()}`;
+            btn.disabled = false;
+        }
+    }
+
+    function downloadDirect3DFile(url, filename) {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+
+    // ====== 自由图文生图模块逻辑 ======
     let bottomRefBase64 = null;
     let bottomRefMimeType = null;
 
@@ -2432,19 +3184,21 @@ ${finalPrompt}`;
 
         if (!promptText && !bottomRefBase64) {
             err.style.display = 'block';
-            err.textContent = '请至少输入画面描述文字或上传一张参考图！';
+            err.textContent = '请至少输入画面构想或上传参考图！';
             return;
         }
 
         if (imageEngine === 'gemini' && !cfg.geminiImageApiKey) {
             err.style.display = 'block';
             err.textContent = '请先在上方 AI 引擎配置区填写渲染生图模型的 APINebula API Key';
+            openEngineSettingsModal();
             return;
         }
 
         if (imageEngine === 'doubao' && (!cfg.doubaoApiKey || !cfg.doubaoImageModel)) {
             err.style.display = 'block';
             err.textContent = '请先在上方 AI 引擎配置区填写火山引擎 API Key 及生图模型接入点';
+            openEngineSettingsModal();
             return;
         }
 
@@ -2523,7 +3277,7 @@ ${finalPrompt}`;
         }
     }
 
-    // ====== 右侧：AI 视觉解析对话大模型逻辑 ======
+    // ====== AI 工业设计多模态视觉智囊逻辑 ======
     let bottomChatHistory = [];
 
     function handleChatInputKeyDown(event) {
@@ -2543,9 +3297,8 @@ ${finalPrompt}`;
         bottomChatHistory = [];
         const container = document.getElementById('bottomChatMessages');
         container.innerHTML = `
-            <div class="chat-welcome">
-                <div class="chat-avatar-ai">🤖</div>
-                <div>
+            <div class="chat-bubble-row ai">
+                <div class="chat-bubble-box ai">
                     <strong style="color:var(--text-main);">对话记录已清空。</strong><br>
                     随时向我提问，或选择快捷指令对设计图进行人体工学、CMF与工艺剖析。
                 </div>
@@ -2559,25 +3312,30 @@ ${finalPrompt}`;
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;")
-            .replace(/```([\s\S]*?)```/g, '<pre style="background:rgba(0,0,0,0.06);padding:8px 10px;border-radius:6px;overflow-x:auto;margin:6px 0;font-family:monospace;"><code>$1</code></pre>')
-            .replace(/`([^`]+)`/g, '<code style="background:rgba(0,0,0,0.05);padding:1px 4px;border-radius:4px;font-family:monospace;">$1</code>')
+            .replace(/```([\s\S]*?)```/g, '<pre style="background:rgba(0,0,0,0.06);padding:8px 12px;border-radius:8px;overflow-x:auto;margin:6px 0;font-family:monospace;font-size:0.78rem;"><code>$1</code></pre>')
+            .replace(/`([^`]+)`/g, '<code style="background:rgba(0,0,0,0.06);padding:2px 5px;border-radius:4px;font-family:monospace;font-size:0.8rem;">$1</code>')
             .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-            .replace(/^\s*[\-\*]\s+(.*)$/gm, '<li style="margin-left:14px;list-style-type:disc;">$1</li>')
-            .replace(/(<li.*<\/li>\s*)+/g, '<ul style="margin:4px 0;padding-left:4px;">$&</ul>')
+            .replace(/^\s*[\-\*]\s+(.*)$/gm, '<li style="margin-left:16px;list-style-type:disc;">$1</li>')
+            .replace(/(<li.*<\/li>\s*)+/g, '<ul style="margin:6px 0;padding-left:4px;">$&</ul>')
             .replace(/\n/g, '<br>');
     }
 
     function appendChatMessage(role, contentText, hasImageContext = false) {
         const container = document.getElementById('bottomChatMessages');
         const row = document.createElement('div');
-        row.className = `chat-msg-row ${role === 'user' ? 'user' : 'ai'}`;
+        row.className = `chat-bubble-row ${role === 'user' ? 'user' : 'ai'}`;
 
         const bubble = document.createElement('div');
-        bubble.className = `chat-bubble ${role === 'user' ? 'user' : 'ai'}`;
+        bubble.className = `chat-bubble-box ${role === 'user' ? 'user' : 'ai'}`;
 
         if (hasImageContext && role === 'user') {
             const tag = document.createElement('div');
-            tag.className = 'chat-image-tag';
+            tag.style.fontSize = '0.68rem';
+            tag.style.padding = '2px 6px';
+            tag.style.background = 'rgba(255,255,255,0.25)';
+            tag.style.borderRadius = '6px';
+            tag.style.marginBottom = '6px';
+            tag.style.display = 'inline-block';
             tag.innerHTML = `🖼️ 已关联当前产品图`;
             bubble.appendChild(tag);
         }
@@ -2604,23 +3362,19 @@ ${finalPrompt}`;
         const visionEngine = document.getElementById('visionModelSelect').value;
 
         let attachedDataUrl = null;
-        let attachedBase64 = null;
-        let attachedMime = 'image/jpeg';
 
         if (attachCheck && attachCheck.checked) {
-            const resImg = document.getElementById('bottomResultImage');
+            const resImg = document.getElementById('resultImage');
+            const btmImg = document.getElementById('bottomResultImage');
+            
             if (resImg && resImg.src && resImg.style.display !== 'none') {
                 attachedDataUrl = resImg.src;
+            } else if (btmImg && btmImg.src && btmImg.style.display !== 'none') {
+                attachedDataUrl = btmImg.src;
             } else if (bottomRefBase64) {
-                attachedBase64 = bottomRefBase64;
-                attachedMime = bottomRefMimeType || 'image/jpeg';
-                attachedDataUrl = `data:${attachedMime};base64,${bottomRefBase64}`;
-            }
-
-            if (attachedDataUrl && attachedDataUrl.startsWith('data:')) {
-                const parts = attachedDataUrl.split(',');
-                attachedMime = parts[0].split(':')[1].split(';')[0];
-                attachedBase64 = parts[1];
+                attachedDataUrl = `data:${bottomRefMimeType || 'image/jpeg'};base64,${bottomRefBase64}`;
+            } else if (uploadedImageBase64) {
+                attachedDataUrl = `data:${uploadedImageMimeType || 'image/jpeg'};base64,${uploadedImageBase64}`;
             }
         }
 
@@ -2654,7 +3408,6 @@ ${finalPrompt}`;
                     });
                 }
 
-                // 取最近4轮历史作为对话上下文
                 const recentHistory = bottomChatHistory.slice(-6).map(item => ({
                     role: item.role,
                     content: item.content
@@ -2704,7 +3457,7 @@ ${finalPrompt}`;
             bottomChatHistory.push({ role: 'assistant', content: reply });
 
         } catch (err) {
-            aiTextNode.innerHTML = `<span style="color:#E06C75;font-weight:500;">❌ 视觉模型对话失败: ${err.message}</span>`;
+            aiTextNode.innerHTML = `<span style="color:#E06C75; font-weight:600;">❌ 视觉模型对话失败: ${err.message}</span>`;
         } finally {
             sendBtn.disabled = false;
             const container = document.getElementById('bottomChatMessages');
