@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AURA · 人体工学产品4X4矩阵AI智造舱 (全屏版)</title>
     
+    <!-- 方案 A：样条张力 N-Spline 浏览器标签页 Favicon 图标 -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23B8684A'/%3E%3Cstop offset='100%25' stop-color='%23D49A89'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='120' rx='28' fill='url(%23g)'/%3E%3Cg transform='translate(30,30) scale(2.5)' fill='none' stroke='%23FFF' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 19V6.5C5 5.2 6.2 4.4 7.2 5.2L16.8 18.8C17.8 19.6 19 18.8 19 17.5V9' stroke-width='2.8'/%3E%3Ccircle cx='19' cy='5' r='1.8' fill='%23FFF' stroke='none'/%3E%3C/g%3E%3C/svg%3E">
+
     <!-- 引入高品质现代西文字体与中文无衬线体 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,6 +18,10 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.148.0/examples/js/loaders/GLTFLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.148.0/examples/js/exporters/OBJExporter.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.148.0/examples/js/exporters/USDZExporter.js"></script>
+
+    <!-- Markdown 核心渲染引擎 & Mermaid 图表可视化引擎 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 
     <style>
         :root {
@@ -501,7 +508,6 @@
             line-height: 1.35;
         }
 
-        /* 提升 4X4 矩阵文本输入框高度，方便完整审阅与多行编辑 */
         textarea.matrix-textarea {
             width: 100%;
             border: none;
@@ -511,7 +517,7 @@
             color: var(--text-main);
             line-height: 1.6;
             resize: vertical;
-            min-height: 115px; /* 扩展高度，舒适容纳 5~6 行参数描述 */
+            min-height: 115px;
             outline: none;
             padding: 4px 0 0 0;
         }
@@ -816,7 +822,7 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
             padding-right: 4px;
         }
         .chat-bubble-row {
@@ -828,24 +834,171 @@
         .chat-bubble-row.ai { align-items: flex-start; }
         
         .chat-bubble-box {
-            max-width: 86%;
-            padding: 10px 14px;
+            padding: 12px 16px;
             border-radius: 16px;
             font-size: 0.82rem;
-            line-height: 1.55;
+            line-height: 1.6;
             word-break: break-word;
         }
         .chat-bubble-box.user {
+            max-width: 82%;
             background: linear-gradient(135deg, var(--primary) 0%, #D49A89 100%);
             color: #FFFFFF;
             border-bottom-right-radius: 4px;
             box-shadow: 0 4px 14px var(--primary-glow);
         }
         .chat-bubble-box.ai {
-            background: var(--bg-input);
+            max-width: 94%;
+            background: var(--bg-card-subtle);
             color: var(--text-main);
             border-bottom-left-radius: 4px;
             border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-subtle);
+        }
+
+        /* ====== AI 对话 Markdown 渲染与图表样式 ====== */
+        .ai-markdown-rendered {
+            color: var(--text-main);
+            font-size: 0.82rem;
+            line-height: 1.65;
+            word-break: break-word;
+        }
+        .ai-markdown-rendered h1,
+        .ai-markdown-rendered h2,
+        .ai-markdown-rendered h3,
+        .ai-markdown-rendered h4 {
+            color: var(--text-main);
+            font-weight: 700;
+            margin: 12px 0 6px 0;
+            line-height: 1.35;
+        }
+        .ai-markdown-rendered h1 {
+            font-size: 1.05rem;
+            color: var(--primary);
+            border-bottom: 1.5px solid var(--border-subtle);
+            padding-bottom: 4px;
+        }
+        .ai-markdown-rendered h2 {
+            font-size: 0.95rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .ai-markdown-rendered h3 { font-size: 0.88rem; }
+        .ai-markdown-rendered h4 { font-size: 0.82rem; }
+
+        .ai-markdown-rendered p {
+            margin: 6px 0;
+        }
+        .ai-markdown-rendered strong {
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .ai-markdown-rendered hr {
+            border: none;
+            border-top: 1px dashed var(--border-subtle);
+            margin: 12px 0;
+        }
+        .ai-markdown-rendered blockquote {
+            border-left: 3.5px solid var(--primary);
+            background: var(--primary-light);
+            padding: 6px 12px;
+            margin: 8px 0;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+        .ai-markdown-rendered ul, 
+        .ai-markdown-rendered ol {
+            margin: 6px 0;
+            padding-left: 20px;
+        }
+        .ai-markdown-rendered li {
+            margin-bottom: 4px;
+        }
+
+        /* 响应式数据表格系统 (支持横向滑动) */
+        .ai-markdown-rendered .table-responsive-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            margin: 10px 0;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+            box-shadow: var(--shadow-subtle);
+        }
+        .ai-markdown-rendered table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.76rem;
+            text-align: left;
+        }
+        .ai-markdown-rendered th {
+            background: var(--bg-card-subtle);
+            color: var(--primary);
+            font-weight: 700;
+            padding: 8px 12px;
+            border-bottom: 1.5px solid var(--border-subtle);
+            white-space: nowrap;
+        }
+        .ai-markdown-rendered td {
+            padding: 7px 12px;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-main);
+            vertical-align: middle;
+        }
+        .ai-markdown-rendered tr:last-child td {
+            border-bottom: none;
+        }
+        .ai-markdown-rendered tr:nth-child(even) td {
+            background: rgba(0, 0, 0, 0.02);
+        }
+        body.dark .ai-markdown-rendered tr:nth-child(even) td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* 代码与代码块 */
+        .ai-markdown-rendered code:not(.mermaid) {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            background: var(--bg-card-subtle);
+            border: 1px solid var(--border-subtle);
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            color: var(--primary);
+        }
+        .ai-markdown-rendered pre {
+            background: var(--bg-card-subtle);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 10px 12px;
+            overflow-x: auto;
+            margin: 8px 0;
+        }
+        .ai-markdown-rendered pre code {
+            border: none;
+            padding: 0;
+            color: var(--text-main);
+            background: transparent;
+        }
+
+        /* Mermaid 图表卡片容器 */
+        .ai-markdown-rendered .mermaid-chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: auto;
+            box-shadow: var(--shadow-subtle);
+        }
+        .ai-markdown-rendered .mermaid {
+            width: 100%;
+            text-align: center;
         }
 
         .quick-prompts-flex {
@@ -1110,14 +1263,16 @@
     <!-- ====== 全局顶栏导航 ====== -->
     <header class="app-navbar">
         <div class="brand-group">
+            <!-- 方案 A：样条张力 N-Spline 极简高辨识度 Logo -->
             <div class="brand-logo">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 19V6.5C5 5.2 6.2 4.4 7.2 5.2L16.8 18.8C17.8 19.6 19 18.8 19 17.5V9" stroke-width="2.8"/>
+                    <circle cx="19" cy="5" r="1.8" fill="currentColor" stroke="none"/>
                 </svg>
             </div>
             <div class="brand-title">
                 <h1>
-                    AURA DESIGN 4X4
+                    NURBS DESIGN 4X4
                     <span class="brand-badge">Ergonomics AI 2.0</span>
                 </h1>
                 <span class="brand-subtitle">自然健康 · 人体工学产品 AI 工业设计工作舱</span>
@@ -1247,7 +1402,7 @@
                         </div>
                     </div>
 
-                    <!-- 步骤 02: 4X4 矩阵输入字段 (完整还原文件一四层级描述)[cite: 1] -->
+                    <!-- 步骤 02: 4X4 矩阵输入字段[cite: 1] -->
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <div class="section-header-pill">
                             <span>02 · 4X4 人体工学矩阵定义</span>
@@ -1603,7 +1758,7 @@
                 </div>
             </div>
 
-            <!-- 右侧：AI 工业设计与 CMF 视觉智囊 (彻底解决挤压与遮挡)[cite: 2] -->
+            <!-- 右侧：AI 工业设计与 CMF 视觉智囊 -->
             <div class="chat-studio-card">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
                     <div style="display:flex; align-items:center; gap:8px;">
@@ -1626,8 +1781,10 @@
                 <div class="chat-messages-scroll" id="bottomChatMessages">
                     <div class="chat-bubble-row ai">
                         <div class="chat-bubble-box ai">
-                            <strong style="color:var(--text-main);">你好！我是你的工业设计与视觉解析助手。</strong><br>
-                            我已直接挂载当前配置的<strong>视觉解析大模型</strong>。当你勾选「关联当前图片」时，我可以自动调取左侧生成的渲染图或导入的参考图，针对<strong>人体工学结构、造型轮廓、CMF面料、打样制造工艺</strong>进行多维度视觉诊断，或帮你润色扩写高品质 Prompt！
+                            <div class="ai-markdown-rendered">
+                                <h3 style="margin-top:0;">你好！我是你的工业设计与视觉解析助手。</h3>
+                                <p>我已直接挂载当前配置的<strong>视觉解析大模型</strong>。支持针对<strong>人体工学结构、造型轮廓、CMF 面料、打样制造工艺</strong>进行多维度视觉诊断，并可直接输出<strong>多级标题、对比表格与流程图表</strong>！</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1635,7 +1792,8 @@
                 <!-- 快捷指令标签 -->
                 <div class="quick-prompts-flex">
                     <span class="quick-prompt-tag" onclick="useQuickPrompt('请结合人体工学，详细解析左侧设计图的造型弧度、支撑贴合度与设计亮点')">📐 人体工学解析</span>
-                    <span class="quick-prompt-tag" onclick="useQuickPrompt('请从CMF角度剖析这款产品的材质质感、配色方案及表面工艺细节')">🎨 CMF/质感剖析</span>
+                    <span class="quick-prompt-tag" onclick="useQuickPrompt('请以标准 Markdown 表格形式，输出本产品的【CMF选材与表面工艺参数对比表】')">📊 CMF对比表</span>
+                    <span class="quick-prompt-tag" onclick="useQuickPrompt('请用 ```mermaid 流程图绘制该产品的【体压分散与受力支撑力学传导路径】')">📉 传导流程图</span>
                     <span class="quick-prompt-tag" onclick="useQuickPrompt('请指出这款设计的3个潜在改进空间与可落地的优化建议')">💡 改进诊断</span>
                     <span class="quick-prompt-tag" onclick="useQuickPrompt('请帮我优化一段针对该产品的高阶渲染英文Prompt生图提示词')">✨ 提示词扩写</span>
                 </div>
@@ -1687,7 +1845,7 @@
                 <div id="geminiCommonConfigArea" style="background: var(--bg-card-subtle); padding: 14px; border-radius: var(--radius-lg); border: 1px solid var(--border-subtle);">
                     <div class="input-group" style="margin-bottom: 10px;">
                         <label>APINebula 接口地址 (Base URL)</label>
-                        <input type="text" id="apiNebulaBaseUrl" placeholder="https://apinebula.com/v1" value="https://apinebula.com/v1">
+                        <input type="text" id="apiNebulaBaseUrl" placeholder="[https://apinebula.com/v1](https://apinebula.com/v1)" value="[https://apinebula.com/v1](https://apinebula.com/v1)">
                     </div>
 
                     <div id="geminiVisionConfigArea" style="margin-bottom: 10px;">
@@ -1718,10 +1876,10 @@
                         </div>
                     </div>
 
-                    <!-- 文件一 APINebula API Key 获取方式超链接[cite: 1] -->
+                    <!-- APINebula API Key 获取超链接[cite: 1] -->
                     <div class="api-link-hint">
                         <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <a href="https://apinebula.ai/01QH2F" target="_blank" rel="noopener">前往 APINebula 控制台获取 API Key →</a>
+                        <a href="[https://apinebula.ai/01QH2F](https://apinebula.ai/01QH2F)" target="_blank" rel="noopener">前往 APINebula 控制台获取 API Key →</a>
                     </div>
                 </div>
 
@@ -1750,10 +1908,10 @@
                         <input type="text" id="doubao3DModel" placeholder="ep-xxxxxxxxxx 或 doubao-seed3d-2-0-260328" value="doubao-seed3d-2-0-260328">
                     </div>
 
-                    <!-- 文件一 火山引擎 API Key 获取方式超链接[cite: 1] -->
+                    <!-- 火山引擎 API Key 获取超链接[cite: 1] -->
                     <div class="api-link-hint">
                         <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <a href="https://console.volcengine.com/ark/region:ark+cn-beijing/apiKey" target="_blank" rel="noopener">获取火山引擎 API Key →</a>
+                        <a href="[https://console.volcengine.com/ark/region:ark+cn-beijing/apiKey](https://console.volcengine.com/ark/region:ark+cn-beijing/apiKey)" target="_blank" rel="noopener">获取火山引擎 API Key →</a>
                     </div>
                 </div>
 
@@ -1808,6 +1966,70 @@
 
     function safeSave(key, value) {
         try { localStorage.setItem(key, value); } catch (e) { console.warn('localStorage 保存受限'); }
+    }
+
+    /* ====== 初始化 Markdown 与 Mermaid 图表引擎 ====== */
+    function initMarkdownEngine() {
+        if (typeof marked !== 'undefined') {
+            const renderer = new marked.Renderer();
+            
+            // 自动为所有 Markdown 表格包裹横向滑动容器，防止挤压布局
+            const originalTable = renderer.table.bind(renderer);
+            renderer.table = function(header, body) {
+                return `<div class="table-responsive-wrapper">${originalTable(header, body)}</div>`;
+            };
+
+            // 识别 ```mermaid 图表代码块，转化为图表渲染容器
+            const originalCode = renderer.code.bind(renderer);
+            renderer.code = function(code, lang, escaped) {
+                if (lang === 'mermaid') {
+                    return `<div class="mermaid-chart-card"><div class="mermaid">${code}</div></div>`;
+                }
+                return originalCode(code, lang, escaped);
+            };
+
+            marked.setOptions({
+                renderer: renderer,
+                gfm: true,
+                breaks: true
+            });
+        }
+
+        if (typeof mermaid !== 'undefined') {
+            mermaid.initialize({
+                startOnLoad: false,
+                theme: document.body.classList.contains('dark') ? 'dark' : 'neutral',
+                securityLevel: 'loose'
+            });
+        }
+    }
+
+    // 核心渲染函数：Markdown 解析 + Mermaid 动态图表绘制
+    async function renderAiMarkdownContent(targetElement, markdownText) {
+        if (!targetElement) return;
+        targetElement.className = 'ai-markdown-rendered';
+
+        if (!markdownText) {
+            targetElement.innerHTML = '';
+            return;
+        }
+
+        if (typeof marked !== 'undefined') {
+            targetElement.innerHTML = marked.parse(markdownText);
+        } else {
+            targetElement.textContent = markdownText;
+        }
+
+        if (typeof mermaid !== 'undefined') {
+            const chartNodes = targetElement.querySelectorAll('.mermaid');
+            if (chartNodes.length > 0) {
+                try {
+                    await mermaid.run({ nodes: chartNodes });
+                } catch (err) {
+                    console.warn('Mermaid 渲染异常:', err);
+                }
+            }
+        }
     }
 
     // 全屏模式视图切换控制
@@ -1896,7 +2118,7 @@
         openEngineSettingsModal();
     }
 
-    /* 还原文件一：4X4矩阵通用结构定义与品类库[cite: 1] */
+    /* 4X4矩阵通用结构定义与品类库[cite: 1] */
     const genericMemoryFoam = function(name, enName, scene) {
         return {
             name: name,
@@ -2002,6 +2224,8 @@
     }
 
     window.addEventListener('DOMContentLoaded', function() {
+        initMarkdownEngine();
+
         const savedCat = localStorage.getItem(STORAGE_CATEGORY);
         if (savedCat) {
             const catEl = document.getElementById('productCategory');
@@ -2124,6 +2348,9 @@
         const isDark = document.body.classList.toggle('dark');
         localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
         document.getElementById('themeIcon').textContent = isDark ? '🌙' : '☀️';
+        if (typeof mermaid !== 'undefined') {
+            mermaid.initialize({ startOnLoad: false, theme: isDark ? 'dark' : 'neutral' });
+        }
     }
     (function() { 
         if (localStorage.getItem(THEME_KEY) === 'dark') {
@@ -3299,25 +3526,13 @@ ${finalPrompt}`;
         container.innerHTML = `
             <div class="chat-bubble-row ai">
                 <div class="chat-bubble-box ai">
-                    <strong style="color:var(--text-main);">对话记录已清空。</strong><br>
-                    随时向我提问，或选择快捷指令对设计图进行人体工学、CMF与工艺剖析。
+                    <div class="ai-markdown-rendered">
+                        <strong style="color:var(--text-main);">对话记录已清空。</strong><br>
+                        随时向我提问，或选择快捷指令对设计图进行人体工学、CMF与工艺剖析。
+                    </div>
                 </div>
             </div>
         `;
-    }
-
-    function formatMarkdownText(text) {
-        if (!text) return '';
-        return text
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/```([\s\S]*?)```/g, '<pre style="background:rgba(0,0,0,0.06);padding:8px 12px;border-radius:8px;overflow-x:auto;margin:6px 0;font-family:monospace;font-size:0.78rem;"><code>$1</code></pre>')
-            .replace(/`([^`]+)`/g, '<code style="background:rgba(0,0,0,0.06);padding:2px 5px;border-radius:4px;font-family:monospace;font-size:0.8rem;">$1</code>')
-            .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-            .replace(/^\s*[\-\*]\s+(.*)$/gm, '<li style="margin-left:16px;list-style-type:disc;">$1</li>')
-            .replace(/(<li.*<\/li>\s*)+/g, '<ul style="margin:6px 0;padding-left:4px;">$&</ul>')
-            .replace(/\n/g, '<br>');
     }
 
     function appendChatMessage(role, contentText, hasImageContext = false) {
@@ -3341,7 +3556,11 @@ ${finalPrompt}`;
         }
 
         const textSpan = document.createElement('div');
-        textSpan.innerHTML = role === 'user' ? contentText.replace(/\n/g, '<br>') : formatMarkdownText(contentText);
+        if (role === 'user') {
+            textSpan.innerHTML = contentText.replace(/\n/g, '<br>');
+        } else {
+            renderAiMarkdownContent(textSpan, contentText);
+        }
         bubble.appendChild(textSpan);
 
         row.appendChild(bubble);
@@ -3381,7 +3600,7 @@ ${finalPrompt}`;
         appendChatMessage('user', userText, !!attachedDataUrl);
         input.value = '';
 
-        const aiTextNode = appendChatMessage('assistant', '⏳ 正在调取视觉解析模型思考与诊断中...');
+        const aiTextNode = appendChatMessage('assistant', '⏳ 正在调取视觉解析模型深度思考中...');
         sendBtn.disabled = true;
 
         const systemPrompt = `你是一位世界顶尖的人体工学产品工业设计总监、CMF高级专家与AI生成式设计顾问。
@@ -3390,7 +3609,10 @@ ${finalPrompt}`;
 1. 深入剖析人体工学受力、曲面支撑弧度与使用痛点；
 2. 评析面料质感、配色调性、缝合工艺及装配制版可行性；
 3. 如果用户要求优化提示词，请输出能带来高品质渲染质感的结构化Prompt；
-4. 排版结构清晰、使用加粗和项目符号呈现关键结论。`;
+4. 排版结构要求：
+   - 充分使用层级分明的 Markdown 标题（如 ##、###）来组织段落；
+   - 涉及多项指标、CMF材质选型对比或参数对照时，务必使用标准 Markdown 表格输出；
+   - 描述力学传导、装配工序或用户交互路径时，可直接输出 \`\`\`mermaid 流程图代码块。`;
 
         try {
             let reply = "";
@@ -3451,7 +3673,7 @@ ${finalPrompt}`;
                 }
             }
 
-            aiTextNode.innerHTML = formatMarkdownText(reply);
+            await renderAiMarkdownContent(aiTextNode, reply);
 
             bottomChatHistory.push({ role: 'user', content: userText });
             bottomChatHistory.push({ role: 'assistant', content: reply });
